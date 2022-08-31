@@ -23,9 +23,24 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+.App-Email{
+background-color: #102859;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content:center;
+color: white;
+}
+.Login{
+  background-color: rgb(4, 53, 118);
+  color: white;
+}
 .App-title {
   color: white;
+}
+
+body{
+background-color: #102859;
 }
 
 @keyframes App-logo-spin {
