@@ -19,22 +19,30 @@
     <title>Messiah University Undergrad Course Scheduler</title>
   </head>
   <body>
+    <div id="root"></div>
     <div class="App-Email">
-      <h1>Login Form</h1>
+      <h1>Login</h1>
       <form>
         <div class="form-control">
-          <input type="text" required>
-          <label> Email </label>
+          <label> 
+            <input type="text" required>Email
+          </label>
         </div>
-        <div class="App-Password">
-          <input type="password" required>
-          <label> Password </label>
+        <div class="form-control">
+          <label> 
+            <input type="password" required>Password
+          </label>
         </div>
-        <button class="Login"> Login </button>
+        <button type = "submit" class="Login"> Login </button>
       </form>
+      <h4>
+        Forgot Username or Password? Click below to reset
+      </h4>
+      <a href="https://www.messiah.edu/">Reset</a>
+
     </div>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    
 
   </body>
 </html>

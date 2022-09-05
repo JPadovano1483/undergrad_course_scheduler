@@ -15,7 +15,7 @@
 
 .App-header {
   background-color: #102859;
-  min-height: 100vh;
+  min-height: 50vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,6 +25,7 @@
 }
 .App-Email{
 background-color: #102859;
+top: 100px;
 display: flex;
 flex-direction: column;
 align-items: center;
@@ -36,6 +37,9 @@ color: white;
   color: white;
 }
 .App-title {
+  color: white;
+}
+.form-control{
   color: white;
 }
 
