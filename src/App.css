@@ -3,7 +3,7 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 30vmin;
   pointer-events: none;
 }
 
@@ -14,8 +14,8 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: #102859;
+  min-height: 50vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -23,9 +23,28 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+.App-Email{
+background-color: #102859;
+top: 100px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content:center;
+color: white;
+}
+.Login{
+  background-color: rgb(4, 53, 118);
+  color: white;
+}
+.App-title {
+  color: white;
+}
+.form-control{
+  color: white;
+}
 
-.App-link {
-  color: #61dafb;
+body{
+background-color: #102859;
 }
 
 @keyframes App-logo-spin {
@@ -33,6 +52,6 @@
     transform: rotate(0deg);
   }
   to {
-    transform: rotate(360deg);
+    transform: rotate(0deg);
   }
 }
