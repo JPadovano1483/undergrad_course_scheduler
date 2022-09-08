@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+
 }
 
 .App-logo {
@@ -14,7 +15,6 @@
 }
 
 .App-header {
-  background-color: #102859;
   min-height: 50vh;
   display: flex;
   flex-direction: column;
@@ -23,34 +23,42 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-.App-Email{
-background-color: #102859;
-top: 100px;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content:center;
-color: white;
-}
-.Login{
-  background-color: rgb(4, 53, 118);
-  color: white;
-}
-.App-title {
-  color: white;
-}
-.form-control{
+
+.App-Email {
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   color: white;
 }
 
-body{
-background-color: #102859;
+.Login {
+  background-color: rgb(4, 53, 118);
+  color: white;
+}
+
+.App-title {
+  color: white;
+}
+
+.form-control {
+  color: white;
+}
+
+#pwd {
+  margin-left: 30px;
+}
+
+body {
+  background-color: rgb(0, 40, 86);
 }
 
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(0deg);
   }
