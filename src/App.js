@@ -7,12 +7,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <a
-          href="https://www.youtube.com/"
-          className="App-title"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a className="App-title" target="_blank" rel="noopener noreferrer">
           Please enter your username and password.
         </a>
       </header>
