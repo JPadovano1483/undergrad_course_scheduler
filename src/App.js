@@ -36,7 +36,7 @@ function App() {
           <h4>
             Forgot Username or Password? Click below to reset
           </h4>
-          <Link to ="https://www.messiah.edu/">Reset</Link>
+          
         </div>
       </body>
     </div>
