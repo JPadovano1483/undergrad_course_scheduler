@@ -1,6 +1,7 @@
 import './home.css';
 import * as React from 'react';
 import { Grid, Paper, Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import Navigation from './navigation';
 
 
 function Home() {
@@ -9,14 +10,7 @@ function Home() {
             <header id="header" class="fixed-top">
                 <div class="container d-flex align-items-center justify-content-between">
                     <h1 class="logo">Messiah University</h1>
-                    <nav id="navbar" class="navbar">
-                        <ul>
-                            <li><a class="active">4 Year Plan</a></li>
-                            <li><a href="">Prerequisites</a></li>
-                            <li><a href="">All Courses</a></li>
-                            <li><a href="">Admin</a></li>
-                        </ul>
-                    </nav>
+                    <Navigation />
                 </div>
             </header>
             <div class='tableContainer'>
