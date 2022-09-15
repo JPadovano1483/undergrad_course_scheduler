@@ -20,6 +20,7 @@ function Home() {
                 </div>
             </header>
             <div class='tableContainer'>
+                <h1>8 Semester Plan</h1>
                 <Grid container spacing={0}>
                     <Grid xs={6} class='tableGrid'>
                         <TableContainer component={Paper}>
