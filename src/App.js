@@ -30,7 +30,7 @@ function App() {
               </label>
             </div>
             <Link to="/home">
-              <button type="submit" class="Login"> Login </button>
+              <button type="submit" className="Login"> Login </button>
             </Link>
           </form>
           <h4>
