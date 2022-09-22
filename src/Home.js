@@ -305,4 +305,19 @@ function Home() {
     );
 }
 
+// retrieve a user's 8-semester plan 
+function getPlan() {
+    const db = require("./server");
+
+    db.query('SELECT course_id FROM heroku_a19411dd68d921e;', (err, res) => {
+        return res.forEach(element => {
+            console.log(element);
+        });
+    });
+}
+
+getPlan();
+
+// display semester blocks with function maybe
+
 export default Home;
