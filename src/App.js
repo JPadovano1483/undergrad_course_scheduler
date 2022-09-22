@@ -6,18 +6,37 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
+        <p
+          className="App-title"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
-        </a>
+          Please enter your username and password.
+        </p>
       </header>
+      <body>
+        <div className="App-Email">
+          <h1>Login</h1>
+          <form>
+            <div className="form-control">
+              <label>
+                <input type="text" required />Email
+              </label>
+            </div>
+            <div className="form-control">
+              <label id='pwd'>
+                <input type="password" required />Password
+              </label>
+            </div>
+            <Link to="/home">
+              <button type="submit" className="Login"> Login </button>
+            </Link>
+          </form>
+          <h4>
+            Forgot Username or Password? Click below to reset
+          </h4>
+        </div>
+      </body>
     </div>
   );
 }
