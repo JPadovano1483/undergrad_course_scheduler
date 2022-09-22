@@ -6,12 +6,12 @@ import Navigation from './navigation';
 
 function Home() {
     return (
-        <div class="App">
+        <div className="App">
             <Navigation />
-            <div class='tableContainer'>
+            <div className='tableContainer'>
                 <h1>8 Semester Plan</h1>
                 <Grid container spacing={0}>
-                    <Grid xs={6} class='tableGrid'>
+                    <Grid xs={6} className='tableGrid'>
                         <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                 <TableHead>
@@ -59,7 +59,7 @@ function Home() {
                             </Table>
                         </TableContainer>
                     </Grid>
-                    <Grid xs={6} class='tableGrid'>
+                    <Grid xs={6} className='tableGrid'>
                         <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                 <TableHead>
@@ -107,7 +107,7 @@ function Home() {
                             </Table>
                         </TableContainer>
                     </Grid>
-                    <Grid xs={6} class='tableGrid'>
+                    <Grid xs={6} className='tableGrid'>
                         <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                 <TableHead>
@@ -155,7 +155,7 @@ function Home() {
                             </Table>
                         </TableContainer>
                     </Grid>
-                    <Grid xs={6} class='tableGrid'>
+                    <Grid xs={6} className='tableGrid'>
                         <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                 <TableHead>
@@ -203,7 +203,7 @@ function Home() {
                             </Table>
                         </TableContainer>
                     </Grid>
-                    <Grid xs={6} class='tableGrid'>
+                    <Grid xs={6} className='tableGrid'>
                         <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                 <TableHead>
@@ -251,7 +251,7 @@ function Home() {
                             </Table>
                         </TableContainer>
                     </Grid>
-                    <Grid xs={6} class='tableGrid'>
+                    <Grid xs={6} className='tableGrid'>
                         <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                 <TableHead>
