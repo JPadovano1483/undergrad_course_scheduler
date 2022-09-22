@@ -7,12 +7,7 @@ import Navigation from './navigation';
 function Home() {
     return (
         <div class="App">
-            <header id="header" class="fixed-top">
-                <div class="container d-flex align-items-center justify-content-between">
-                    <h1 class="logo">Messiah University</h1>
-                    <Navigation />
-                </div>
-            </header>
+            <Navigation />
             <div class='tableContainer'>
                 <h1>8 Semester Plan</h1>
                 <Grid container spacing={0}>
