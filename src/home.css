@@ -139,11 +139,13 @@
     background-color: #F8F8FF;
     padding-left: 50px;
     padding-top: 30px;
+    margin: -8px;
 }
 
 body {
     font-family: "Open Sans", sans-serif;
     color: #444444;
+    overflow: auto;
 }
 
 a {
