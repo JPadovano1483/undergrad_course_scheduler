@@ -36,7 +36,6 @@ function App() {
           <h4>
             Forgot Username or Password? Click below to reset
           </h4>
-          
         </div>
       </body>
     </div>
