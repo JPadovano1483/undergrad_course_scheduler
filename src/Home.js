@@ -6,9 +6,6 @@ import Navigation from './navigation';
 
 function Home() {
     return (
-        <div className="App">
-            <Navigation />
-            <div className='tableContainer'>
                 <h1>8 Semester Plan</h1>
                 <Grid container spacing={0}>
                     <Grid xs={6} className='tableGrid'>
