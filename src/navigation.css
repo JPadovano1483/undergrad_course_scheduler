@@ -1,3 +1,8 @@
+.App {
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 a {
     color: white;
     text-decoration: none;
@@ -6,4 +11,36 @@ a {
 a:hover {
     color: #008df1;
     text-decoration: none;
+}
+
+#header {
+    background: rgb(0, 40, 86);
+    transition: all 0.5s;
+    z-index: 997;
+    padding: 15px 0;
+    box-shadow: 0px 2px 15px rgba(36, 50, 93, 0.06);
+}
+
+#header .logo {
+    font-size: 28px;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: white;
+    text-align: center;
+}
+
+#header .logo img {
+    max-height: 40px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Raleway", sans-serif;
 }
