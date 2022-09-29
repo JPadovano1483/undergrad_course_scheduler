@@ -16,10 +16,12 @@
 //     });
 //   });
 
-const db = require("./server");
 
-db.query('SELECT course_id, course_name, credits FROM heroku_a19411dd68d921e.course join heroku_a19411dd68d921e.semester_course using(course_id) join heroku_a19411dd68d921e.semester using(semester_id) join heroku_a19411dd68d921e.plan using(plan_id) join heroku_a19411dd68d921e.user using(user_id) where plan_id=1;', (err, res) => {
-  return res.forEach(element => {
-    console.log(element);
-  });
-});
+
+// const db = require("./server");
+
+// db.query('SELECT course_id, course_name, credits FROM heroku_a19411dd68d921e.course join heroku_a19411dd68d921e.semester_course using(course_id) join heroku_a19411dd68d921e.semester using(semester_id) join heroku_a19411dd68d921e.plan using(plan_id) join heroku_a19411dd68d921e.user using(user_id) where plan_id=1;', (err, res) => {
+//   return res.forEach(element => {
+//     console.log(element);
+//   });
+// });

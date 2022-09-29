@@ -2,9 +2,16 @@ import './home.css';
 import * as React from 'react';
 import { Grid, Paper, Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Navigation from './navigation';
+import Axios from 'axios';
 
 
 function Home() {
+    const sem1 = () => {
+        Axios.get("http://localhost:3001/users").then((response) => {
+            console.log(response.data);
+        });
+    }
+    sem1();
     return (
         <div className="App">
             <Navigation />
@@ -306,15 +313,15 @@ function Home() {
 }
 
 // retrieve a user's 8-semester plan 
-function getPlan(user) {
-    const db = require("./server");
+// function getPlan(user) {
+//     const db = require("../server/server");
 
-    db.query('SELECT course_id, course_name, credits FROM heroku_a19411dd68d921e.course join heroku_a19411dd68d921e.semester_course using(course_id) join heroku_a19411dd68d921e.semester using(semester_id) join heroku_a19411dd68d921e.plan using(plan_id) join heroku_a19411dd68d921e.user using(user_id) where plan_id=1;', (err, res) => {
-    return res.forEach(element => {
-        console.log(element);
-    });
-    });
-}
+//     db.query('SELECT course_id, course_name, credits FROM heroku_a19411dd68d921e.course join heroku_a19411dd68d921e.semester_course using(course_id) join heroku_a19411dd68d921e.semester using(semester_id) join heroku_a19411dd68d921e.plan using(plan_id) join heroku_a19411dd68d921e.user using(user_id) where plan_id=1;', (err, res) => {
+//     return res.forEach(element => {
+//         console.log(element);
+//     });
+//     });
+// }
 
 // display semester blocks with function maybe
 
