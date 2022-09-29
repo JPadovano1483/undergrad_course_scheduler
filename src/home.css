@@ -9,6 +9,7 @@
     padding-left: 50px;
     padding-right: 50px;
     padding-top: 30px;
+    padding-bottom: 30px;
     margin: -6px;
     min-height: 735px;
 }
@@ -38,8 +39,4 @@ TableRow {
 
 .inputContainer {
     width: 60%;
-}
-
-TableCell :hover {
-    cursor: grab;
 }
