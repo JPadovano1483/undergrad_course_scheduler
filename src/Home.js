@@ -1,9 +1,10 @@
 import './home.css';
 import * as React from 'react';
-import { Grid, Paper, Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Grid, Paper, Table, TableCell, TableContainer, TableHead, TableBody, TableRow } from '@mui/material';
 import Navigation from './navigation';
 import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useState } from 'react';
 
 const isShown = false;
 const handleClick = event => {
@@ -12,12 +13,28 @@ const handleClick = event => {
     console.log(isShown)
 }
 function Home() {
-    const sem1 = () => {
-        Axios.get("http://localhost:3001/users").then((response) => {
-            console.log(response.data);
+    // could try to get all courses and filter down by semester_id
+    const [sem1, setSem1] = useState([]);
+    const [sem2, setSem2] = useState([]);
+    const [sem3, setSem3] = useState([]);
+    const [sem4, setSem4] = useState([]);
+    const [sem5, setSem5] = useState([]);
+    const [sem6, setSem6] = useState([]);
+    const [sem7, setSem7] = useState([]);
+    const [sem8, setSem8] = useState([]);
+    const getSemester = (setSem, id) => {
+        Axios.get(`http://localhost:3001/semester/${id}`).then((response) => {
+            setSem(response.data);
         });
     }
-    sem1();
+    getSemester(setSem1, 1);
+    getSemester(setSem2, 2);
+    getSemester(setSem3, 3);
+    getSemester(setSem4, 4);
+    getSemester(setSem5, 5);
+    getSemester(setSem6, 6);
+    getSemester(setSem7, 7);
+    getSemester(setSem8, 8);
     return (
         <div className="App">
             <Navigation />
@@ -31,56 +48,16 @@ function Home() {
                         <h2>First Semester</h2>
                         <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
-                                <TableHead>
-                                    <TableRow onClick={handleClick}>
-                                        <TableCell>Click Me</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                </TableHead>
+                                <TableBody>
+                                    {sem1.map((row) => (
+                                        <TableRow>
+                                            <TableCell>{row.course_id}</TableCell>
+                                            <TableCell>{row.course_name}</TableCell>
+                                            <TableCell>{row.credits}</TableCell>
+                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
                             </Table>
                         </TableContainer>
                     </Grid>
@@ -88,56 +65,118 @@ function Home() {
                         <h2>Second Semester</h2>
                         <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
-                                <TableHead>
-                                    <TableRow onClick={handleClick}>
-                                        <TableCell>Click Me</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>Course Code</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Credits</TableCell>
-                                        <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                    </TableRow>
-                                </TableHead>
+                                <TableBody>
+                                    {sem2.map((row) => (
+                                        <TableRow>
+                                            <TableCell>{row.course_id}</TableCell>
+                                            <TableCell>{row.course_name}</TableCell>
+                                            <TableCell>{row.credits}</TableCell>
+                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+                    <Grid item={true} xs={6} className='tableGrid'>
+                        <h2>Third Semester</h2>
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 645 }} aria-label="simple table">
+                                <TableBody>
+                                    {sem3.map((row) => (
+                                        <TableRow>
+                                            <TableCell>{row.course_id}</TableCell>
+                                            <TableCell>{row.course_name}</TableCell>
+                                            <TableCell>{row.credits}</TableCell>
+                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+                    <Grid item={true} xs={6} className='tableGrid'>
+                        <h2>Fourth Semester</h2>
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 645 }} aria-label="simple table">
+                                <TableBody>
+                                    {sem4.map((row) => (
+                                        <TableRow>
+                                            <TableCell>{row.course_id}</TableCell>
+                                            <TableCell>{row.course_name}</TableCell>
+                                            <TableCell>{row.credits}</TableCell>
+                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+                    <Grid item={true} xs={6} className='tableGrid'>
+                        <h2>Fifth Semester</h2>
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 645 }} aria-label="simple table">
+                                <TableBody>
+                                    {sem5.map((row) => (
+                                        <TableRow>
+                                            <TableCell>{row.course_id}</TableCell>
+                                            <TableCell>{row.course_name}</TableCell>
+                                            <TableCell>{row.credits}</TableCell>
+                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+                    <Grid item={true} xs={6} className='tableGrid'>
+                        <h2>Sixth Semester</h2>
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 645 }} aria-label="simple table">
+                                <TableBody>
+                                    {sem6.map((row) => (
+                                        <TableRow>
+                                            <TableCell>{row.course_id}</TableCell>
+                                            <TableCell>{row.course_name}</TableCell>
+                                            <TableCell>{row.credits}</TableCell>
+                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+                    <Grid item={true} xs={6} className='tableGrid'>
+                        <h2>Seventh Semester</h2>
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 645 }} aria-label="simple table">
+                                <TableBody>
+                                    {sem7.map((row) => (
+                                        <TableRow>
+                                            <TableCell>{row.course_id}</TableCell>
+                                            <TableCell>{row.course_name}</TableCell>
+                                            <TableCell>{row.credits}</TableCell>
+                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+                    <Grid item={true} xs={6} className='tableGrid'>
+                        <h2>Eighth Semester</h2>
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 645 }} aria-label="simple table">
+                                <TableBody>
+                                    {sem8.map((row) => (
+                                        <TableRow>
+                                            <TableCell>{row.course_id}</TableCell>
+                                            <TableCell>{row.course_name}</TableCell>
+                                            <TableCell>{row.credits}</TableCell>
+                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
                             </Table>
                         </TableContainer>
                     </Grid>
@@ -146,18 +185,5 @@ function Home() {
         </div>
     );
 }
-
-// retrieve a user's 8-semester plan 
-// function getPlan(user) {
-//     const db = require("../server/server");
-
-//     db.query('SELECT course_id, course_name, credits FROM heroku_a19411dd68d921e.course join heroku_a19411dd68d921e.semester_course using(course_id) join heroku_a19411dd68d921e.semester using(semester_id) join heroku_a19411dd68d921e.plan using(plan_id) join heroku_a19411dd68d921e.user using(user_id) where plan_id=1;', (err, res) => {
-//     return res.forEach(element => {
-//         console.log(element);
-//     });
-//     });
-// }
-
-// display semester blocks with function maybe
 
 export default Home;
