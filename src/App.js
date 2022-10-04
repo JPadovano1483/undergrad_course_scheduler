@@ -1,45 +1,125 @@
-import logo from './MessiahLogo.JPG';
 import './App.css';
-import { Link } from 'react-router-dom';
+import * as React from 'react';
+import logo from './MessiahLogo.JPG';
+import {Avatar, Button, CssBaseline, TextField, FormControlLabel} from '@mui/material';
+import {Checkbox, Grid, Box, Typography, Container} from '@mui/material';
+import {Link} from 'react-router-dom';
+import Axios from 'axios';
+import { useState } from 'react';
 
-function App() {
+export default function SignIn() {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  };
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const login = () => {
+    Axios.post("http://localhost:3001/login", {
+      email: email,
+      password: password,
+    }).then((response) => {
+      if (response.data[0].username !== undefined) {
+        console.log(response.data[0].username);
+        console.log(response.data[0].password);
+        window.location.href = "http://localhost:3000/home";
+      }
+      else {
+        console.log(response.data);
+      }
+    });
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p
-          className="App-title"
-          target="_blank"
-          rel="noopener noreferrer"
+    <Container component ="root"
+    sx={{
+      color:'black',
+    }}>
+      <Container component="main" maxWidth="xs"
+      sx={{
+        color: 'black',
+      }}>
+
+        <CssBaseline />
+        
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
         >
-          Please enter your username and password.
-        </p>
-      </header>
-      <body>
-        <div class="App-Email">
-          <h1>Login</h1>
-          <form>
-            <div class="form-control">
-              <label>
-                <input type="text" required />Email
-              </label>
-            </div>
-            <div class="form-control">
-              <label id='pwd'>
-                <input type="password" required />Password
-              </label>
-            </div>
-            <Link to="/home">
-              <button type="submit" class="Login"> Login </button>
-            </Link>
-          </form>
-          <h4>
-            Forgot Username or Password? Click below to reset
-          </h4>
-        </div>
-      </body>
-    </div>
+          
+          <img src={logo} className="App-logo" alt="logo"  />
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me"
+            />
+            
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={ login }
+            >
+        
+              Sign In
+            </Button>
+
+            <Grid container = 'test'>
+              <Grid item xs>
+                
+                  Forgot password?
+                
+              </Grid>
+            
+              <Link to ="/SignUp">
+                <Grid item xs>
+                
+                  Don't have an account? Sign Up
+               
+                </Grid>
+              </Link>
+            </Grid>
+          </Box>
+        </Box>
+      </Container>
+      </Container>
   );
 }
-
-export default App;
