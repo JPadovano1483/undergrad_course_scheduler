@@ -41,7 +41,7 @@ function Home() {
             <div className='contentContainer'>
                 <h1>8 Semester Plan</h1>
                 {isShown && (
-                    <p>Here is your content</p>
+                    <p>Here is your content.</p>
                 )}
                 <Grid container spacing={0}>
                     <Grid item={true} xs={6} className='tableGrid'>
