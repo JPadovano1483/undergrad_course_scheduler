@@ -18,27 +18,27 @@ app.use(express.json());
 const db = mysql.createConnection({
   user: "root",
   host: "localhost",
-  password: "ceaQwa!!",
-  database: "undergrad_course_scheduler",
+  password: "password",
+  database: "UGCS",
 });
 
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  db.query("SELECT * FROM user WHERE username = ? AND password = ?", 
-  [email, password],
-  (err, result) => {
-    if (err) {
-      console.log(err);
-    } 
-    if (result.length > 0) {
-      res.send(result);
-    }
-    else {
-      res.send("Username or password is incorrect.");
-    }
-  });
+  db.query("SELECT * FROM user WHERE username = ? AND password = ?",
+    [email, password],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      if (result.length > 0) {
+        res.send(result);
+      }
+      else {
+        res.send("Username or password is incorrect.");
+      }
+    });
 });
 
 app.get("/users", (req, res) => {
@@ -56,12 +56,12 @@ app.get("/plan", (req, res) => {
   db.query(`SELECT course_id, course_name, credits, semester_id FROM user JOIN plan using(user_id) JOIN semester using(plan_id) JOIN semester_course using(semester_id) JOIN course using(course_id) WHERE user_id=?`,
     user_id,
     (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  });
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
 });
 
 app.get("/semester/:id", (req, res) => {
@@ -69,12 +69,12 @@ app.get("/semester/:id", (req, res) => {
   db.query(`SELECT course_id, course_name, credits FROM user JOIN plan using(user_id) JOIN semester using(plan_id) JOIN semester_course using(semester_id) JOIN course using(course_id) WHERE semester_id=?`,
     semester_id,
     (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  });
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
 });
 
 const PORT = 3001;
