@@ -1,20 +1,35 @@
+import './App.css';
+import * as React from 'react';
 import logo from './MessiahLogo.JPG';
 import {Avatar, Button, CssBaseline, TextField, FormControlLabel} from '@mui/material';
 import {Checkbox, Grid, Box, Typography, Container} from '@mui/material';
-import * as React from 'react';
 import {Link} from 'react-router-dom';
-import './App.css';
-
+import Axios from 'axios';
+import { useState } from 'react';
 
 export default function SignIn() {
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
   };
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const login = () => {
+    Axios.post("http://localhost:3001/login", {
+      email: email,
+      password: password,
+    }).then((response) => {
+      if (response.data[0].username !== undefined) {
+        console.log(response.data[0].username);
+        console.log(response.data[0].password);
+        window.location.href = "http://localhost:3000/home";
+      }
+      else {
+        console.log(response.data);
+      }
+    });
+  }
 
   return (
     <Container component ="root"
@@ -54,6 +69,9 @@ export default function SignIn() {
               name="email"
               autoComplete="email"
               autoFocus
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
             />
             <TextField
               margin="normal"
@@ -64,23 +82,26 @@ export default function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
             
-            <Link to="/home"> 
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-          
-                Sign In
-              </Button>
-            </Link>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={ login }
+            >
+        
+              Sign In
+            </Button>
+
             <Grid container = 'test'>
               <Grid item xs>
                 
