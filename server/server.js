@@ -18,10 +18,28 @@ app.use(express.json());
 const db = mysql.createConnection({
   user: "root",
   host: "localhost",
-  password: "ceaQwa!!",
-  database: "undergrad_course_scheduler",
+  password: "753ety58",
+  database: "undergrad_course_scheduler_schema",
 });
 
+app.post("/login", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  db.query("SELECT * FROM user WHERE username = ? AND password = ?", 
+  [email, password],
+  (err, result) => {
+    if (err) {
+      console.log(err);
+    } 
+    if (result.length > 0) {
+      res.send(result);
+    }
+    else {
+      res.send("Username or password is incorrect.");
+    }
+  });
+});
 
 app.get("/users", (req, res) => {
   db.query("SELECT * FROM user", (err, result) => {
