@@ -16,14 +16,14 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
 
   const login = () => {
-    Axios.post("http://localhost:3001/login", {
+    Axios.post("https://undergrad-course-scheduler.herokuapp.com/login", {
       email: email,
       password: password,
     }).then((response) => {
       if (response.data[0].username !== undefined) {
         console.log(response.data[0].username);
         console.log(response.data[0].password);
-        window.location.href = "http://localhost:3000/home";
+        window.location.href = "https://undergrad-course-scheduler.herokuapp.com/home";
       }
       else {
         console.log(response.data);

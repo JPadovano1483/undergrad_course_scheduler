@@ -23,7 +23,7 @@ function Home() {
     const [sem7, setSem7] = useState([]);
     const [sem8, setSem8] = useState([]);
     const getSemester = (setSem, id) => {
-        Axios.get(`http://localhost:3001/semester/${id}`).then((response) => {
+        Axios.get(`https://undergrad-course-scheduler.herokuapp.com/semester/${id}`).then((response) => {
             setSem(response.data);
         });
     }
