@@ -34,6 +34,7 @@ export default function SignIn() {
   return (
     <Container component ="root"
     sx={{
+      backgroundColor:'#002856',
       color:'black',
     }}>
       <Container component="main" maxWidth="xs"
@@ -102,17 +103,24 @@ export default function SignIn() {
               Sign In
             </Button>
 
-            <Grid container = 'test'>
-              <Grid item xs>
-                
-                  Forgot password?
-                
-              </Grid>
             
-              <Link to ="/SignUp">
-                <Grid item xs>
+            <Grid container = 'test'>
+              <Link to ="/Reset">
+                <Grid item xs
+                sx={{color: '#4007a2', mr: 4}}
+                >
                 
-                  Don't have an account? Sign Up
+                  Forgot password?      
+                
+                </Grid>
+              </Link>
+              <Link to ="/SignUp">
+                <Grid item xs
+                sx={{color: '#4007a2'}}
+                >
+                
+                  Don't have an account? 
+                  Sign Up
                
                 </Grid>
               </Link>

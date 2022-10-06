@@ -66,12 +66,23 @@ export default function SignUp() {
                   autoComplete="email"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <TextField
                   required
                   fullWidth
                   name="password"
                   label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Confirm Password"
                   type="password"
                   id="password"
                   autoComplete="new-password"
@@ -96,7 +107,8 @@ export default function SignUp() {
             </Link>
             <Grid container justifyContent="flex-end">
             <Link to ="/">
-              <Grid item>
+              <Grid item
+              sx={{color: '#4007a2'}}>
                 
                   Already have an account? Sign in
                 
