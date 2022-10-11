@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Avatar, Button, CssBaseline, TextField, FormControlLabel} from '@mui/material';
-import {Checkbox, Grid, Box,  Typography, Container} from '@mui/material';
+import {Avatar, Button, CssBaseline, TextField} from '@mui/material';
+import {Grid, Box,  Typography, Container} from '@mui/material';
 import {Link} from 'react-router-dom';
 
 
@@ -16,7 +16,11 @@ export default function SignUp() {
   };
 
   return (
-    
+    <Container component ="root"
+    sx={{
+      backgroundColor:'#002856',
+      color:'black',
+    }}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -66,7 +70,7 @@ export default function SignUp() {
                   autoComplete="email"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <TextField
                   required
                   fullWidth
@@ -77,12 +81,18 @@ export default function SignUp() {
                   autoComplete="new-password"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
+              <Grid item xs={6}>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Confirm Password"
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
                 />
               </Grid>
+              
             </Grid>
             <Link to ="/home">
             <Button
@@ -96,7 +106,8 @@ export default function SignUp() {
             </Link>
             <Grid container justifyContent="flex-end">
             <Link to ="/">
-              <Grid item>
+              <Grid item
+              sx={{color: '#4007a2'}}>
                 
                   Already have an account? Sign in
                 
@@ -106,6 +117,6 @@ export default function SignUp() {
           </Box>
         </Box>
       </Container>
-    
+    </Container>
   );
 }

@@ -1,9 +1,9 @@
 import './App.css';
 import * as React from 'react';
 import logo from './MessiahLogo.JPG';
-import {Avatar, Button, CssBaseline, TextField, FormControlLabel} from '@mui/material';
-import {Checkbox, Grid, Box, Typography, Container} from '@mui/material';
-import {Link} from 'react-router-dom';
+import { Avatar, Button, TextField, FormControlLabel } from '@mui/material';
+import { Checkbox, Grid, Box, Typography, Container } from '@mui/material';
+import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import { useState } from 'react';
 
@@ -32,17 +32,18 @@ export default function SignIn() {
   }
 
   return (
-    <Container component ="root"
-    sx={{
-      color:'black',
-    }}>
-      <Container component="main" maxWidth="xs"
+    <Container component="root"
       sx={{
+        backgroundColor: '#002856',
         color: 'black',
       }}>
+      <Container component="main" maxWidth="xs"
+        sx={{
+          color: 'black',
+        }}>
 
-        <CssBaseline />
-        
+        {/* <CssBaseline /> */}
+
         <Box
           sx={{
             marginTop: 8,
@@ -51,10 +52,10 @@ export default function SignIn() {
             alignItems: 'center',
           }}
         >
-          
-          <img src={logo} className="App-logo" alt="logo"  />
+
+          <img src={logo} className="App-logo" alt="logo" />
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            
+
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign in
@@ -90,36 +91,43 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={ login }
+              onClick={login}
             >
-        
+
               Sign In
             </Button>
 
-            <Grid container = 'test'>
-              <Grid item xs>
-                
+
+            <Grid container='test'>
+              <Link to="/ForgotPassword">
+                <Grid item xs
+                  sx={{ color: '#4007a2', mr: 4 }}
+                >
+
                   Forgot password?
-                
-              </Grid>
-            
-              <Link to ="/SignUp">
-                <Grid item xs>
-                
-                  Don't have an account? Sign Up
-               
+
+                </Grid>
+              </Link>
+              <Link to="/SignUp">
+                <Grid item xs
+                  sx={{ color: '#4007a2' }}
+                >
+
+                  Don't have an account?
+                  Sign Up
+
                 </Grid>
               </Link>
             </Grid>
           </Box>
         </Box>
       </Container>
-      </Container>
+    </Container>
   );
 }
