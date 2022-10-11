@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Avatar, Button, CssBaseline, TextField, FormControlLabel} from '@mui/material';
-import {Checkbox, Grid, Box,  Typography, Container} from '@mui/material';
+import {Avatar, Button, CssBaseline, TextField} from '@mui/material';
+import {Grid, Box,  Typography, Container} from '@mui/material';
 import {Link} from 'react-router-dom';
 
 
@@ -16,7 +16,11 @@ export default function SignUp() {
   };
 
   return (
-    
+    <Container component ="root"
+    sx={{
+      backgroundColor:'#002856',
+      color:'black',
+    }}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -88,12 +92,7 @@ export default function SignUp() {
                   autoComplete="new-password"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
-              </Grid>
+              
             </Grid>
             <Link to ="/home">
             <Button
@@ -118,6 +117,6 @@ export default function SignUp() {
           </Box>
         </Box>
       </Container>
-    
+    </Container>
   );
 }

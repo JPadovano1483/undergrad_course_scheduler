@@ -105,7 +105,7 @@ export default function SignIn() {
 
             
             <Grid container = 'test'>
-              <Link to ="/Reset">
+              <Link to ="/ForgotPassword">
                 <Grid item xs
                 sx={{color: '#4007a2', mr: 4}}
                 >
