@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {CssBaseline} from '@mui/material';
 import {Grid, Box,  Typography, Container} from '@mui/material';
 import {Link} from 'react-router-dom';
 
@@ -20,15 +19,15 @@ return (
         backgroundColor:'#002856',
         color:'black',
         }}>
-            <CssBaseline/>
 
             <Box
-                sx={{marginTop: 20,
+                sx={{
+                borderRadius: 5,
+                marginTop: 20,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                backgroundColor: 'white',
-                Width: 200
+                backgroundColor: 'white'
                 }}>
 
                 <Typography component="h1" variant="h5"

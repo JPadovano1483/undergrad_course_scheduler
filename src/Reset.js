@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, CssBaseline, TextField } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import { Grid, Box, Typography, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
 
@@ -22,7 +22,6 @@ export default function SignUp() {
         color: 'black',
       }}>
       <Container component="main" maxWidth="xs">
-        {/* <CssBaseline /> */}
         <Box
           sx={{
             marginTop: 8,
