@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {Button, CssBaseline, TextField} from '@mui/material';
-import {Grid, Box,  Typography, Container} from '@mui/material';
-import {Link} from 'react-router-dom';
+import { Button, CssBaseline, TextField } from '@mui/material';
+import { Grid, Box, Typography, Container } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 
 
@@ -16,13 +16,13 @@ export default function SignUp() {
   };
 
   return (
-    <Container component ="root"
-    sx={{
-      backgroundColor:'#002856',
-      color:'black',
-    }}>
+    <Container component="root"
+      sx={{
+        backgroundColor: '#002856',
+        color: 'black',
+      }}>
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
+        {/* <CssBaseline /> */}
         <Box
           sx={{
             marginTop: 8,
@@ -59,26 +59,26 @@ export default function SignUp() {
                   autoComplete="new-password"
                 />
               </Grid>
-              
+
             </Grid>
-            <Link to ="/home">
-            <Button
+            <Link to="/home">
+              <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                >
+              >
                 Submit
               </Button>
             </Link>
             <Grid container justifyContent="flex-end">
-            <Link to ="/">
-              <Grid item
-              sx={{color: '#4007a2'}}>
-                
+              <Link to="/">
+                <Grid item
+                  sx={{ color: '#4007a2' }}>
+
                   Return to Login
-                
-              </Grid>
+
+                </Grid>
               </Link>
             </Grid>
           </Box>
