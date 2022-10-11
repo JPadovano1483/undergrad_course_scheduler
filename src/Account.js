@@ -1,22 +1,18 @@
+import { Avatar } from "@mui/material";
 import Navigation from "./navigation";
-import './home.css';
+import "./account.css"
 import { Checkbox, FormControlLabel, FormGroup, TextField } from "@mui/material";
 import Button from '@mui/material/Button';
 import InputIcon from '@mui/icons-material/Input';
 import TimeRangePicker from '@wojtekmaj/react-timerange-picker'
 
 
-function Admin() {
-    //Course_id
-    //course_name
-    //course_description
-    //credits
+function Account() {
     return (
         <>
             <Navigation />
-            <div className='contentContainer'>
-                <h1>Please enter course information</h1>
-                <p style={{ color: 'red' }}>Fields marked with * are required</p>
+            <div className="profileContainer">
+                <Avatar sx={{ bgcolor: '#D6742A', width: 200, height: 200, fontSize: 100 }}>SA</Avatar>
                 <div className="inputContainer">
                     <form>
                         <TextField required label="Course ID" id="courseID" variant="filled" sx={{ my: 1, width: '50%' }} />
@@ -44,7 +40,6 @@ function Admin() {
                 </div>
             </div>
         </>
-    );
-
+    )
 }
-export default Admin;
+export default Account;

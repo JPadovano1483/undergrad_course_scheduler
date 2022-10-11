@@ -21,18 +21,20 @@ const Navigation = () => {
         < >
             <div className="App">
                 <header id="header" className="fixed-top">
-                    <div className="main">
-                        <h1 className="logo">Messiah University</h1>
-                        <NavigationContainer>
+                    {/* <h1 className="logo">Messiah University</h1> */}
+                    <NavigationContainer>
+                        <div className='links'>
                             <LinksContainer>
                                 <Link to="/home">4 Year Plan</Link>
                                 <Link to="">Prerequisites</Link>
                                 <Link to="">All Courses</Link>
                                 <Link to="/admin">Admin</Link>
                             </LinksContainer>
-                            <Avatar sx={{ bgcolor: '#D6742A' }}>SA</Avatar>
-                        </NavigationContainer>
-                    </div>
+                        </div>
+                        <Avatar sx={{ bgcolor: '#D6742A' }}>
+                            <Link to="/account" className='accountLink'>SA</Link>
+                        </Avatar>
+                    </NavigationContainer>
                 </header>
             </div>
             <Outlet />
