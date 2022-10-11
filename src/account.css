@@ -9,3 +9,16 @@
     min-height: 730px;
     justify-content: center;
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+    align-items: center;
+}
+
+row {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    min-width: 100%
+}
