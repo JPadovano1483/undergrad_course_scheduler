@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './Home';
 import Admin from './Admin';
 import SignUp from './SignUp';
+import Account from "./Account";
 import ForgotPassword from './ForgotPassword';
 import EmailConfirm from './EmailConfirm';
 import Reset from './Reset';
@@ -17,10 +18,12 @@ root.render(
       <Route path='/' element={<App />} />
       <Route path='home' element={<Home />} />
       <Route path='admin' element={<Admin />} />
-      <Route path='signup' element ={<SignUp />} />
-      <Route path='forgotpassword' element = {<ForgotPassword />}/>
-      <Route path='emailconfirm' element = {<EmailConfirm/>}/>
-      <Route path='reset' element = {<Reset/>}/>
+      <Route path='signup' element={<SignUp />} />
+      <Route path='account' element={<Account />} />
+      <Route path='signup' element={<SignUp />} />
+      <Route path='forgotpassword' element={<ForgotPassword />} />
+      <Route path='emailconfirm' element={<EmailConfirm />} />
+      <Route path='reset' element={<Reset />} />
     </Routes>
   </BrowserRouter>
 );

@@ -1,17 +1,11 @@
 import './home.css';
 import * as React from 'react';
-import { Grid, Paper, Table, TableCell, TableContainer, TableHead, TableBody, TableRow } from '@mui/material';
+import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow } from '@mui/material';
 import Navigation from './navigation';
 import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from 'react';
 
-const isShown = false;
-const handleClick = event => {
-    console.log("Click");
-    // setIsShown(true);
-    console.log(isShown)
-}
 function Home() {
     // could try to get all courses and filter down by semester_id
     const [sem1, setSem1] = useState([]);
@@ -40,9 +34,6 @@ function Home() {
             <Navigation />
             <div className='contentContainer'>
                 <h1>8 Semester Plan</h1>
-                {isShown && (
-                    <p>Here is your content</p>
-                )}
                 <Grid container spacing={0}>
                     <Grid item={true} xs={6} className='tableGrid'>
                         <h2>First Semester</h2>
