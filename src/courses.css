@@ -1,0 +1,42 @@
+.App {
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.contentContainer {
+    background-color: #F8F8FF;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    margin: -6px;
+    min-height: 735px;
+}
+
+body {
+    font-family: "Open Sans", sans-serif;
+    color: #444444;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Raleway", sans-serif;
+}
+
+TableRow {
+    margin-top: 10px;
+    cursor: grab;
+}
+
+.tableGrid {
+    padding: 25px;
+}
+
+.inputContainer {
+    width: 60%;
+}
