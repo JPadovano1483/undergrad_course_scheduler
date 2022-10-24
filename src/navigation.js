@@ -27,7 +27,7 @@ const Navigation = () => {
                             <LinksContainer>
                                 <Link to="/home">4 Year Plan</Link>
                                 <Link to="">Prerequisites</Link>
-                                <Link to="">All Courses</Link>
+                                <Link to="/allcourses">All Courses</Link>
                                 <Link to="/admin">Admin</Link>
                             </LinksContainer>
                         </div>
