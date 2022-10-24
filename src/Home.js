@@ -4,7 +4,7 @@ import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow } fr
 import Navigation from './navigation';
 import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Home() {
     // could try to get all courses and filter down by semester_id
@@ -17,18 +17,34 @@ function Home() {
     const [sem7, setSem7] = useState([]);
     const [sem8, setSem8] = useState([]);
     const getSemester = (setSem, id) => {
-        Axios.get(`http://localhost:3001/semester/${id}`).then((response) => {
+        Axios.get(`https://undergrad-course-scheduler.herokuapp.com/semester/${id}`).then((response) => {
             setSem(response.data);
         });
     }
-    getSemester(setSem1, 1);
-    getSemester(setSem2, 2);
-    getSemester(setSem3, 3);
-    getSemester(setSem4, 4);
-    getSemester(setSem5, 5);
-    getSemester(setSem6, 6);
-    getSemester(setSem7, 7);
-    getSemester(setSem8, 8);
+    useEffect(() => {
+        getSemester(setSem1, 1);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem2, 2);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem3, 3);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem4, 4);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem5, 5);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem6, 6);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem7, 7);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem8, 8);
+    }, []);
     return (
         <div className="App">
             <Navigation />
