@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@reduxjs/toolkit": "^1.8.5",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.6",
@@ -20,13 +19,13 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-redux": "^8.0.2",
-    "react-redux": "^8.0.2",
     "react-router-dom": "^6.4.1",
     "react-scripts": "^5.0.1",
+    "redux-thunk": "^2.4.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start --max_old_space_size=8192",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -48,9 +47,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@redux-devtools/core": "^3.13.1"
   },
   "devDependencies": {
     "@redux-devtools/core": "^3.13.1"
