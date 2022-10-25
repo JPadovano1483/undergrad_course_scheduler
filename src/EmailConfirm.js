@@ -22,7 +22,7 @@ return (
 
             <Box
                 sx={{
-                borderRadius: 5,
+                borderRadius: 6,
                 marginTop: 20,
                 display: 'flex',
                 flexDirection: 'column',
@@ -32,7 +32,7 @@ return (
 
                 <Typography component="h1" variant="h5"
                 sx={{
-                    ml:3
+                    ml:3, mt: 3
                 }}
                 >
                     Your password reset request has been processed
@@ -57,7 +57,9 @@ return (
                     <Link to ="/">
                         <Grid item
                             sx={{color: '#4007a2',
-                            ml: 3}}>
+                            ml: 3,
+                            mb: 3 
+                        }}>
                         Back to Login Page
                         </Grid>
                     </Link>

@@ -27,6 +27,7 @@ export default function SignUp() {
     sx={{
       backgroundColor:'#002856',
       color:'black',
+      mt: 5
     }}>
       <Container component="main" maxWidth="xs">
         <Box

@@ -30,6 +30,7 @@ function Account() {
                         sx={{ bgcolor: '#D6742A', width: 200, height: 200, fontSize: 100 }}
                     >SA</Avatar>
                     <row>
+
                         <h2>jamie_padvano</h2>
                     </row>
                     <row>
