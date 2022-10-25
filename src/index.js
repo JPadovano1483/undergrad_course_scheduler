@@ -6,12 +6,14 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './Home';
 import Admin from './Admin';
 import SignUp from './SignUp';
+import { Provider } from 'react-redux';
+import store from './store/store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
     <Routes>
-      <Route path='/' element={<App />} />
+      <Route path='/' element={<Provider store={store}><App /></Provider>} />
       <Route path='home' element={<Home />} />
       <Route path='admin' element={<Admin />} />
       <Route path='signup' element ={<SignUp />} />
