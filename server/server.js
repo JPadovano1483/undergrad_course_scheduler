@@ -89,6 +89,22 @@ app.get("/users", (req, res) => {
   });
 });
 
+app.post("/account", (req, res) => {
+  const major = req.body.major;
+  const concentration = req.body.concentration;
+  const minor = req.body.minor;
+
+  db.query("UPDATE user SET major_name = ?, concentration_name = ?, minor_name = ? WHERE username = ?",
+  [major, concentration, minor, 'jamie_padovano'],
+  (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
 app.get("/plan", (req, res) => {
   const user_id = req.params.id;
   db.query(`SELECT course_id, course_name, credits, semester_id FROM user JOIN plan using(user_id) JOIN semester using(plan_id) JOIN semester_course using(semester_id) JOIN course using(course_id) WHERE user_id=?`,
