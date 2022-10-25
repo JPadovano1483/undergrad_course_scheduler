@@ -18,8 +18,24 @@ app.use(express.json());
 const db = mysql.createConnection({
   user: "root",
   host: "localhost",
-  password: "password",
-  database: "UGCS",
+  password: "753ety58",
+  database: "undergrad_course_scheduler_schema",
+});
+
+app.post("/course", (req, res) => {
+  const courseId = req.body.courseId;
+  const courseName = req.body.courseName;
+  const courseDescription = req.body.courseDescription;
+  const credits = req.body.credits;
+  db.query("INSERT INTO course (course_id, course_name, course_description, credits) VALUES (?,?,?,?)",
+  [courseId, courseName, courseDescription, credits],
+  (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
 });
 
 app.post("/login", (req, res) => {
@@ -27,22 +43,60 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
 
   db.query("SELECT * FROM user WHERE username = ? AND password = ?",
-    [email, password],
+  [email, password],
+  (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    if (result.length > 0) {
+      res.send(result);
+    }
+    else {
+      res.send("Username or password is incorrect.");
+    }
+  });
+});
+
+app.post("/signup", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const confPassword = req.body.confPassword;
+
+  if (password == confPassword) {
+    db.query("INSERT INTO user (username, password, major_name, concentration_name) VALUES (?,?,?,?)",
+    [email, password, "", ""],
     (err, result) => {
       if (err) {
         console.log(err);
-      }
-      if (result.length > 0) {
+      } else {
         res.send(result);
       }
-      else {
-        res.send("Username or password is incorrect.");
-      }
     });
+  }
+  else {
+    res.send("Passwords do not match.");
+  }
 });
 
 app.get("/users", (req, res) => {
-  db.query("SELECT * FROM user", (err, result) => {
+  db.query("SELECT * FROM user", 
+  (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+app.post("/account", (req, res) => {
+  const major = req.body.major;
+  const concentration = req.body.concentration;
+  const minor = req.body.minor;
+
+  db.query("UPDATE user SET major_name = ?, concentration_name = ?, minor_name = ? WHERE username = ?",
+  [major, concentration, minor, 'jamie_padovano'],
+  (err, result) => {
     if (err) {
       console.log(err);
     } else {
