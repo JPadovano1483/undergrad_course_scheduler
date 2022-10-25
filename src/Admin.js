@@ -44,7 +44,6 @@ function Admin() {
                 </div>
             </div>
         </>
-
     );
 
 }
