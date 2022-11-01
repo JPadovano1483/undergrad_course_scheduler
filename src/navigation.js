@@ -1,4 +1,4 @@
-import './navigation.css'
+import './css/navigation.css'
 import { Link, Outlet } from "react-router-dom";
 import { styled } from "@mui/system";
 import { Avatar } from '@mui/material';

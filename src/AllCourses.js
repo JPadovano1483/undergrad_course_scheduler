@@ -1,5 +1,5 @@
 import Navigation from "./navigation";
-import './courses.css'
+import './css/courses.css'
 import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, TableHead } from '@mui/material';
 
 function AllCourses() {

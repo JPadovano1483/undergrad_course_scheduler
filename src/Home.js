@@ -1,10 +1,10 @@
-import './home.css';
+import './css/home.css';
 import * as React from 'react';
 import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow } from '@mui/material';
 import Navigation from './navigation';
 import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Home() {
     // could try to get all courses and filter down by semester_id
@@ -21,14 +21,30 @@ function Home() {
             setSem(response.data);
         });
     }
-    getSemester(setSem1, 1);
-    getSemester(setSem2, 2);
-    getSemester(setSem3, 3);
-    getSemester(setSem4, 4);
-    getSemester(setSem5, 5);
-    getSemester(setSem6, 6);
-    getSemester(setSem7, 7);
-    getSemester(setSem8, 8);
+    useEffect(() => {
+        getSemester(setSem1, 1);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem2, 2);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem3, 3);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem4, 4);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem5, 5);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem6, 6);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem7, 7);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem8, 8);
+    }, []);
     return (
         <div className="App">
             <Navigation />
