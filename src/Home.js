@@ -1,4 +1,4 @@
-import './home.css';
+import './css/home.css';
 import * as React from 'react';
 import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow } from '@mui/material';
 import Navigation from './navigation';

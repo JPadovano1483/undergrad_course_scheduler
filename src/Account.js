@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import {Avatar, Button, TextField} from '@mui/material';
 import Navigation from "./navigation";
-import "./account.css"
+import "./css/account.css"
 import Axios from 'axios';
 
 function Account() {

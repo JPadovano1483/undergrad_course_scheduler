@@ -1,6 +1,6 @@
-import './App.css';
+import './css/App.css';
 import * as React from 'react';
-import logo from './MessiahLogo.JPG';
+import logo from './images/MessiahLogo.JPG';
 import { Avatar, Button, TextField, FormControlLabel } from '@mui/material';
 import { Checkbox, Grid, Box, Typography, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
