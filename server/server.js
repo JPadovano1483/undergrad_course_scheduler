@@ -78,6 +78,17 @@ app.post("/signup", (req, res) => {
   }
 });
 
+app.get("/courses", (req, res) => {
+  db.query("SELECT * FROM course", 
+  (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
 app.get("/users", (req, res) => {
   db.query("SELECT * FROM user", 
   (err, result) => {
