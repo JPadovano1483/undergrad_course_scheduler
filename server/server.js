@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
+const path = requite('path');
 
 app.use(cors());
 app.use(express.json());
@@ -21,6 +22,12 @@ const db = mysql.createConnection({
 //   password: "ceaQwa!!",
 //   database: "undergrad_course_scheduler",
 // });
+
+// trying to get server started with app
+app.use(express.static(path.join(__dirname, '../src')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/../src/index.js'));
+})
 
 app.post("/login", (req, res) => {
   const email = req.body.email;
