@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
-const path = requite('path');
+const path = require('path');
 
 app.use(cors());
 app.use(express.json());
@@ -24,10 +24,13 @@ const db = mysql.createConnection({
 // });
 
 // trying to get server started with app
-app.use(express.static(path.join(__dirname, '../src')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/../src/index.js'));
+app.use(express.static(path.join(__dirname, 'build')));
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'This is the api endpoint'
+  })
 })
+
 
 app.post("/login", (req, res) => {
   const email = req.body.email;
@@ -82,6 +85,10 @@ app.get("/semester/:id", (req, res) => {
         res.send(result);
       }
     });
+});
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 const PORT = 3001;
