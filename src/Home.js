@@ -1,12 +1,15 @@
 import './css/home.css';
 import * as React from 'react';
-import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow } from '@mui/material';
+import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer } from '@mui/material';
 import Navigation from './navigation';
 import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useEffect } from 'react';
+import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 
 function Home() {
+    const [open, setOpen] = useState(false);
+    const drawerWidth = 350;
     // could try to get all courses and filter down by semester_id
     const [sem1, setSem1] = useState([]);
     const [sem2, setSem2] = useState([]);
@@ -48,13 +51,45 @@ function Home() {
     return (
         <div className="App">
             <Navigation />
+            <Drawer sx={{
+                width: drawerWidth,
+                flexShrink: 0,
+                '& .MuiDrawer-paper': {
+                    width: drawerWidth,
+                    padding: 2,
+                    alignItems: 'center',
+                    backgroundColor: '#F8F8FF'
+                },
+            }} open={open} anchor={"right"} onClose={() => setOpen(false)}>
+                <h1>All Courses</h1>
+                <TableContainer component={Paper}>
+                    <Table aria-label="simple table">
+                        <TableBody>
+                            {sem1.map((row) => (
+                                <TableRow>
+                                    <TableCell>{row.course_id}</TableCell>
+                                    <TableCell>{row.course_name}</TableCell>
+                                    <TableCell>{row.credits}</TableCell>
+                                    <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Drawer>
+            <IconButton onClick={() => setOpen(true)}>
+                <ArrowDropDownCircleIcon sx={{
+                    color: 'rgba(128, 128, 128, .9)', width: 50, height: 'auto', position: 'fixed',
+                    top: 400, right: -10, transform: 'rotate(90deg)'
+                }}></ArrowDropDownCircleIcon>
+            </IconButton>
             <div className='contentContainer'>
                 <h1>8 Semester Plan</h1>
                 <Grid container spacing={0}>
                     <Grid item={true} xs={6} className='tableGrid'>
                         <h2>First Semester</h2>
                         <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 645 }} aria-label="simple table">
+                            <Table aria-label="simple table">
                                 <TableBody>
                                     {sem1.map((row) => (
                                         <TableRow>

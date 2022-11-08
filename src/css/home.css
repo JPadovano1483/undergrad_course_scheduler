@@ -1,11 +1,13 @@
 .App {
     text-align: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flexbox;
 }
 
 
 .contentContainer {
     background-color: #F8F8FF;
+    flex-shrink: 1;
     padding-left: 50px;
     padding-right: 50px;
     padding-top: 30px;

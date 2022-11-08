@@ -6,7 +6,7 @@ function AllCourses() {
     return (
         <>
             <Navigation />
-            <div className="contentContainer">
+            <div className="coursesContainer">
                 <h1>
                     All Courses
                 </h1>
