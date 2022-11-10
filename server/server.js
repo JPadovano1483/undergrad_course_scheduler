@@ -24,7 +24,8 @@ const db = mysql.createConnection({
 // });
 
 // trying to get server started with app
-app.use(express.static(path.join(__dirname, 'build')));
+// app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, '../src/build')));
 app.get('/api', (req, res) => {
   res.json({
     message: 'This is the api endpoint'
@@ -87,8 +88,12 @@ app.get("/semester/:id", (req, res) => {
     });
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '/../src/build/index.html'));
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '/../src/build/index.html'));
+// });
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/../src/build/index.html'));
 });
 
 const PORT = 3001;
