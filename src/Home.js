@@ -147,9 +147,9 @@ function Home() {
                         <h2>Third Semester</h2>
                         <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
-                                <Draggable>
                                 <TableBody>
                                     {sem3.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
@@ -176,19 +176,19 @@ function Home() {
                                                 </Dialog>     
                                             </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
-                                </Draggable>
                             </Table>
                         </TableContainer>
                     </Grid>
                     <Grid item={true} xs={6} className='tableGrid'>
                         <h2>Fourth Semester</h2>
                         <TableContainer component={Paper}>
-                            <Draggable>
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem4.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
@@ -215,10 +215,10 @@ function Home() {
                                                 </Dialog>     
                                             </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
-                            </Draggable>
                         </TableContainer>
                     </Grid>
                     <Grid item={true} xs={6} className='tableGrid'>
@@ -227,6 +227,7 @@ function Home() {
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem5.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
@@ -253,6 +254,7 @@ function Home() {
                                                 </Dialog>     
                                             </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -264,6 +266,7 @@ function Home() {
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem6.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
@@ -290,6 +293,7 @@ function Home() {
                                                 </Dialog>     
                                             </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -301,6 +305,7 @@ function Home() {
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem7.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
@@ -327,6 +332,7 @@ function Home() {
                                                 </Dialog>     
                                             </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -338,6 +344,7 @@ function Home() {
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem8.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
@@ -364,6 +371,7 @@ function Home() {
                                                 </Dialog>     
                                             </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>

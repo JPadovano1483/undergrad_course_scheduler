@@ -2,11 +2,11 @@ import './App.css';
 import * as React from 'react';
 import logo from './MessiahLogo.JPG';
 import { Avatar, Button, TextField, FormControlLabel } from '@mui/material';
-import { Checkbox, Grid, Box, Typography, Container, Alert, AlertTitle } from '@mui/material';
+import { Checkbox, Grid, Box, Typography, Container, Alert} from '@mui/material';
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import { useState } from 'react';
-import { connect } from 'react-redux';
+//import { connect } from 'react-redux';
 
 export default function SignIn() {
   const handleSubmit = (event) => {
@@ -29,8 +29,8 @@ export default function SignIn() {
       else 
       {
         console.log(response.data)
-        //const form = document.getElementById('alert_test');
-        document.getElementById('alert_test').hidden = true
+        let form = document.getElementById("alert_test");
+        form.style.visibility = 'visible';
         //document.getElementById('dip').hidden = true
          
 
@@ -100,7 +100,10 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <Alert class = 'alet_test' variant = "filled" severity ="error">
+            <Alert component = 'alert_test' variant = "filled" severity ="error"
+            sx = {{
+              visibility:'hidden'
+            }}>
               Warning! Email or password is incorrect
             </Alert>
             <Button
