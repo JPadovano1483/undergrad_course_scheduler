@@ -50,5 +50,6 @@
   },
   "devDependencies": {
     "@redux-devtools/core": "^3.13.1"
-  }
+  },
+  "proxy": "https://undergrad-course-scheduler.herokuapp.com/"
 }
