@@ -6,7 +6,7 @@ import { Checkbox, Grid, Box, Typography, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import { useState } from 'react';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 
 export default function SignIn() {
   const handleSubmit = (event) => {
