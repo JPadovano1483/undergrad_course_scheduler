@@ -142,6 +142,28 @@ app.get("/semester/:id", (req, res) => {
     });
 });
 
+app.post("/reset", (req, res) => {
+  const password = req.body.password;
+  const confPassword = req.body.confPassword;
+  const email = req.body.email;
+  if (password == confPassword) {
+    db.query(`UPDATE user SET password = ? WHERE username = ?`,
+    [password, email],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Password changed.");
+          res.send(result);
+        }
+      });
+  }
+  else {
+    console.log("Passwords do not match.");
+    res.send("Passwords do not match.");
+  }
+});
+
 const PORT = 3001;
 
 app.listen(process.env.PORT || PORT, () => {
