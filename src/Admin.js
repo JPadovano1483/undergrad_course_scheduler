@@ -1,5 +1,5 @@
 import Navigation from "./navigation";
-import './home.css';
+import './css/home.css';
 import * as React from 'react';
 import { useState } from 'react';
 import { Checkbox, FormControlLabel, FormGroup, TextField } from "@mui/material";
