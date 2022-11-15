@@ -1,8 +1,10 @@
 import './css/home.css';
 import { PropTypes } from 'prop-types';
 import * as React from 'react';
-import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Input, Button } from '@mui/material';
+import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Input, Button, Button} from '@mui/material';
+import { Dialog, DialogTitle, DialogActions} from '@mui/material';
 import Navigation from './navigation';
+import Draggable from 'react-draggable';
 import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useEffect } from 'react';
@@ -182,16 +184,35 @@ function Home() {
                             <Table aria-label="simple table">
                                 <TableBody>
                                     {sem1.map((row) => (
-                                        <TableRow onClick={handleDialogOpen}>
+                                        <Draggable>
+                                            <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
-                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
-                                            <SimpleDialog
-                                                open={dialogOpen}
+                                            <TableCell> 
+                                                <Button color = "error" onClick={handleClickOpen}>
+                                                    <DeleteIcon></DeleteIcon>
+                                                </Button>
+                                                <Dialog
+                                                open={open}
                                                 onClose={handleClose}
-                                            />
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                                overlayStyle={{backgroundColor: 'transparent'}}
+                                                >
+                                                <DialogTitle id="alert-dialog-title">
+                                                {"Delete this course?"}
+                                                </DialogTitle>
+                                                <DialogActions>
+                                                <Button onClick={handleClose}>Confirm</Button>
+                                                <Button onClick={handleClose} autoFocus>
+                                                Cancel
+                                                </Button>
+                                                </DialogActions>
+                                                </Dialog> 
+                                            </TableCell>
                                         </TableRow>
+                                     </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -203,12 +224,34 @@ function Home() {
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem2.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
-                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                            <TableCell>
+                                            <Button color = "error" onClick={handleClickOpen}>
+                                                    <DeleteIcon></DeleteIcon>
+                                                </Button>
+                                                <Dialog
+                                                open={open}
+                                                onClose={handleClose}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                                >
+                                                <DialogTitle id="alert-dialog-title">
+                                                {"Delete this course?"}
+                                                </DialogTitle>
+                                                <DialogActions>
+                                                <Button onClick={handleClose}>Confirm</Button>
+                                                <Button onClick={handleClose} autoFocus>
+                                                Cancel
+                                                </Button>
+                                                </DialogActions>
+                                                </Dialog>     
+                                            </TableCell>
                                         </TableRow>
+                                       </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -220,12 +263,34 @@ function Home() {
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem3.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
-                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                            <TableCell>
+                                            <Button color = "error" onClick={handleClickOpen}>
+                                                    <DeleteIcon></DeleteIcon>
+                                                </Button>
+                                                <Dialog
+                                                open={open}
+                                                onClose={handleClose}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                                >
+                                                <DialogTitle id="alert-dialog-title">
+                                                {"Delete this course?"}
+                                                </DialogTitle>
+                                                <DialogActions>
+                                                <Button onClick={handleClose}>Confirm</Button>
+                                                <Button onClick={handleClose} autoFocus>
+                                                Cancel
+                                                </Button>
+                                                </DialogActions>
+                                                </Dialog>     
+                                            </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -237,12 +302,34 @@ function Home() {
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem4.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
-                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                            <TableCell>
+                                            <Button color = "error" onClick={handleClickOpen}>
+                                                    <DeleteIcon></DeleteIcon>
+                                                </Button>
+                                                <Dialog
+                                                open={open}
+                                                onClose={handleClose}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                                >
+                                                <DialogTitle id="alert-dialog-title">
+                                                {"Delete this course?"}
+                                                </DialogTitle>
+                                                <DialogActions>
+                                                <Button onClick={handleClose}>Confirm</Button>
+                                                <Button onClick={handleClose} autoFocus>
+                                                Cancel
+                                                </Button>
+                                                </DialogActions>
+                                                </Dialog>     
+                                            </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -254,12 +341,34 @@ function Home() {
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem5.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
-                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                            <TableCell>
+                                            <Button color = "error" onClick={handleClickOpen}>
+                                                    <DeleteIcon></DeleteIcon>
+                                                </Button>
+                                                <Dialog class = 'alertTest'
+                                                open={open}
+                                                onClose={handleClose}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                                >
+                                                <DialogTitle id="alert-dialog-title">
+                                                {"Delete this course?"}
+                                                </DialogTitle>
+                                                <DialogActions>
+                                                <Button onClick={handleClose}>Confirm</Button>
+                                                <Button onClick={handleClose} autoFocus>
+                                                Cancel
+                                                </Button>
+                                                </DialogActions>
+                                                </Dialog>     
+                                            </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -271,12 +380,34 @@ function Home() {
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem6.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
-                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                            <TableCell>
+                                            <Button color = "error" onClick={handleClickOpen}>
+                                                    <DeleteIcon></DeleteIcon>
+                                                </Button>
+                                                <Dialog
+                                                open={open}
+                                                onClose={handleClose}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                                >
+                                                <DialogTitle id="alert-dialog-title">
+                                                {"Delete this course?"}
+                                                </DialogTitle>
+                                                <DialogActions>
+                                                <Button onClick={handleClose}>Confirm</Button>
+                                                <Button onClick={handleClose} autoFocus>
+                                                Cancel
+                                                </Button>
+                                                </DialogActions>
+                                                </Dialog>     
+                                            </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -288,12 +419,34 @@ function Home() {
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem7.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
-                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                            <TableCell>
+                                            <Button color = "error" onClick={handleClickOpen}>
+                                                    <DeleteIcon></DeleteIcon>
+                                                </Button>
+                                                <Dialog
+                                                open={open}
+                                                onClose={handleClose}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                                >
+                                                <DialogTitle id="alert-dialog-title">
+                                                {"Delete this course?"}
+                                                </DialogTitle>
+                                                <DialogActions>
+                                                <Button onClick={handleClose}>Confirm</Button>
+                                                <Button onClick={handleClose} autoFocus>
+                                                Cancel
+                                                </Button>
+                                                </DialogActions>
+                                                </Dialog>     
+                                            </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -305,12 +458,34 @@ function Home() {
                             <Table sx={{ minWidth: 645 }} aria-label="simple table">
                                 <TableBody>
                                     {sem8.map((row) => (
+                                        <Draggable>
                                         <TableRow>
                                             <TableCell>{row.course_id}</TableCell>
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
-                                            <TableCell><DeleteIcon></DeleteIcon></TableCell>
+                                            <TableCell>
+                                            <Button color = "error" onClick={handleClickOpen}>
+                                                    <DeleteIcon></DeleteIcon>
+                                                </Button>
+                                                <Dialog
+                                                open={open}
+                                                onClose={handleClose}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                                >
+                                                <DialogTitle id="alert-dialog-title">
+                                                {"Delete this course?"}
+                                                </DialogTitle>
+                                                <DialogActions>
+                                                <Button onClick={handleClose}>Confirm</Button>
+                                                <Button onClick={handleClose} autoFocus>
+                                                Cancel
+                                                </Button>
+                                                </DialogActions>
+                                                </Dialog>     
+                                            </TableCell>
                                         </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
