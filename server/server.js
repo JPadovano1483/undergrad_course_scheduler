@@ -89,6 +89,17 @@ app.post("/signup", (req, res) => {
   }
 });
 
+app.get("/courses", (req, res) => {
+  db.query("SELECT * FROM course", 
+  (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
 app.get("/users", (req, res) => {
   db.query("SELECT * FROM user",
     (err, result) => {
@@ -140,6 +151,28 @@ app.get("/semester/:id", (req, res) => {
         res.send(result);
       }
     });
+});
+
+app.post("/reset", (req, res) => {
+  const password = req.body.password;
+  const confPassword = req.body.confPassword;
+  const email = req.body.email;
+  if (password == confPassword) {
+    db.query(`UPDATE user SET password = ? WHERE username = ?`,
+    [password, email],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Password changed.");
+          res.send(result);
+        }
+      });
+  }
+  else {
+    console.log("Passwords do not match.");
+    res.send("Passwords do not match.");
+  }
 });
 
 const PORT = 3001;

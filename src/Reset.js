@@ -1,18 +1,29 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { Button, TextField } from '@mui/material';
 import { Grid, Box, Typography, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
-
+import Axios from 'axios';
 
 
 export default function SignUp() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const email = urlParams.get('email');
+  console.log(email);
+
+  const [password, setPassword] = useState("");
+  const [confPassword, setConfPassword] = useState("");
+
+  const changePassword = () => {
+      console.log("Changing password.");
+      Axios.post(`http://localhost:3001/reset`, {
+          email: email,
+          password: password,
+          confPassword: confPassword,
+      }).then((response) => {
+          console.log(response);
+      });
   };
 
   return (
@@ -34,7 +45,7 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Password Reset
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box component="form" noValidate sx={{ mt: 3 }}>
             <Grid container spacing={2}>
 
               <Grid item xs={12}>
@@ -46,31 +57,37 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  onChange={(e) => {
+                    setPassword(e.target.value)
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
-                  name="password"
+                  name="confPassword"
                   label="Confirm New Password"
                   type="password"
-                  id="password"
+                  id="confPassword"
                   autoComplete="new-password"
+                  onChange={(e) => {
+                    setConfPassword(e.target.value)
+                  }}
                 />
               </Grid>
 
             </Grid>
-            <Link to="/home">
+            {/* <Link to="/home"> */}
               <Button
-                type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                onClick={changePassword}
               >
                 Submit
               </Button>
-            </Link>
+            {/* </Link> */}
             <Grid container justifyContent="flex-end">
               <Link to="/">
                 <Grid item
