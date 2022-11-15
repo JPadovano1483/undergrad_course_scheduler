@@ -16,18 +16,16 @@ function Home() {
         onClose: PropTypes.func.isRequired,
         open: PropTypes.bool.isRequired,
     };
-    const [open, setOpen] = useState(false);
-
-    let dialogOpen = false;
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     const handleDialogOpen = () => {
         console.log('Im open');
-        dialogOpen = true;
-        setOpen(true);
+        setDialogOpen(true);
     };
 
     const handleClose = (value) => {
-        setOpen(false);
+        setDialogOpen(false);
     };
     const drawerWidth = 350;
     // could try to get all courses and filter down by semester_id
@@ -117,7 +115,7 @@ function Home() {
         <div className="App">
             <Navigation />
             <div className='contentContainer'>
-                <IconButton onClick={() => setOpen(true)}>
+                <IconButton onClick={() => setDrawerOpen(true)}>
                     <ArrowDropDownCircleIcon sx={{
                         color: 'rgba(128, 128, 128, .9)', width: 50, height: 'auto', position: 'fixed',
                         top: 400, right: -10, transform: 'rotate(90deg)'
@@ -132,7 +130,7 @@ function Home() {
                         alignItems: 'center',
                         backgroundColor: '#F8F8FF'
                     },
-                }} open={open} anchor={"right"} onClose={() => setOpen(false)}>
+                }} open={drawerOpen} anchor={"right"} onClose={() => setDrawerOpen(false)}>
                     <h1>All Courses</h1>
                 <Box
                     component="form"
@@ -190,7 +188,7 @@ function Home() {
                                             <TableCell>{row.credits}</TableCell>
                                             <TableCell><DeleteIcon></DeleteIcon></TableCell>
                                             <SimpleDialog
-                                                open={open}
+                                                open={dialogOpen}
                                                 onClose={handleClose}
                                             />
                                         </TableRow>
