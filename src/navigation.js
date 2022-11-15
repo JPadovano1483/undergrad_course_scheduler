@@ -1,44 +1,34 @@
-import './navigation.css'
-import { Link, Outlet } from "react-router-dom";
-import { styled } from "@mui/system";
-import { Avatar } from '@mui/material';
+import './css/navigation.css'
+import { Link } from "react-router-dom";
+import { Avatar, AppBar, Toolbar, Typography } from '@mui/material';
 
-
-const NavigationContainer = styled('div')({
-    padding: 10,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-});
-const LinksContainer = styled('div')({
-    display: "flex",
-    justifyContent: "space-around",
-    gap: 50,
-});
-
-const Navigation = () => {
+export default function Navigation() {
     return (
-        < >
-            <div className="App">
-                <header id="header" className="fixed-top">
-                    {/* <h1 className="logo">Messiah University</h1> */}
-                    <NavigationContainer>
-                        <div className='links'>
-                            <LinksContainer>
-                                <Link to="/home">4 Year Plan</Link>
-                                <Link to="">Prerequisites</Link>
-                                <Link to="/allcourses">All Courses</Link>
-                                <Link to="/admin">Admin</Link>
-                            </LinksContainer>
-                        </div>
-                        <Avatar sx={{ bgcolor: '#D6742A' }}>
-                            <Link to="/account" className='accountLink'>SA</Link>
-                        </Avatar>
-                    </NavigationContainer>
-                </header>
-            </div>
-            <Outlet />
-        </>
+        <AppBar position="static" sx={{ backgroundColor: '#002856;' }}>
+            <Toolbar>
+                <Link to="/home" className='link'>4 Year Plan</Link>
+                <Link to="/admin" className='link'>Admin</Link>
+                <Typography component="div" sx={{ flexGrow: 1 }}></Typography>
+                <Avatar sx={{ bgcolor: '#D6742A' }} className='accountLink'>
+                    <Link to="/account">SA</Link>
+                </Avatar>
+            </Toolbar>
+        </AppBar>
     );
-};
-export default Navigation;
+}
+
+// const Navigation = () => {
+//     return (
+//         < >
+//             <div className="App">
+//                 <header id="header" className="fixed-top">
+//                     <NavigationContainer>
+//                         
+//                         
+//                     </NavigationContainer>
+//                 </header>
+//             </div>
+//             <Outlet />
+//         </>
+//     );
+// };

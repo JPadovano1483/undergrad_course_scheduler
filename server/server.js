@@ -18,8 +18,8 @@ app.use(express.json());
 const db = mysql.createConnection({
   user: "root",
   host: "localhost",
-  password: "buckwheat2010",
-  database: "undergrad",
+  password: "ceaQwa!!",
+  database: "undergrad_course_scheduler",
 });
 
 app.post("/course", (req, res) => {
@@ -28,14 +28,25 @@ app.post("/course", (req, res) => {
   const courseDescription = req.body.courseDescription;
   const credits = req.body.credits;
   db.query("INSERT INTO course (course_id, course_name, course_description, credits) VALUES (?,?,?,?)",
-  [courseId, courseName, courseDescription, credits],
-  (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  });
+    [courseId, courseName, courseDescription, credits],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.get("/allCourses", (req, res) => {
+  db.query("SELECT * FROM course",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
 });
 
 app.post("/login", (req, res) => {
@@ -43,18 +54,18 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
 
   db.query("SELECT * FROM user WHERE username = ? AND password = ?",
-  [email, password],
-  (err, result) => {
-    if (err) {
-      console.log(err);
-    }
-    if (result.length > 0) {
-      res.send(result);
-    }
-    else {
-      res.send("Username or password is incorrect.");
-    }
-  });
+    [email, password],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      if (result.length > 0) {
+        res.send(result);
+      }
+      else {
+        res.send("Username or password is incorrect.");
+      }
+    });
 });
 
 app.post("/signup", (req, res) => {
@@ -64,22 +75,22 @@ app.post("/signup", (req, res) => {
 
   if (password == confPassword) {
     db.query("INSERT INTO user (username, password, major_name, concentration_name) VALUES (?,?,?,?)",
-    [email, password, "", ""],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    });
+      [email, password, "", ""],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send(result);
+        }
+      });
   }
   else {
     res.send("Passwords do not match.");
   }
 });
 
-app.get("/users", (req, res) => {
-  db.query("SELECT * FROM user", 
+app.get("/courses", (req, res) => {
+  db.query("SELECT * FROM course", 
   (err, result) => {
     if (err) {
       console.log(err);
@@ -87,6 +98,17 @@ app.get("/users", (req, res) => {
       res.send(result);
     }
   });
+});
+
+app.get("/users", (req, res) => {
+  db.query("SELECT * FROM user",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
 });
 
 app.post("/account", (req, res) => {
@@ -95,14 +117,14 @@ app.post("/account", (req, res) => {
   const minor = req.body.minor;
 
   db.query("UPDATE user SET major_name = ?, concentration_name = ?, minor_name = ? WHERE username = ?",
-  [major, concentration, minor, 'jamie_padovano'],
-  (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  });
+    [major, concentration, minor, 'jamie_padovano'],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
 });
 
 app.get("/plan", (req, res) => {
@@ -129,6 +151,28 @@ app.get("/semester/:id", (req, res) => {
         res.send(result);
       }
     });
+});
+
+app.post("/reset", (req, res) => {
+  const password = req.body.password;
+  const confPassword = req.body.confPassword;
+  const email = req.body.email;
+  if (password == confPassword) {
+    db.query(`UPDATE user SET password = ? WHERE username = ?`,
+    [password, email],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Password changed.");
+          res.send(result);
+        }
+      });
+  }
+  else {
+    console.log("Passwords do not match.");
+    res.send("Passwords do not match.");
+  }
 });
 
 const PORT = 3001;
