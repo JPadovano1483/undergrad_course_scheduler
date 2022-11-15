@@ -1,7 +1,7 @@
 import './css/home.css';
 import { PropTypes } from 'prop-types';
 import * as React from 'react';
-import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Input, Button, Button} from '@mui/material';
+import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Button} from '@mui/material';
 import { Dialog, DialogTitle, DialogActions} from '@mui/material';
 import Navigation from './navigation';
 import Draggable from 'react-draggable';
@@ -112,6 +112,13 @@ function Home() {
             return filterCourses("default", "none", courseList);
         }
     }
+    const [open, setOpen] = React.useState(false);
+    const handleClickOpen = () => {
+        setOpen(true);
+      };
+    
+
+    
 
     return (
         <div className="App">
@@ -195,7 +202,7 @@ function Home() {
                                                 </Button>
                                                 <Dialog
                                                 open={open}
-                                                onClose={handleClose}
+                                                
                                                 aria-labelledby="alert-dialog-title"
                                                 aria-describedby="alert-dialog-description"
                                                 overlayStyle={{backgroundColor: 'transparent'}}
