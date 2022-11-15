@@ -18,8 +18,8 @@ app.use(express.json());
 const db = mysql.createConnection({
   user: "root",
   host: "localhost",
-  password: "password",
-  database: "UGCS",
+  password: "ceaQwa!!",
+  database: "undergrad_course_scheduler",
 });
 
 app.post("/course", (req, res) => {
@@ -29,6 +29,17 @@ app.post("/course", (req, res) => {
   const credits = req.body.credits;
   db.query("INSERT INTO course (course_id, course_name, course_description, credits) VALUES (?,?,?,?)",
     [courseId, courseName, courseDescription, credits],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.get("/allCourses", (req, res) => {
+  db.query("SELECT * FROM course",
     (err, result) => {
       if (err) {
         console.log(err);
