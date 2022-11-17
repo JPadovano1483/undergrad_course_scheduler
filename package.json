@@ -28,7 +28,7 @@
     "start": "react-scripts --optimize_for_size --max_old_space_size=460 start",
     "src": "cd src && npm start",
     "server": "cd server && node server.js",
-    "heroku-postbuild": "cd src && npm install && npm run build",
+    "heroku-postbuild": "cd src && npm install && cd ../ && npm run build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
