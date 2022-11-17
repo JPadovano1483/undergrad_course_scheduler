@@ -32,7 +32,7 @@ export default function SignIn() {
   }
 
   return (
-    <Container component="root"
+    <Container
       sx={{
         backgroundColor: '#002856',
         color: 'black',
@@ -105,7 +105,7 @@ export default function SignIn() {
             </Button>
 
 
-            <Grid container='test'>
+            <Grid>
               <Link to="/ForgotPassword">
                 <Grid item xs
                   sx={{ color: '#4007a2', mr: 4 }}
