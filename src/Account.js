@@ -31,7 +31,7 @@ function Account() {
                     >SA</Avatar>
                     <row>
 
-                        <h2>jamie_padvano</h2>
+                        <h2>jamie_padovano</h2>
                     </row>
                     <row>
                         <TextField 
