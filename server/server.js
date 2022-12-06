@@ -18,8 +18,8 @@ app.use(express.json());
 const db = mysql.createConnection({
   user: "root",
   host: "localhost",
-  password: "password",
-  database: "UGCS",
+  password: "ceaQwa!!",
+  database: "undergrad_course_scheduler",
 });
 
 app.post("/course", (req, res) => {

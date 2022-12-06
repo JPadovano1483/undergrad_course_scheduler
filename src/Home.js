@@ -181,9 +181,9 @@ function Home() {
                         <TableBody>
                             {element.map((row) => (
                                 <Draggable>
-                                    <TableRow onClick={handleDialogOpen}>
+                                    <TableRow>
                                         <TableCell>{row.course_id}</TableCell>
-                                        <TableCell>{row.course_name}</TableCell>
+                                        <TableCell onClick={handleDialogOpen}>{row.course_name}</TableCell>
                                         <TableCell>{row.credits}</TableCell>
                                         <TableCell>
                                             <Button color="error" onClick={() => handleDeleteCourse(row, element)}>
