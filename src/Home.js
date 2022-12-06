@@ -155,6 +155,7 @@ function Home() {
     
     const semesterBlocks = (plan) => {
         let blocks = [];
+        let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eigth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
         // trying to take in all plan and split it into the semesters
         // let semesters = [];
         
@@ -171,9 +172,9 @@ function Home() {
         //             }
         //         }
         //     };
-            for (const element of plan) {
+            for (const [index, element] of plan.entries()) {
                 blocks.push(<Grid item={true} xs={6} className='tableGrid'>
-                    <h2>First Semester</h2>
+                    <h2>{numbers[index]} Semester</h2>
                     <TableContainer component={Paper}>
                         <Table aria-label="simple table">
                             <TableBody>
