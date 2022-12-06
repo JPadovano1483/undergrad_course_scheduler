@@ -26,8 +26,8 @@ const db = mysql.createConnection({
 const db = mysql.createConnection({
   user: "root",
   host: "localhost",
-  password: "ceaQwa!!",
-  database: "undergrad_course_scheduler",
+  password: "buckwheat2010",
+  database: "undergrad",
 });
 
 app.post("/course", (req, res) => {

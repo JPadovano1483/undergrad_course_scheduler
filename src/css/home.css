@@ -45,3 +45,68 @@ TableRow {
 {
     background-color: transparent;
 }
+.linkAdmin
+{
+    background-color: #002856;
+    color:  white;
+    border: groove #002856;
+    border-radius: 3px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    margin: 10px;
+}
+.linkAdminEdit
+{
+    background-color: #002856;
+    color:  white;
+    border: groove #002856;
+    border-radius: 3px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+
+}
+.account
+{
+    background-color: #002856;
+    color:  white;
+    border: groove #002856;
+    border-radius: 3px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    width: 20%;
+    margin-left: 850px;
+    
+}
+.username
+{
+    display: grid;
+    background-color: #002856;
+    color:  white;
+    border: groove #002856;
+    border-radius: 3px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    width: 10%;
+    margin-bottom: -50px;
+   
+}
+.infoTest
+{
+    display: grid;
+    width: 30%;
+    margin-top: -70px;
+    
+}
+.infoName
+{
+    margin-top: -20px;
+    margin-bottom: -10px;
+}

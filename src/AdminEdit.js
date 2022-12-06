@@ -28,6 +28,7 @@ function Admin() {
             major: major,
             minor: minor,
             concentration: concentration,
+
         }).then((response) => {
             console.log(response);
         });
@@ -59,7 +60,7 @@ function Admin() {
                     </Button>
                 </div>
               
-                <h1>Please enter course information</h1>
+                <h1>Please enter the course to edit</h1>
                 <p style={{ color: 'red' }}>Fields marked with * are required</p>
                 <div className="inputContainer">
                     <form>
@@ -73,6 +74,9 @@ function Admin() {
                                 setCourseId(e.target.value)
                             }} 
                         />
+
+
+
                         <TextField 
                              
                             fullWidth 
