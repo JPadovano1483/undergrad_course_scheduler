@@ -22,6 +22,14 @@ const db = mysql.createConnection({
 //   database: "undergrad_course_scheduler",
 // });
 
+// localhost database - copy of cleardb
+const db = mysql.createConnection({
+  user: "root",
+  host: "localhost",
+  password: "password",
+  database: "UGCS",
+});
+
 app.post("/course", (req, res) => {
   const courseId = req.body.courseId;
   const courseName = req.body.courseName;
@@ -115,14 +123,14 @@ app.post("/signup", (req, res) => {
 });
 
 app.get("/courses", (req, res) => {
-  db.query("SELECT * FROM course", 
-  (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  });
+  db.query("SELECT * FROM course",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
 });
 
 app.get("/users", (req, res) => {
@@ -152,9 +160,9 @@ app.post("/account", (req, res) => {
     });
 });
 
-app.get("/plan", (req, res) => {
+app.get("/plan/:id", (req, res) => {
   const user_id = req.params.id;
-  db.query(`SELECT course_id, course_name, credit_num, semester_id FROM user JOIN plan using(user_id) JOIN semester using(plan_id) JOIN semester_course using(semester_id) JOIN course using(course_id) WHERE user_id=?`,
+  db.query(`SELECT semester_id, course_id, course_name, credits FROM user JOIN plan using(user_id) JOIN semester using(plan_id) JOIN semester_course using(semester_id) JOIN course using(course_id) WHERE user_id=?`,
     user_id,
     (err, result) => {
       if (err) {
@@ -167,7 +175,7 @@ app.get("/plan", (req, res) => {
 
 app.get("/semester/:id", (req, res) => {
   const semester_id = req.params.id;
-  db.query(`SELECT course_id, course_name, credit_num FROM user JOIN plan using(user_id) JOIN semester using(plan_id) JOIN semester_course using(semester_id) JOIN course using(course_id) WHERE semester_id=?`,
+  db.query(`SELECT course_id, course_name, credits, semester_id FROM user JOIN plan using(user_id) JOIN semester using(plan_id) JOIN semester_course using(semester_id) JOIN course using(course_id) WHERE semester_id=?`,
     semester_id,
     (err, result) => {
       if (err) {
@@ -184,7 +192,7 @@ app.post("/reset", (req, res) => {
   const email = req.body.email;
   if (password == confPassword) {
     db.query(`UPDATE user SET password = ? WHERE username = ?`,
-    [password, email],
+      [password, email],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -199,6 +207,35 @@ app.post("/reset", (req, res) => {
     res.send("Passwords do not match.");
   }
 });
+
+app.post("/addCourse", (req, res) => {
+  const semester_id = req.body.semester_id;
+  const course_id = req.body.course_id;
+  db.query(`INSERT INTO semester_course VALUES (?,?)`,
+    [semester_id, course_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/deleteCourse", (req, res) => {
+  const semester_id = req.body.semester_id;
+  const course_id = req.body.course_id;
+  db.query(`DELETE FROM semester_course WHERE semester_id=? AND course_id=?`,
+    [semester_id, course_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  )
+})
 
 const PORT = 3001;
 
