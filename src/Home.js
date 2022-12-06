@@ -69,10 +69,25 @@ function Home() {
         getSemester(setSem8, 8);
     }, []);
 
+    const checkPrereq = (courseId, sem1, sem2, sem3, sem4, sem5, sem6, sem7) => {
+        Axios.get(`http://localhost:3001/prereq`, {
+            courseId: courseId,
+            sem1: sem1,
+            sem2: sem2,
+            sem3: sem3,
+            sem4: sem4,
+            sem5: sem5,
+            sem6: sem6,
+            sem7: sem7,
+        }).then((response) => {
+            return response;
+        });
+    };
+
     const [courseList, setCourseList] = useState([]);
     const getCourses = (set) => {
         Axios.get(`http://localhost:3001/allCourses`).then((response) => {
-        setCourseList(response.data);
+            setCourseList(response.data);
         });
     }
     useEffect(() => {
@@ -112,10 +127,10 @@ function Home() {
             return filterCourses("default", "none", courseList);
         }
     }
-    const [open, setOpen] = React.useState(false);
-    const handleClickOpen = () => {
-        setOpen(true);
-      };
+    // const [open, setOpen] = React.useState(false);
+    // const handleClickOpen = () => {
+    //     setOpen(true);
+    //   };
     
 
     
@@ -197,11 +212,11 @@ function Home() {
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
                                             <TableCell> 
-                                                <Button color = "error" onClick={handleClickOpen}>
+                                                <Button color = "error" onClick={handleDialogOpen}>
                                                     <DeleteIcon></DeleteIcon>
                                                 </Button>
                                                 <Dialog
-                                                open={open}
+                                                open={dialogOpen}
                                                 
                                                 aria-labelledby="alert-dialog-title"
                                                 aria-describedby="alert-dialog-description"
@@ -237,11 +252,11 @@ function Home() {
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
                                             <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
+                                            <Button color = "error" onClick={handleDialogOpen}>
                                                     <DeleteIcon></DeleteIcon>
                                                 </Button>
                                                 <Dialog
-                                                open={open}
+                                                open={dialogOpen}
                                                 onClose={handleClose}
                                                 aria-labelledby="alert-dialog-title"
                                                 aria-describedby="alert-dialog-description"
@@ -276,11 +291,11 @@ function Home() {
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
                                             <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
+                                            <Button color = "error" onClick={handleDialogOpen}>
                                                     <DeleteIcon></DeleteIcon>
                                                 </Button>
                                                 <Dialog
-                                                open={open}
+                                                open={dialogOpen}
                                                 onClose={handleClose}
                                                 aria-labelledby="alert-dialog-title"
                                                 aria-describedby="alert-dialog-description"
@@ -315,11 +330,11 @@ function Home() {
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
                                             <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
+                                            <Button color = "error" onClick={handleDialogOpen}>
                                                     <DeleteIcon></DeleteIcon>
                                                 </Button>
                                                 <Dialog
-                                                open={open}
+                                                open={dialogOpen}
                                                 onClose={handleClose}
                                                 aria-labelledby="alert-dialog-title"
                                                 aria-describedby="alert-dialog-description"
@@ -354,11 +369,11 @@ function Home() {
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
                                             <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
+                                            <Button color = "error" onClick={handleDialogOpen}>
                                                     <DeleteIcon></DeleteIcon>
                                                 </Button>
                                                 <Dialog class = 'alertTest'
-                                                open={open}
+                                                open={dialogOpen}
                                                 onClose={handleClose}
                                                 aria-labelledby="alert-dialog-title"
                                                 aria-describedby="alert-dialog-description"
@@ -393,11 +408,11 @@ function Home() {
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
                                             <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
+                                            <Button color = "error" onClick={handleDialogOpen}>
                                                     <DeleteIcon></DeleteIcon>
                                                 </Button>
                                                 <Dialog
-                                                open={open}
+                                                open={dialogOpen}
                                                 onClose={handleClose}
                                                 aria-labelledby="alert-dialog-title"
                                                 aria-describedby="alert-dialog-description"
@@ -432,11 +447,11 @@ function Home() {
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
                                             <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
+                                            <Button color = "error" onClick={handleDialogOpen}>
                                                     <DeleteIcon></DeleteIcon>
                                                 </Button>
                                                 <Dialog
-                                                open={open}
+                                                open={dialogOpen}
                                                 onClose={handleClose}
                                                 aria-labelledby="alert-dialog-title"
                                                 aria-describedby="alert-dialog-description"
@@ -471,11 +486,11 @@ function Home() {
                                             <TableCell>{row.course_name}</TableCell>
                                             <TableCell>{row.credits}</TableCell>
                                             <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
+                                            <Button color = "error" onClick={handleDialogOpen}>
                                                     <DeleteIcon></DeleteIcon>
                                                 </Button>
                                                 <Dialog
-                                                open={open}
+                                                open={dialogOpen}
                                                 onClose={handleClose}
                                                 aria-labelledby="alert-dialog-title"
                                                 aria-describedby="alert-dialog-description"
