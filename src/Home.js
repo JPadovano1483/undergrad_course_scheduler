@@ -1,8 +1,8 @@
 import './css/home.css';
 import { PropTypes } from 'prop-types';
 import * as React from 'react';
-import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Button} from '@mui/material';
-import { Dialog, DialogTitle, DialogActions} from '@mui/material';
+import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogActions } from '@mui/material';
 import Navigation from './navigation';
 import Draggable from 'react-draggable';
 import Axios from 'axios';
@@ -72,7 +72,7 @@ function Home() {
     const [courseList, setCourseList] = useState([]);
     const getCourses = (set) => {
         Axios.get(`http://localhost:3001/allCourses`).then((response) => {
-        setCourseList(response.data);
+            setCourseList(response.data);
         });
     }
     useEffect(() => {
@@ -82,14 +82,14 @@ function Home() {
     // filter course search
     let [filteredCourses, setFilteredCourses] = useState([]);
     let filterCourses = (criteria, input, list) => {
-        switch(criteria) {
+        switch (criteria) {
             case "id":
-                return list.filter(course => 
+                return list.filter(course =>
                     course.course_id.includes(input)
                 );
 
             case "name":
-                return list.filter(course => 
+                return list.filter(course =>
                     course.course_name.includes(input)
                 );
 
@@ -101,7 +101,7 @@ function Home() {
     const handleCourseSearch = () => {
         let idInput = document.getElementById('course_id_input')?.value;
         let nameInput = document.getElementById('course_name_input')?.value
-        
+
         if (nameInput) {
             return filterCourses("name", nameInput, courseList);
         }
@@ -115,10 +115,10 @@ function Home() {
     const [open, setOpen] = React.useState(false);
     const handleClickOpen = () => {
         setOpen(true);
-      };
-    
+    };
 
-    
+
+
 
     return (
         <div className="App">
@@ -141,34 +141,34 @@ function Home() {
                     },
                 }} open={drawerOpen} anchor={"right"} onClose={() => setDrawerOpen(false)}>
                     <h1>All Courses</h1>
-                <Box
-                    component="form"
-                    sx={{
-                        '& .MuiTextField-root': { m: 1, width: '25ch' },
-                    }}
-                    noValidate
-                    autoComplete="off"
+                    <Box
+                        component="form"
+                        sx={{
+                            '& .MuiTextField-root': { m: 1, width: '25ch' },
+                        }}
+                        noValidate
+                        autoComplete="off"
                     >
-                    <div>
-                        <TextField
-                            id="course_id_input"
-                            label="Course ID"
-                        />
-                    </div>
-                    <div>
-                        <TextField
-                            id="course_name_input"
-                            label="Course Name"
-                        />
-                    </div>
-                    <div>
-                        <Button
-                            onClick={() => setFilteredCourses(handleCourseSearch())}
+                        <div>
+                            <TextField
+                                id="course_id_input"
+                                label="Course ID"
+                            />
+                        </div>
+                        <div>
+                            <TextField
+                                id="course_name_input"
+                                label="Course Name"
+                            />
+                        </div>
+                        <div>
+                            <Button
+                                onClick={() => setFilteredCourses(handleCourseSearch())}
                             >
-                            Search
-                        </Button>
-                    </div>
-                </Box>
+                                Search
+                            </Button>
+                        </div>
+                    </Box>
                     <TableContainer component={Paper}>
                         <Table aria-label="simple table">
                             <TableBody>
@@ -177,7 +177,7 @@ function Home() {
                                         <TableCell>{row.course_id}</TableCell>
                                         <TableCell>{row.course_name}</TableCell>
                                         <TableCell>{row.credits}</TableCell>
-                                        </TableRow>
+                                    </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
@@ -192,34 +192,38 @@ function Home() {
                                 <TableBody>
                                     {sem1.map((row) => (
                                         <Draggable>
-                                            <TableRow>
-                                            <TableCell>{row.course_id}</TableCell>
-                                            <TableCell>{row.course_name}</TableCell>
-                                            <TableCell>{row.credits}</TableCell>
-                                            <TableCell> 
-                                                <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                overlayStyle={{backgroundColor: 'transparent'}}
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                {"Delete this course?"}
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={handleClose}>Confirm</Button>
-                                                <Button onClick={handleClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog> 
-                                            </TableCell>
-                                        </TableRow>
-                                     </Draggable>
+                                            <TableRow onClick={handleDialogOpen}>
+                                                <TableCell>{row.course_id}</TableCell>
+                                                <TableCell>{row.course_name}</TableCell>
+                                                <TableCell>{row.credits}</TableCell>
+                                                <TableCell>
+                                                    <Button color="error" onClick={handleClickOpen}>
+                                                        <DeleteIcon></DeleteIcon>
+                                                    </Button>
+                                                    <Dialog
+                                                        open={open}
+
+                                                        aria-labelledby="alert-dialog-title"
+                                                        aria-describedby="alert-dialog-description"
+                                                        overlayStyle={{ backgroundColor: 'transparent' }}
+                                                    >
+                                                        <DialogTitle id="alert-dialog-title">
+                                                            {"Delete this course?"}
+                                                        </DialogTitle>
+                                                        <DialogActions>
+                                                            <Button onClick={handleClose}>Confirm</Button>
+                                                            <Button onClick={handleClose} autoFocus>
+                                                                Cancel
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                </TableCell>
+                                                <SimpleDialog
+                                                    open={dialogOpen}
+                                                    onClose={handleClose}
+                                                />
+                                            </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -232,33 +236,33 @@ function Home() {
                                 <TableBody>
                                     {sem2.map((row) => (
                                         <Draggable>
-                                        <TableRow>
-                                            <TableCell>{row.course_id}</TableCell>
-                                            <TableCell>{row.course_name}</TableCell>
-                                            <TableCell>{row.credits}</TableCell>
-                                            <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                onClose={handleClose}
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                {"Delete this course?"}
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={handleClose}>Confirm</Button>
-                                                <Button onClick={handleClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>     
-                                            </TableCell>
-                                        </TableRow>
-                                       </Draggable>
+                                            <TableRow>
+                                                <TableCell>{row.course_id}</TableCell>
+                                                <TableCell>{row.course_name}</TableCell>
+                                                <TableCell>{row.credits}</TableCell>
+                                                <TableCell>
+                                                    <Button color="error" onClick={handleClickOpen}>
+                                                        <DeleteIcon></DeleteIcon>
+                                                    </Button>
+                                                    <Dialog
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                        aria-labelledby="alert-dialog-title"
+                                                        aria-describedby="alert-dialog-description"
+                                                    >
+                                                        <DialogTitle id="alert-dialog-title">
+                                                            {"Delete this course?"}
+                                                        </DialogTitle>
+                                                        <DialogActions>
+                                                            <Button onClick={handleClose}>Confirm</Button>
+                                                            <Button onClick={handleClose} autoFocus>
+                                                                Cancel
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                </TableCell>
+                                            </TableRow>
+                                        </Draggable>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -271,32 +275,32 @@ function Home() {
                                 <TableBody>
                                     {sem3.map((row) => (
                                         <Draggable>
-                                        <TableRow>
-                                            <TableCell>{row.course_id}</TableCell>
-                                            <TableCell>{row.course_name}</TableCell>
-                                            <TableCell>{row.credits}</TableCell>
-                                            <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                onClose={handleClose}
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                {"Delete this course?"}
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={handleClose}>Confirm</Button>
-                                                <Button onClick={handleClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>     
-                                            </TableCell>
-                                        </TableRow>
+                                            <TableRow>
+                                                <TableCell>{row.course_id}</TableCell>
+                                                <TableCell>{row.course_name}</TableCell>
+                                                <TableCell>{row.credits}</TableCell>
+                                                <TableCell>
+                                                    <Button color="error" onClick={handleClickOpen}>
+                                                        <DeleteIcon></DeleteIcon>
+                                                    </Button>
+                                                    <Dialog
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                        aria-labelledby="alert-dialog-title"
+                                                        aria-describedby="alert-dialog-description"
+                                                    >
+                                                        <DialogTitle id="alert-dialog-title">
+                                                            {"Delete this course?"}
+                                                        </DialogTitle>
+                                                        <DialogActions>
+                                                            <Button onClick={handleClose}>Confirm</Button>
+                                                            <Button onClick={handleClose} autoFocus>
+                                                                Cancel
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                </TableCell>
+                                            </TableRow>
                                         </Draggable>
                                     ))}
                                 </TableBody>
@@ -310,32 +314,32 @@ function Home() {
                                 <TableBody>
                                     {sem4.map((row) => (
                                         <Draggable>
-                                        <TableRow>
-                                            <TableCell>{row.course_id}</TableCell>
-                                            <TableCell>{row.course_name}</TableCell>
-                                            <TableCell>{row.credits}</TableCell>
-                                            <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                onClose={handleClose}
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                {"Delete this course?"}
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={handleClose}>Confirm</Button>
-                                                <Button onClick={handleClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>     
-                                            </TableCell>
-                                        </TableRow>
+                                            <TableRow>
+                                                <TableCell>{row.course_id}</TableCell>
+                                                <TableCell>{row.course_name}</TableCell>
+                                                <TableCell>{row.credits}</TableCell>
+                                                <TableCell>
+                                                    <Button color="error" onClick={handleClickOpen}>
+                                                        <DeleteIcon></DeleteIcon>
+                                                    </Button>
+                                                    <Dialog
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                        aria-labelledby="alert-dialog-title"
+                                                        aria-describedby="alert-dialog-description"
+                                                    >
+                                                        <DialogTitle id="alert-dialog-title">
+                                                            {"Delete this course?"}
+                                                        </DialogTitle>
+                                                        <DialogActions>
+                                                            <Button onClick={handleClose}>Confirm</Button>
+                                                            <Button onClick={handleClose} autoFocus>
+                                                                Cancel
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                </TableCell>
+                                            </TableRow>
                                         </Draggable>
                                     ))}
                                 </TableBody>
@@ -349,32 +353,32 @@ function Home() {
                                 <TableBody>
                                     {sem5.map((row) => (
                                         <Draggable>
-                                        <TableRow>
-                                            <TableCell>{row.course_id}</TableCell>
-                                            <TableCell>{row.course_name}</TableCell>
-                                            <TableCell>{row.credits}</TableCell>
-                                            <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog class = 'alertTest'
-                                                open={open}
-                                                onClose={handleClose}
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                {"Delete this course?"}
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={handleClose}>Confirm</Button>
-                                                <Button onClick={handleClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>     
-                                            </TableCell>
-                                        </TableRow>
+                                            <TableRow>
+                                                <TableCell>{row.course_id}</TableCell>
+                                                <TableCell>{row.course_name}</TableCell>
+                                                <TableCell>{row.credits}</TableCell>
+                                                <TableCell>
+                                                    <Button color="error" onClick={handleClickOpen}>
+                                                        <DeleteIcon></DeleteIcon>
+                                                    </Button>
+                                                    <Dialog class='alertTest'
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                        aria-labelledby="alert-dialog-title"
+                                                        aria-describedby="alert-dialog-description"
+                                                    >
+                                                        <DialogTitle id="alert-dialog-title">
+                                                            {"Delete this course?"}
+                                                        </DialogTitle>
+                                                        <DialogActions>
+                                                            <Button onClick={handleClose}>Confirm</Button>
+                                                            <Button onClick={handleClose} autoFocus>
+                                                                Cancel
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                </TableCell>
+                                            </TableRow>
                                         </Draggable>
                                     ))}
                                 </TableBody>
@@ -388,32 +392,32 @@ function Home() {
                                 <TableBody>
                                     {sem6.map((row) => (
                                         <Draggable>
-                                        <TableRow>
-                                            <TableCell>{row.course_id}</TableCell>
-                                            <TableCell>{row.course_name}</TableCell>
-                                            <TableCell>{row.credits}</TableCell>
-                                            <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                onClose={handleClose}
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                {"Delete this course?"}
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={handleClose}>Confirm</Button>
-                                                <Button onClick={handleClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>     
-                                            </TableCell>
-                                        </TableRow>
+                                            <TableRow>
+                                                <TableCell>{row.course_id}</TableCell>
+                                                <TableCell>{row.course_name}</TableCell>
+                                                <TableCell>{row.credits}</TableCell>
+                                                <TableCell>
+                                                    <Button color="error" onClick={handleClickOpen}>
+                                                        <DeleteIcon></DeleteIcon>
+                                                    </Button>
+                                                    <Dialog
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                        aria-labelledby="alert-dialog-title"
+                                                        aria-describedby="alert-dialog-description"
+                                                    >
+                                                        <DialogTitle id="alert-dialog-title">
+                                                            {"Delete this course?"}
+                                                        </DialogTitle>
+                                                        <DialogActions>
+                                                            <Button onClick={handleClose}>Confirm</Button>
+                                                            <Button onClick={handleClose} autoFocus>
+                                                                Cancel
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                </TableCell>
+                                            </TableRow>
                                         </Draggable>
                                     ))}
                                 </TableBody>
@@ -427,32 +431,32 @@ function Home() {
                                 <TableBody>
                                     {sem7.map((row) => (
                                         <Draggable>
-                                        <TableRow>
-                                            <TableCell>{row.course_id}</TableCell>
-                                            <TableCell>{row.course_name}</TableCell>
-                                            <TableCell>{row.credits}</TableCell>
-                                            <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                onClose={handleClose}
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                {"Delete this course?"}
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={handleClose}>Confirm</Button>
-                                                <Button onClick={handleClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>     
-                                            </TableCell>
-                                        </TableRow>
+                                            <TableRow>
+                                                <TableCell>{row.course_id}</TableCell>
+                                                <TableCell>{row.course_name}</TableCell>
+                                                <TableCell>{row.credits}</TableCell>
+                                                <TableCell>
+                                                    <Button color="error" onClick={handleClickOpen}>
+                                                        <DeleteIcon></DeleteIcon>
+                                                    </Button>
+                                                    <Dialog
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                        aria-labelledby="alert-dialog-title"
+                                                        aria-describedby="alert-dialog-description"
+                                                    >
+                                                        <DialogTitle id="alert-dialog-title">
+                                                            {"Delete this course?"}
+                                                        </DialogTitle>
+                                                        <DialogActions>
+                                                            <Button onClick={handleClose}>Confirm</Button>
+                                                            <Button onClick={handleClose} autoFocus>
+                                                                Cancel
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                </TableCell>
+                                            </TableRow>
                                         </Draggable>
                                     ))}
                                 </TableBody>
@@ -466,32 +470,32 @@ function Home() {
                                 <TableBody>
                                     {sem8.map((row) => (
                                         <Draggable>
-                                        <TableRow>
-                                            <TableCell>{row.course_id}</TableCell>
-                                            <TableCell>{row.course_name}</TableCell>
-                                            <TableCell>{row.credits}</TableCell>
-                                            <TableCell>
-                                            <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                onClose={handleClose}
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                {"Delete this course?"}
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={handleClose}>Confirm</Button>
-                                                <Button onClick={handleClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>     
-                                            </TableCell>
-                                        </TableRow>
+                                            <TableRow>
+                                                <TableCell>{row.course_id}</TableCell>
+                                                <TableCell>{row.course_name}</TableCell>
+                                                <TableCell>{row.credits}</TableCell>
+                                                <TableCell>
+                                                    <Button color="error" onClick={handleClickOpen}>
+                                                        <DeleteIcon></DeleteIcon>
+                                                    </Button>
+                                                    <Dialog
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                        aria-labelledby="alert-dialog-title"
+                                                        aria-describedby="alert-dialog-description"
+                                                    >
+                                                        <DialogTitle id="alert-dialog-title">
+                                                            {"Delete this course?"}
+                                                        </DialogTitle>
+                                                        <DialogActions>
+                                                            <Button onClick={handleClose}>Confirm</Button>
+                                                            <Button onClick={handleClose} autoFocus>
+                                                                Cancel
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                </TableCell>
+                                            </TableRow>
                                         </Draggable>
                                     ))}
                                 </TableBody>

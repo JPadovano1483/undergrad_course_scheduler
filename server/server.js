@@ -18,8 +18,8 @@ app.use(express.json());
 const db = mysql.createConnection({
   user: "root",
   host: "localhost",
-  password: "ceaQwa!!",
-  database: "undergrad_course_scheduler",
+  password: "password",
+  database: "UGCS",
 });
 
 app.post("/course", (req, res) => {
@@ -90,14 +90,14 @@ app.post("/signup", (req, res) => {
 });
 
 app.get("/courses", (req, res) => {
-  db.query("SELECT * FROM course", 
-  (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  });
+  db.query("SELECT * FROM course",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
 });
 
 app.get("/users", (req, res) => {
@@ -159,7 +159,7 @@ app.post("/reset", (req, res) => {
   const email = req.body.email;
   if (password == confPassword) {
     db.query(`UPDATE user SET password = ? WHERE username = ?`,
-    [password, email],
+      [password, email],
       (err, result) => {
         if (err) {
           console.log(err);
