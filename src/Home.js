@@ -1,8 +1,8 @@
 import './css/home.css';
 import { PropTypes } from 'prop-types';
 import * as React from 'react';
-import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Button} from '@mui/material';
-import { Dialog, DialogTitle, DialogActions} from '@mui/material';
+import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogActions } from '@mui/material';
 import Navigation from './navigation';
 import Draggable from 'react-draggable';
 import Axios from 'axios';
@@ -23,6 +23,7 @@ function Home() {
 
     const handleDialogOpen = () => {
         setDialogOpen(true);
+        console.log('hello');
     };
 
     const handleClose = (value) => {
@@ -57,7 +58,7 @@ function Home() {
         getPlan(setPlan, 1)
     }, []);
 
-    
+
 
     const getSemester = (setSem, id) => {
         Axios.get(`http://localhost:3001/semester/${id}`).then((response) => {
@@ -92,7 +93,7 @@ function Home() {
     const [courseList, setCourseList] = useState([]);
     const getCourses = (set) => {
         Axios.get(`http://localhost:3001/allCourses`).then((response) => {
-        setCourseList(response.data);
+            setCourseList(response.data);
         });
     }
     useEffect(() => {
@@ -102,26 +103,26 @@ function Home() {
     // filter course search
     let [filteredCourses, setFilteredCourses] = useState([]);
     let filterCourses = (criteria, input, list) => {
-        switch(criteria) {
+        switch (criteria) {
             case "id":
-                return list.filter(course => 
+                return list.filter(course =>
                     course.course_id.includes(input)
                 );
 
             case "name":
-                return list.filter(course => 
+                return list.filter(course =>
                     course.course_name.includes(input)
                 );
 
             default:
-                return list; 
+                return list;
         }
     }
 
     const handleCourseSearch = () => {
         let idInput = document.getElementById('course_id_input')?.value;
         let nameInput = document.getElementById('course_name_input')?.value
-        
+
         if (nameInput) {
             return filterCourses("name", nameInput, courseList);
         }
@@ -152,13 +153,13 @@ function Home() {
             console.log(response);
         });
     }
-    
+
     const semesterBlocks = (plan) => {
         let blocks = [];
         let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eigth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
         // trying to take in all plan and split it into the semesters
         // let semesters = [];
-        
+
         // if (plan.data) {
         //     let numSemesters = plan.data[plan.data.length - 1].semester_id - plan.data[0].semester_id + 1;
         //     let curSemId = plan.data[0].semester_id;
@@ -172,23 +173,23 @@ function Home() {
         //             }
         //         }
         //     };
-            for (const [index, element] of plan.entries()) {
-                blocks.push(<Grid item={true} xs={6} className='tableGrid'>
-                    <h2>{numbers[index]} Semester</h2>
-                    <TableContainer component={Paper}>
-                        <Table aria-label="simple table">
-                            <TableBody>
-                                {element.map((row) => (
-                                    <Draggable>
-                                        <TableRow>
-                                            <TableCell>{row.course_id}</TableCell>
-                                            <TableCell>{row.course_name}</TableCell>
-                                            <TableCell>{row.credits}</TableCell>
-                                            <TableCell> 
-                                                <Button color = "error" onClick={() => handleDeleteCourse(row, element)}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                {/* <Button color = "error" onClick={handleClickOpen}>
+        for (const [index, element] of plan.entries()) {
+            blocks.push(<Grid item={true} xs={6} className='tableGrid'>
+                <h2>{numbers[index]} Semester</h2>
+                <TableContainer component={Paper}>
+                    <Table aria-label="simple table">
+                        <TableBody>
+                            {element.map((row) => (
+                                <Draggable>
+                                    <TableRow onClick={handleDialogOpen}>
+                                        <TableCell>{row.course_id}</TableCell>
+                                        <TableCell>{row.course_name}</TableCell>
+                                        <TableCell>{row.credits}</TableCell>
+                                        <TableCell>
+                                            <Button color="error" onClick={() => handleDeleteCourse(row, element)}>
+                                                <DeleteIcon></DeleteIcon>
+                                            </Button>
+                                            {/* <Button color = "error" onClick={handleClickOpen}>
                                                     <DeleteIcon></DeleteIcon>
                                                 </Button>
                                                 <Dialog
@@ -207,19 +208,23 @@ function Home() {
                                                 </Button>
                                                 </DialogActions>
                                                 </Dialog>  */}
-                                            </TableCell>
-                                        </TableRow>
-                                    </Draggable>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <Button onClick={() => addToSemester(element)}>Add</Button>
-                </Grid>);
-            }
+                                        </TableCell>
+                                        <SimpleDialog
+                                            open={dialogOpen}
+                                            onClose={handleClose}
+                                        />
+                                    </TableRow>
+                                </Draggable>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Button onClick={() => addToSemester(element)}>Add</Button>
+            </Grid>);
+        }
         return blocks;
     }
-    
+
     const semesters = [sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8];
 
     const [selectedSemester, setSelectedSemester] = useState("");
@@ -240,7 +245,7 @@ function Home() {
                 console.log(response);
             });
         }
-    } 
+    }
 
     // const saveSemesters = () => {
     //     Axios.post(`http://localhost:3001/updateSemesters`, {
@@ -250,7 +255,7 @@ function Home() {
     //       console.log(response);
     //   });
     // }
-    
+
 
     return (
         <div className="App">
@@ -273,34 +278,34 @@ function Home() {
                     },
                 }} open={drawerOpen} anchor={"right"} onClose={() => handleDrawerClose()}>
                     <h1>All Courses</h1>
-                <Box
-                    component="form"
-                    sx={{
-                        '& .MuiTextField-root': { m: 1, width: '25ch' },
-                    }}
-                    noValidate
-                    autoComplete="off"
+                    <Box
+                        component="form"
+                        sx={{
+                            '& .MuiTextField-root': { m: 1, width: '25ch' },
+                        }}
+                        noValidate
+                        autoComplete="off"
                     >
-                    <div>
-                        <TextField
-                            id="course_id_input"
-                            label="Course ID"
-                        />
-                    </div>
-                    <div>
-                        <TextField
-                            id="course_name_input"
-                            label="Course Name"
-                        />
-                    </div>
-                    <div>
-                        <Button
-                            onClick={() => setFilteredCourses(handleCourseSearch())}
+                        <div>
+                            <TextField
+                                id="course_id_input"
+                                label="Course ID"
+                            />
+                        </div>
+                        <div>
+                            <TextField
+                                id="course_name_input"
+                                label="Course Name"
+                            />
+                        </div>
+                        <div>
+                            <Button
+                                onClick={() => setFilteredCourses(handleCourseSearch())}
                             >
-                            Search
-                        </Button>
-                    </div>
-                </Box>
+                                Search
+                            </Button>
+                        </div>
+                    </Box>
                     <TableContainer component={Paper}>
                         <Table aria-label="simple table">
                             <TableBody>
@@ -319,7 +324,7 @@ function Home() {
                 <Grid container spacing={0}>
                     {semesterBlocks(semesters)}
                 </Grid>
-            {/* <Button onClick={saveSemesters}>Save</Button> */}
+                {/* <Button onClick={saveSemesters}>Save</Button> */}
             </div>
         </div >
     );
