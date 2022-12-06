@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Button, TextField } from '@mui/material';
 import { Grid, Box, Typography, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
+// const Mailjet = require('node-mailjet');
+import { Client } from 'node-mailjet';
 
 export default function Reset() {
     const sendEmail = () => {
-        const Mailjet = require('node-mailjet');
 
-        const client = Mailjet
+        const client = Client
             .apiConnect('a4d0148c05371f7107bdd333b86d9797', '3d1fb5bf7ab1b63f9c889840f053e513')
 
         client

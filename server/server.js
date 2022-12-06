@@ -7,11 +7,19 @@ app.use(cors());
 app.use(express.json());
 
 // cleardb in heroku
+const db = mysql.createConnection({
+  host: "us-cdbr-east-06.cleardb.net",
+  user: "ba47d98a7b19bc",
+  password: "f4d6ec6d",
+  database: "heroku_a19411dd68d921e",
+});
+
+// localhost database - copy of cleardb
 // const db = mysql.createConnection({
-//   host: "us-cdbr-east-06.cleardb.net",
-//   user: "ba47d98a7b19bc",
-//   password: "f4d6ec6d",
-//   database: "heroku_a19411dd68d921e",
+//   user: "root",
+//   host: "localhost",
+//   password: "ceaQwa!!",
+//   database: "undergrad_course_scheduler",
 // });
 
 // localhost database - copy of cleardb
@@ -27,13 +35,38 @@ app.post("/course", (req, res) => {
   const courseName = req.body.courseName;
   const courseDescription = req.body.courseDescription;
   const credits = req.body.credits;
-  db.query("INSERT INTO course (course_id, course_name, course_description, credits) VALUES (?,?,?,?)",
+  db.query("INSERT INTO course (course_id, course_name, course_description, credit_num) VALUES (?,?,?,?)",
     [courseId, courseName, courseDescription, credits],
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
         res.send(result);
+      }
+    });
+});
+
+app.get("/prereq", (req, res) => {
+  const course_id = req.body.id;
+  const sem = [req.body.sem1, req.body.sem2, req.body.sem3, req.body.sem4, req.body.sem5, req.body.sem6, req.body.sem7];
+  db.query("SELECT prerequisite_id FROM prerequisite WHERE course_id = ?",
+    [course_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      if (result.length > 0) {
+        for (let i = 0; i < result.length; i++) {
+          for (let j = 0; j < sem.length; j++) {
+            if (result[i] == sem[j]) {
+              res.send(false);
+            }
+          }
+        }
+      }
+      else {
+        console.log("No prerequisites.");
+        res.send(true);
       }
     });
 });
@@ -90,14 +123,14 @@ app.post("/signup", (req, res) => {
 });
 
 app.get("/courses", (req, res) => {
-  db.query("SELECT * FROM course", 
-  (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  });
+  db.query("SELECT * FROM course",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
 });
 
 app.get("/users", (req, res) => {
@@ -127,9 +160,9 @@ app.post("/account", (req, res) => {
     });
 });
 
-app.get("/plan", (req, res) => {
+app.get("/plan/:id", (req, res) => {
   const user_id = req.params.id;
-  db.query(`SELECT course_id, course_name, credits, semester_id FROM user JOIN plan using(user_id) JOIN semester using(plan_id) JOIN semester_course using(semester_id) JOIN course using(course_id) WHERE user_id=?`,
+  db.query(`SELECT semester_id, course_id, course_name, credits FROM user JOIN plan using(user_id) JOIN semester using(plan_id) JOIN semester_course using(semester_id) JOIN course using(course_id) WHERE user_id=?`,
     user_id,
     (err, result) => {
       if (err) {
@@ -142,7 +175,7 @@ app.get("/plan", (req, res) => {
 
 app.get("/semester/:id", (req, res) => {
   const semester_id = req.params.id;
-  db.query(`SELECT course_id, course_name, credits FROM user JOIN plan using(user_id) JOIN semester using(plan_id) JOIN semester_course using(semester_id) JOIN course using(course_id) WHERE semester_id=?`,
+  db.query(`SELECT course_id, course_name, credits, semester_id FROM user JOIN plan using(user_id) JOIN semester using(plan_id) JOIN semester_course using(semester_id) JOIN course using(course_id) WHERE semester_id=?`,
     semester_id,
     (err, result) => {
       if (err) {
@@ -159,7 +192,7 @@ app.post("/reset", (req, res) => {
   const email = req.body.email;
   if (password == confPassword) {
     db.query(`UPDATE user SET password = ? WHERE username = ?`,
-    [password, email],
+      [password, email],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -174,6 +207,35 @@ app.post("/reset", (req, res) => {
     res.send("Passwords do not match.");
   }
 });
+
+app.post("/addCourse", (req, res) => {
+  const semester_id = req.body.semester_id;
+  const course_id = req.body.course_id;
+  db.query(`INSERT INTO semester_course VALUES (?,?)`,
+    [semester_id, course_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/deleteCourse", (req, res) => {
+  const semester_id = req.body.semester_id;
+  const course_id = req.body.course_id;
+  db.query(`DELETE FROM semester_course WHERE semester_id=? AND course_id=?`,
+    [semester_id, course_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  )
+})
 
 const PORT = 3001;
 
