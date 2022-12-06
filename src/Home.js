@@ -90,6 +90,21 @@ function Home() {
         getSemester(setSem8, 8);
     }, []);
 
+    const checkPrereq = (courseId, sem1, sem2, sem3, sem4, sem5, sem6, sem7) => {
+        Axios.get(`http://localhost:3001/prereq`, {
+            courseId: courseId,
+            sem1: sem1,
+            sem2: sem2,
+            sem3: sem3,
+            sem4: sem4,
+            sem5: sem5,
+            sem6: sem6,
+            sem7: sem7,
+        }).then((response) => {
+            return response;
+        });
+    };
+
     const [courseList, setCourseList] = useState([]);
     const getCourses = (set) => {
         Axios.get(`http://localhost:3001/allCourses`).then((response) => {
