@@ -1,43 +1,14 @@
 import * as React from 'react';
+import Axios from 'axios';
 import { Button, TextField } from '@mui/material';
 import { Grid, Box, Typography, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
-// const Mailjet = require('node-mailjet');
-import { Client } from 'node-mailjet';
 
 export default function Reset() {
     const sendEmail = () => {
-
-        const client = Client
-            .apiConnect('a4d0148c05371f7107bdd333b86d9797', '3d1fb5bf7ab1b63f9c889840f053e513')
-
-        client
-            .post('send', {'version': 'v3.1'})
-            .request({ "Messages":[
-                {
-                "From": {
-                    "Email": "andrewcoldsmith@gmail.com",
-                    "Name": "Andrew"
-                },
-                "To": [
-                    {
-                    "Email": "andrewcoldsmith@gmail.com",
-                    "Name": "Andrew"
-                    }
-                ],
-                "Subject": "Greetings from Mailjet.",
-                "TextPart": "My first Mailjet email",
-                "HTMLPart": "<h3>Dear passenger 1, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!",
-                "CustomID": "AppGettingStartedTest"
-                }
-            ]
-            })
-            .then(response => {
-                console.log('response => ', response.body)
-            })
-            .catch(err => {
-                console.log('error => ', err)
-            })
+        Axios.get(`http://localhost:3001/email`).then((response) => {
+            console.log("sent");
+        });
     }
 
     return (

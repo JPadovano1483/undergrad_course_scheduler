@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
+const Mailjet = require('node-mailjet');
 
 app.use(cors());
 app.use(express.json());
@@ -22,14 +23,6 @@ const db = mysql.createConnection({
 //   database: "undergrad_course_scheduler",
 // });
 
-// localhost database - copy of cleardb
-const db = mysql.createConnection({
-  user: "root",
-  host: "localhost",
-  password: "buckwheat2010",
-  database: "undergrad",
-});
-
 app.post("/course", (req, res) => {
   const courseId = req.body.courseId;
   const courseName = req.body.courseName;
@@ -37,6 +30,17 @@ app.post("/course", (req, res) => {
   const credits = req.body.credits;
   db.query("INSERT INTO course (course_id, course_name, course_description, credit_num) VALUES (?,?,?,?)",
     [courseId, courseName, courseDescription, credits],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.get("/allCourses", (req, res) => {
+  db.query("SELECT * FROM course",
     (err, result) => {
       if (err) {
         console.log(err);
@@ -71,15 +75,37 @@ app.get("/prereq", (req, res) => {
     });
 });
 
-app.get("/allCourses", (req, res) => {
-  db.query("SELECT * FROM course",
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
+app.get("/email", (req, res) => {
+  const client = Mailjet
+    .apiConnect('a4d0148c05371f7107bdd333b86d9797', '3d1fb5bf7ab1b63f9c889840f053e513')
+
+  client
+    .post('send', {'version': 'v3.1'})
+    .request({ "Messages":[
+      {
+      "From": {
+          "Email": "andrewcoldsmith@gmail.com",
+          "Name": "Andrew"
+      },
+      "To": [
+          {
+          "Email": "andrewcoldsmith@gmail.com",
+          "Name": "Andrew"
+          }
+      ],
+      "Subject": "Greetings from Mailjet.",
+      "TextPart": "My first Mailjet email",
+      "HTMLPart": "<h3>Dear passenger 1, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!",
+      "CustomID": "AppGettingStartedTest"
       }
-    });
+    ]
+  })
+  .then(response => {
+      console.log('response => ', response.body)
+  })
+  .catch(err => {
+      console.log('error => ', err)
+  })
 });
 
 app.post("/login", (req, res) => {
