@@ -1,12 +1,17 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Axios from 'axios';
 import { Button, TextField } from '@mui/material';
 import { Grid, Box, Typography, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 export default function Reset() {
+    const [email, setEmail] = useState("");
+
     const sendEmail = () => {
-        Axios.get(`http://localhost:3001/email`).then((response) => {
+        Axios.post(`http://localhost:3001/email`, {
+            email: email,
+        }).then((response) => {
             console.log("sent");
         });
     }
@@ -50,6 +55,9 @@ export default function Reset() {
                                 label="Email Address"
                                 name="email"
                                 autoComplete="email"
+                                onChange={(e) => {
+                                    setEmail(e.target.value)
+                                }} 
                             />
                         </Grid>
                         <Link to="/EmailConfirm">

@@ -75,7 +75,9 @@ app.get("/prereq", (req, res) => {
     });
 });
 
-app.get("/email", (req, res) => {
+app.post("/email", (req, res) => {
+  const email = req.body.email;
+
   const client = Mailjet
     .apiConnect('a4d0148c05371f7107bdd333b86d9797', '3d1fb5bf7ab1b63f9c889840f053e513')
 
@@ -84,19 +86,15 @@ app.get("/email", (req, res) => {
     .request({ "Messages":[
       {
       "From": {
-          "Email": "andrewcoldsmith@gmail.com",
-          "Name": "Andrew"
+          "Email": "andrewcoldsmith@gmail.com"
       },
       "To": [
           {
-          "Email": "andrewcoldsmith@gmail.com",
-          "Name": "Andrew"
+          "Email": email
           }
       ],
-      "Subject": "Greetings from Mailjet.",
-      "TextPart": "My first Mailjet email",
-      "HTMLPart": "<h3>Dear passenger 1, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!",
-      "CustomID": "AppGettingStartedTest"
+      "Subject": "Password Reset",
+      "HTMLPart": `<h4>To reset your password, click <a href='http://localhost:3000/reset?email=${email}'>here</a>.</h4>`,
       }
     ]
   })
