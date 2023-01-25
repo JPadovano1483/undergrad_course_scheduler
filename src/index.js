@@ -13,6 +13,7 @@ import ForgotPassword from './ForgotPassword';
 import EmailConfirm from './EmailConfirm';
 import Reset from './Reset';
 import AdminEdit from './AdminEdit';
+import AdminUpload from './AdminUpload';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -28,6 +29,7 @@ root.render(
       <Route path='emailconfirm' element={<EmailConfirm />} />
       <Route path='reset' element={<Reset />} />
       <Route path='adminedit' element={<AdminEdit />} />
+      <Route path='adminupload' element={<AdminUpload />} />
     </Routes>
   </BrowserRouter>
 );

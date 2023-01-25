@@ -7,7 +7,6 @@ import Button from '@mui/material/Button';
 import InputIcon from '@mui/icons-material/Input';
 import TimeRangePicker from '@wojtekmaj/react-timerange-picker'
 import Axios from 'axios';
-import { Link } from "react-router-dom";
 
 function Admin() {
     const [courseId, setCourseId] = useState("");
@@ -37,15 +36,18 @@ function Admin() {
         <>
             <Navigation />
             <div className='contentContainer'>
+                <h1>
+                    Select what you want to do
+                </h1>
                 {/* navbar from w3schools */}
-                <div class="navbar">
-                    <div class="dropdown">
-                        <button class="dropbtn">Create 
-                            <i class="fa fa-caret-down"></i>
+                <div className="navbar">
+                    <div className="dropdown">
+                        <button className="dropbtn">Create ▼
+                            <i className="fa fa-caret-down"></i>
                         </button>
-                        <div class="dropdown-content">
-                            <a href="/admin">Create</a>
+                        <div className="dropdown-content">
                             <a href="/adminedit">Edit</a>
+                            <a href="/adminupload">Upload</a>
                         </div>
                     </div>
                 </div>

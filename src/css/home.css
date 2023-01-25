@@ -113,10 +113,11 @@ TableRow {
 /* v w3schools v */
 .navbar {
     overflow: hidden;
+    margin-bottom: 50px;
 }
 .dropdown {
     float: left;
-    background-color: #333;
+    background-color: #002856;
     overflow: hidden;
     display: block;
 }
@@ -132,7 +133,7 @@ TableRow {
     display: block;
 }
 .navbar a:hover, .dropdown:hover .dropbtn {
-    background-color: #002856;
+    background-color: #333;
 }
 .dropdown-content {
     display: none;
