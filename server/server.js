@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
+const Mailjet = require('node-mailjet');
 
 app.use(cors());
 app.use(express.json());
@@ -38,6 +39,17 @@ app.post("/course", (req, res) => {
     });
 });
 
+app.get("/allCourses", (req, res) => {
+  db.query("SELECT * FROM course",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
 app.get("/prereq", (req, res) => {
   const course_id = req.body.id;
   const sem = [req.body.sem1, req.body.sem2, req.body.sem3, req.body.sem4, req.body.sem5, req.body.sem6, req.body.sem7];
@@ -63,15 +75,35 @@ app.get("/prereq", (req, res) => {
     });
 });
 
-app.get("/allCourses", (req, res) => {
-  db.query("SELECT * FROM course",
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
+app.post("/email", (req, res) => {
+  const email = req.body.email;
+
+  const client = Mailjet
+    .apiConnect('a4d0148c05371f7107bdd333b86d9797', '3d1fb5bf7ab1b63f9c889840f053e513')
+
+  client
+    .post('send', {'version': 'v3.1'})
+    .request({ "Messages":[
+      {
+      "From": {
+          "Email": "andrewcoldsmith@gmail.com"
+      },
+      "To": [
+          {
+          "Email": email
+          }
+      ],
+      "Subject": "Password Reset",
+      "HTMLPart": `<h4>To reset your password, click <a href='http://localhost:3000/reset?email=${email}'>here</a>.</h4>`,
       }
-    });
+    ]
+  })
+  .then(response => {
+      console.log('response => ', response.body)
+  })
+  .catch(err => {
+      console.log('error => ', err)
+  })
 });
 
 app.post("/login", (req, res) => {
