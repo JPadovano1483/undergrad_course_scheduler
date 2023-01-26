@@ -4,8 +4,24 @@ import * as React from 'react';
 import { useState } from 'react';
 import Axios from 'axios';
 import { useCSVReader, lightenDarkenColor, formatFileSize, useCSVDownloader } from "react-papaparse";
+import { Button } from "@mui/material";
 
 function AdminUpload() {
+    const [course_id, setCourse_id] = useState("");
+    const [course_name, setCourse_name] = useState("");
+    const [course_description, setCourse_description] = useState("");
+    const [course_credits, setCourse_credits] = useState("");
+    const addCourse = () => {
+        console.log("Adding  courses.");
+        Axios.post(`http://localhost:3001/course`, {
+            courseId: course_id,
+            courseName: course_name,
+            courseDescription: course_description,
+            credit: course_credits,
+        }).then((response) => {
+            console.log(response);
+        });
+    }
     const [parsedCsvData, setParsedCsvData] = useState([]);
     const { CSVDownloader, Type } = useCSVDownloader();
     const GREY = '#CCC';
@@ -87,28 +103,6 @@ function AdminUpload() {
     const [removeHoverColor, setRemoveHoverColor] = useState(
         DEFAULT_REMOVE_HOVER_COLOR
     );
-    const [courseId, setCourseId] = useState("");
-    const [courseName, setCourseName] = useState("");
-    const [courseDescription, setCourseDescription] = useState("");
-    const [credits, setCredits] = useState(0);
-    const [major, setMajor] = useState("");
-    const [minor, setMinor] = useState("");
-    const [concentration, setConcentration] = useState("");
-
-    const addCourse = () => {
-        console.log("Adding course.");
-        Axios.post(`http://localhost:3001/course`, {
-            courseId: courseId,
-            courseName: courseName,
-            courseDescription: courseDescription,
-            credits: credits,
-            major: major,
-            minor: minor,
-            concentration: concentration,
-        }).then((response) => {
-            console.log(response);
-        });
-    }
 
     return (
         <>
@@ -135,8 +129,15 @@ function AdminUpload() {
                 <div className="inputContainer">
                     <CSVReader
                         onUploadAccepted={(results) => {
-                            setParsedCsvData(results.data);
-                            console.log(results);
+                            console.log(results.data);
+                            results.data.forEach(element => {
+                                console.log(element);
+                                setCourse_id(element.course_id);
+                                setCourse_name(element.course_name);
+                                setCourse_description(element.course_description);
+                                setCourse_credits(element.credits);
+                                addCourse();
+                            });
                             setZoneHover(false);
                         }}
                         config={{
@@ -203,7 +204,6 @@ function AdminUpload() {
                         )}
                     </CSVReader>
                     <CSVDownloader
-                        type={Type.Button}
                         filename={'course_upload_template'}
                         bom={true}
                         config={{
@@ -220,7 +220,9 @@ function AdminUpload() {
                             }
                         ]}
                     >
-                        Download
+                        <Button variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >Download upload template</Button>
                     </CSVDownloader>
                 </div>
             </div>
