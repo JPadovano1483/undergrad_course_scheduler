@@ -5,8 +5,35 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import InputIcon from '@mui/icons-material/Input';
 import Axios from 'axios';
+import { useCSVReader } from "react-papaparse";
 
 function AdminUpload() {
+    const [parsedCsvData, setParsedCsvData] = useState([]);
+    const styles = {
+        csvReader: {
+            display: 'flex',
+            flexDirection: 'row',
+            marginBottom: 10,
+        },
+        browseFile: {
+            width: '20%',
+        },
+        acceptedFile: {
+            border: '1px solid #ccc',
+            height: 45,
+            lineHeight: 2.5,
+            paddingLeft: 10,
+            width: '80%',
+        },
+        remove: {
+            borderRadius: 0,
+            padding: '0 20px',
+        },
+        progressBarBackgroundColor: {
+            backgroundColor: 'red',
+        },
+    };
+    const { CSVReader } = useCSVReader();
     const [courseId, setCourseId] = useState("");
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
@@ -53,13 +80,38 @@ function AdminUpload() {
                     Course Schedule Upload
                 </h1>
                 <div className="inputContainer">
-                    <form>
-                        <input style={{margin: "30px 0 40px"}} type="file" accept=".csv"></input>
-                        <Button variant="contained" startIcon={<InputIcon />} sx={{ left: '87%' }} onClick={addCourse}>
-                            <input hidden type="submit" value="Submit"/>
-                            Submit
-                        </Button>
-                    </form>
+                    <CSVReader
+                        onUploadAccepted={results => {
+                            setParsedCsvData(results.data);
+                            console.log(results);
+                        }}
+                        config={{
+                            header: true
+                        }}
+                    >
+                        {({
+                            getRootProps,
+                            acceptedFile,
+                            ProgressBar,
+                            getRemoveFileProps,
+                        }) => (
+                            <>
+                                <div style={styles.csvReader}>
+                                    <button type='button' {...getRootProps()} style={styles.browseFile}>
+                                        Browse file
+                                    </button>
+                                    <div style={styles.acceptedFile}>
+                                        {acceptedFile && acceptedFile.name}
+                                    </div>
+                                    <button {...getRemoveFileProps()} style={styles.remove}>
+                                        Remove
+                                    </button>
+                                </div>
+                                <ProgressBar style={styles.progressBarBackgroundColor} />
+
+                            </>
+                        )}
+                    </CSVReader>
                 </div>
             </div>
         </>
