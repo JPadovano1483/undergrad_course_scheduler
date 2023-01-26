@@ -2,38 +2,91 @@ import Navigation from "./navigation";
 import './css/home.css';
 import * as React from 'react';
 import { useState } from 'react';
-import Button from '@mui/material/Button';
-import InputIcon from '@mui/icons-material/Input';
 import Axios from 'axios';
-import { useCSVReader } from "react-papaparse";
+import { useCSVReader, lightenDarkenColor, formatFileSize, useCSVDownloader } from "react-papaparse";
 
 function AdminUpload() {
     const [parsedCsvData, setParsedCsvData] = useState([]);
+    const { CSVDownloader, Type } = useCSVDownloader();
+    const GREY = '#CCC';
+    const GREY_LIGHT = 'rgba(255, 255, 255, 0.4)';
+    const DEFAULT_REMOVE_HOVER_COLOR = '#A01919';
+    const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(
+        DEFAULT_REMOVE_HOVER_COLOR,
+        40
+    );
+    const GREY_DIM = '#686868';
+
     const styles = {
-        csvReader: {
+        zone: {
+            alignItems: 'center',
+            borderWidth: 2,
+            borderStyle: 'dashed',
+            borderColor: GREY,
+            borderRadius: 20,
             display: 'flex',
-            flexDirection: 'row',
-            marginBottom: 10,
+            flexDirection: 'column',
+            height: '100%',
+            justifyContent: 'center',
+            padding: 20,
         },
-        browseFile: {
-            width: '20%',
+        file: {
+            background: 'linear-gradient(to bottom, #EEE, #DDD)',
+            borderRadius: 20,
+            display: 'flex',
+            height: 120,
+            width: 120,
+            position: 'relative',
+            zIndex: 10,
+            flexDirection: 'column',
+            justifyContent: 'center',
         },
-        acceptedFile: {
-            border: '1px solid #ccc',
-            height: 45,
-            lineHeight: 2.5,
+        info: {
+            alignItems: 'center',
+            display: 'flex',
+            flexDirection: 'column',
             paddingLeft: 10,
-            width: '80%',
+            paddingRight: 10,
+        },
+        size: {
+            backgroundColor: GREY_LIGHT,
+            borderRadius: 3,
+            marginBottom: '0.5em',
+            justifyContent: 'center',
+            display: 'flex',
+        },
+        name: {
+            backgroundColor: GREY_LIGHT,
+            borderRadius: 3,
+            fontSize: 12,
+            marginBottom: '0.5em',
+        },
+        progressBar: {
+            bottom: 14,
+            position: 'absolute',
+            width: '100%',
+            paddingLeft: 10,
+            paddingRight: 10,
+        },
+        zoneHover: {
+            borderColor: GREY_DIM,
+        },
+        default: {
+            borderColor: GREY,
         },
         remove: {
-            borderRadius: 0,
-            padding: '0 20px',
-        },
-        progressBarBackgroundColor: {
-            backgroundColor: 'red',
+            height: 23,
+            position: 'absolute',
+            right: 6,
+            top: 6,
+            width: 23,
         },
     };
     const { CSVReader } = useCSVReader();
+    const [zoneHover, setZoneHover] = useState(false);
+    const [removeHoverColor, setRemoveHoverColor] = useState(
+        DEFAULT_REMOVE_HOVER_COLOR
+    );
     const [courseId, setCourseId] = useState("");
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
@@ -81,12 +134,21 @@ function AdminUpload() {
                 </h1>
                 <div className="inputContainer">
                     <CSVReader
-                        onUploadAccepted={results => {
+                        onUploadAccepted={(results) => {
                             setParsedCsvData(results.data);
                             console.log(results);
+                            setZoneHover(false);
                         }}
                         config={{
                             header: true
+                        }}
+                        onDragOver={(event) => {
+                            event.preventDefault();
+                            setZoneHover(true);
+                        }}
+                        onDragLeave={(event) => {
+                            event.preventDefault();
+                            setZoneHover(false);
                         }}
                     >
                         {({
@@ -94,29 +156,76 @@ function AdminUpload() {
                             acceptedFile,
                             ProgressBar,
                             getRemoveFileProps,
+                            Remove,
                         }) => (
                             <>
-                                <div style={styles.csvReader}>
-                                    <button type='button' {...getRootProps()} style={styles.browseFile}>
-                                        Browse file
-                                    </button>
-                                    <div style={styles.acceptedFile}>
-                                        {acceptedFile && acceptedFile.name}
-                                    </div>
-                                    <button {...getRemoveFileProps()} style={styles.remove}>
-                                        Remove
-                                    </button>
+                                <div
+                                    {...getRootProps()}
+                                    style={Object.assign(
+                                        {},
+                                        styles.zone,
+                                        zoneHover && styles.zoneHover
+                                    )}
+                                >
+                                    {acceptedFile ? (
+                                        <>
+                                            <div style={styles.file}>
+                                                <div style={styles.info}>
+                                                    <span style={styles.size}>
+                                                        {formatFileSize(acceptedFile.size)}
+                                                    </span>
+                                                    <span style={styles.name}>{acceptedFile.name}</span>
+                                                </div>
+                                                <div style={styles.progressBar}>
+                                                    <ProgressBar />
+                                                </div>
+                                                <div
+                                                    {...getRemoveFileProps()}
+                                                    style={styles.remove}
+                                                    onMouseOver={(event) => {
+                                                        event.preventDefault();
+                                                        setRemoveHoverColor(REMOVE_HOVER_COLOR_LIGHT);
+                                                    }}
+                                                    onMouseOut={(event) => {
+                                                        event.preventDefault();
+                                                        setRemoveHoverColor(DEFAULT_REMOVE_HOVER_COLOR);
+                                                    }}
+                                                >
+                                                    <Remove color={removeHoverColor} />
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        'Drop CSV file here or click to upload'
+                                    )}
                                 </div>
-                                <ProgressBar style={styles.progressBarBackgroundColor} />
-
                             </>
                         )}
                     </CSVReader>
+                    <CSVDownloader
+                        type={Type.Button}
+                        filename={'course_upload_template'}
+                        bom={true}
+                        config={{
+                            delimiter: ',',
+                        }}
+                        data={[
+                            {
+                                'course_id': null,
+                                'course_name': null,
+                                'course_description': null,
+                                'credits': null,
+                                'semester': null,
+                                'year': null
+                            }
+                        ]}
+                    >
+                        Download
+                    </CSVDownloader>
                 </div>
             </div>
         </>
     );
-
 }
 
 export default AdminUpload;
