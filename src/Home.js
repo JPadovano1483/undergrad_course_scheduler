@@ -21,6 +21,9 @@ function Home() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
 
+    const [userId, setUserId] = useState(44);
+    const [semNum, setSemNum] = useState(8);
+
     const handleDialogOpen = () => {
         setDialogOpen(true);
         console.log('hello');
@@ -46,6 +49,10 @@ function Home() {
     const [sem6, setSem6] = useState([]);
     const [sem7, setSem7] = useState([]);
     const [sem8, setSem8] = useState([]);
+    const [sem9, setSem9] = useState([]);
+    const [sem10, setSem10] = useState([]);
+    const [sem11, setSem11] = useState([]);
+    const [sem12, setSem12] = useState([]);
 
     const [plan, setPlan] = useState([]);
     const getPlan = (setPlan, userId) => {
@@ -55,10 +62,8 @@ function Home() {
     }
 
     useEffect(() => {
-        getPlan(setPlan, 1)
+        getPlan(setPlan, userId)
     }, []);
-
-
 
     const getSemester = (setSem, id) => {
         Axios.get(`http://localhost:3001/semester/${id}`).then((response) => {
@@ -88,6 +93,18 @@ function Home() {
     }, []);
     useEffect(() => {
         getSemester(setSem8, 8);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem9, 9);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem10, 10);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem11, 11);
+    }, []);
+    useEffect(() => {
+        getSemester(setSem12, 12);
     }, []);
 
     const checkPrereq = (courseId, sem1, sem2, sem3, sem4, sem5, sem6, sem7) => {
@@ -169,7 +186,26 @@ function Home() {
         });
     }
 
-    const semesterBlocks = (plan) => {
+    const handleAddSemester = (user, semesterNumber) => {
+        // Axios.post(`http://localhost:3001/addSemester`, {
+        //     user_id: user,
+        //     semester_num: semesterNumber
+        // }).then((response) => {
+        //     console.log(response);
+        // });
+        setSemNum(semNum + 1);
+    }
+
+    const handleDeleteSemester = (user) => {
+        // Axios.post(`http://localhost:3001/deleteSemester`, {
+        //     user_id: user
+        // }).then((response) => {
+        //     console.log(response);
+        // });
+        setSemNum(semNum - 1);
+    }
+
+    const semesterBlocks = (semester) => {
         let blocks = [];
         let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eigth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
         // trying to take in all plan and split it into the semesters
@@ -188,7 +224,7 @@ function Home() {
         //             }
         //         }
         //     };
-        for (const [index, element] of plan.entries()) {
+        for (const [index, element] of semester.entries()) {
             blocks.push(<Grid item={true} xs={6} className='tableGrid'>
                 <h2>{numbers[index]} Semester</h2>
                 <TableContainer component={Paper}>
@@ -240,7 +276,10 @@ function Home() {
         return blocks;
     }
 
-    const semesters = [sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8];
+    let semesters = [];
+    for (let i = 1; i <= semNum; i++) {
+        semesters.push(eval("sem" + i));
+    }
 
     const [selectedSemester, setSelectedSemester] = useState("");
 
@@ -335,11 +374,16 @@ function Home() {
                         </Table>
                     </TableContainer>
                 </Drawer>
-                <h1>8 Semester Plan</h1>
+                <h1>{/*{Object.values(plan).length()} */}Semester Plan</h1>
                 <Grid container spacing={0}>
                     {semesterBlocks(semesters)}
                 </Grid>
-                {/* <Button onClick={saveSemesters}>Save</Button> */}
+                <div>
+                    <Button onClick={() => handleAddSemester(userId, semNum)}>Add One Semester</Button>
+                </div>
+                <div>
+                    <Button onClick={() => handleDeleteSemester(userId)}>Remove One Semester</Button>
+                </div>
             </div>
         </div >
     );
