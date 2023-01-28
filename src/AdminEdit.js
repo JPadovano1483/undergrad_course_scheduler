@@ -38,9 +38,19 @@ function Admin() {
         <>
             <Navigation />
             <div className='contentContainer'>
-            <Link to="/admin" className='linkAdmin'>Create</Link>
-              <Link to="/adminedit" className ='linkAdminEdit'> Edit </Link>
-              <h1>
+             {/* navbar from w3schools */}
+             <div class="navbar">
+                    <div class="dropdown">
+                        <button class="dropbtn">Edit 
+                            <i class="fa fa-caret-down"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="/admin">Create</a>
+                            <a href="/adminedit">Edit</a>
+                        </div>
+                    </div>
+                </div>
+                <h1>
                     Course Search
                 </h1>
                 <div>
