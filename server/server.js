@@ -8,20 +8,21 @@ app.use(cors());
 app.use(express.json());
 
 // cleardb in heroku
-const db = mysql.createConnection({
-  host: "us-cdbr-east-06.cleardb.net",
-  user: "ba47d98a7b19bc",
-  password: "f4d6ec6d",
-  database: "heroku_a19411dd68d921e",
-});
-
-// localhost database - copy of cleardb
 // const db = mysql.createConnection({
-//   user: "root",
-//   host: "localhost",
-//   password: "ceaQwa!!",
-//   database: "undergrad_course_scheduler",
+//   host: "us-cdbr-east-06.cleardb.net",
+//   user: "ba47d98a7b19bc",
+//   password: "f4d6ec6d",
+//   database: "heroku_a19411dd68d921e",
 // });
+
+
+ //localhost database - copy of cleardb
+ const db = mysql.createConnection({
+   user: "root",
+   host: "localhost",
+   password: "buckwheat2010",
+   database: "undergrad",
+ });
 
 app.post("/course", (req, res) => {
   const courseId = req.body.courseId;
@@ -182,6 +183,24 @@ app.post("/account", (req, res) => {
         res.send(result);
       }
     });
+});
+
+app.get("/profile",(req, res) => {
+  const first_name = req.body.first_name;
+  const last_name = req.body.last_name;
+  const username = req.body.username;
+  //const grade_level = req.body.grade_level;
+
+  db.query("SELECT first_name, last_name, username, grade_level FROM user WHERE username = ?",
+  'jamie_padovano',
+  (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+    });
+  
 });
 
 app.get("/plan/:id", (req, res) => {
