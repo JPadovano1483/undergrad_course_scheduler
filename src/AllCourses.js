@@ -1,8 +1,22 @@
 import Navigation from "./navigation";
 import './courses.css'
 import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, TableHead } from '@mui/material';
+import Axios from 'axios';
+import { useState, useEffect } from 'react';
 
 function AllCourses() {
+    const [courses, setCourseList] = useState([]);
+
+    const getCourses = (setCourseList) => {
+        Axios.get(`http://localhost:3001/courses`).then((response) => {
+            setCourseList(response.data);
+        });
+    }
+
+    useEffect(() => {
+        getCourses(setCourseList);
+    }, []);
+
     return (
         <>
             <Navigation />
@@ -20,46 +34,13 @@ function AllCourses() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow>
-                                <TableCell>CIS 191</TableCell>
-                                <TableCell>Web Development: Client Side</TableCell>
-                                <TableCell>3</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>CIS 191</TableCell>
-                                <TableCell>Web Development: Client Side</TableCell>
-                                <TableCell>3</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>CIS 191</TableCell>
-                                <TableCell>Web Development: Client Side</TableCell>
-                                <TableCell>3</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>CIS 191</TableCell>
-                                <TableCell>Web Development: Client Side</TableCell>
-                                <TableCell>3</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>CIS 191</TableCell>
-                                <TableCell>Web Development: Client Side</TableCell>
-                                <TableCell>3</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>CIS 191</TableCell>
-                                <TableCell>Web Development: Client Side</TableCell>
-                                <TableCell>3</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>CIS 191</TableCell>
-                                <TableCell>Web Development: Client Side</TableCell>
-                                <TableCell>3</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>CIS 191</TableCell>
-                                <TableCell>Web Development: Client Side</TableCell>
-                                <TableCell>3</TableCell>
-                            </TableRow>
+                            {courses.map((row) => (
+                                <TableRow>
+                                    <TableCell>{row.course_id}</TableCell>
+                                    <TableCell>{row.course_name}</TableCell>
+                                    <TableCell>{row.credits}</TableCell>
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
                 </TableContainer>

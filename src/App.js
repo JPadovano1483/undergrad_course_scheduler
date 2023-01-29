@@ -1,11 +1,13 @@
-import './App.css';
+import './css/App.css';
 import * as React from 'react';
-import logo from './MessiahLogo.JPG';
+import logo from './images/MessiahLogo.JPG';
 import { Avatar, Button, TextField, FormControlLabel } from '@mui/material';
-import { Checkbox, Grid, Box, Typography, Container } from '@mui/material';
+import { Checkbox, Grid, Box, Typography, Container, Alert} from '@mui/material';
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import { useState } from 'react';
+// import { connect } from 'react-redux';
+//import { connect } from 'react-redux';
 
 export default function SignIn() {
   const handleSubmit = (event) => {
@@ -16,17 +18,24 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
 
   const login = () => {
-    Axios.post("https://undergrad-course-scheduler.herokuapp.com/login", {
+    Axios.post("http://localhost:3001/login", {
       email: email,
       password: password,
     }).then((response) => {
       if (response.data[0].username !== undefined) {
         console.log(response.data[0].username);
         console.log(response.data[0].password);
-        window.location.href = "https://undergrad-course-scheduler.herokuapp.com/home";
+        window.location.href = "http://localhost:3000/home";
       }
-      else {
-        console.log(response.data);
+      else 
+      {
+        console.log(response.data)
+        let form = document.getElementById("alert_test");
+        form.style.visibility = 'visible';
+        //document.getElementById('dip').hidden = true
+         
+
+          
       }
     });
   }
@@ -92,7 +101,12 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-
+            <Alert component = 'alert_test' variant = "filled" severity ="error"
+            sx = {{
+              visibility:'hidden'
+            }}>
+              Warning! Email or password is incorrect
+            </Alert>
             <Button
               type="submit"
               fullWidth

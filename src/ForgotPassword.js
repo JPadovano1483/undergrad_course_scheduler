@@ -1,11 +1,19 @@
 import * as React from 'react';
+import { useState } from 'react';
+import Axios from 'axios';
 import { Button, TextField } from '@mui/material';
 import { Grid, Box, Typography, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 export default function Reset() {
-    const handleSubmit = (event) => {
+    const [email, setEmail] = useState("");
 
+    const sendEmail = () => {
+        Axios.post(`http://localhost:3001/email`, {
+            email: email,
+        }).then((response) => {
+            console.log("sent");
+        });
     }
 
     return (
@@ -38,7 +46,7 @@ export default function Reset() {
                         Please enter the email associated with your account
                     </Typography>
 
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                    <Box component="form" noValidate sx={{ mt: 3 }}>
                         <Grid item xs={12}>
                             <TextField
                                 required
@@ -47,6 +55,9 @@ export default function Reset() {
                                 label="Email Address"
                                 name="email"
                                 autoComplete="email"
+                                onChange={(e) => {
+                                    setEmail(e.target.value)
+                                }} 
                             />
                         </Grid>
                         <Link to="/EmailConfirm">
@@ -55,6 +66,7 @@ export default function Reset() {
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
+                                onClick={sendEmail}
                             >
                                 Send Email
                             </Button>

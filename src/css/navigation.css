@@ -1,0 +1,29 @@
+.App {
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #002856;
+    text-decoration: none;
+}
+
+.link {
+    align-self: center;
+    margin: 10px;
+}
+
+
+
+.accountLink {
+    justify-self: flex-end;
+}
+
+a.accountLink:hover {
+    color: white;
+}

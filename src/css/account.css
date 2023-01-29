@@ -1,0 +1,184 @@
+.profileContainer {
+    background-color: #F8F8FF;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    margin: -6px;
+    min-height: 730px;
+    justify-content: center;
+}
+
+form {
+    flex-direction: column;
+    min-width: 100%;
+    align-items: center;
+}
+
+row {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    min-width: 100%
+}
+.account
+{
+    background-color: #002856;
+    color:  white;
+    border: groove #002856;
+    border-radius: 3px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    margin: auto;
+    margin-bottom: 5px;
+    width: 45%;
+    text-align: center;
+    
+}
+.username
+{
+    display: grid;
+    background-color: #002856;
+    color:  white;
+    border: groove #002856;
+    border-radius: 3px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    width: 40%;
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: 10px;
+   
+}
+.userinfo
+{
+    display: grid;
+    background-color: #002856;
+    color:  white;
+    border: groove #002856;
+    border-radius: 3px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    width: 40%;
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+   
+}
+
+
+.Major
+{
+    display: grid;
+    background-color: #002856;
+    color:  white;
+    border: groove #002856;
+    border-radius: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    font-size: large;
+    text-align: center;
+    margin: auto;
+    width: 23%;
+}
+
+.Minor
+{
+    display: grid;
+    background-color: #002856;
+    color:  white;
+    border: groove #002856;
+    border-radius: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    font-size: large;
+
+    text-align: center;
+    margin: auto;
+    width: 25%;
+}
+.Concentration
+{
+    display: grid;
+    background-color: #002856;
+    color:  white;
+    border: groove #002856;
+    border-radius: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    width: 30%;
+    font-size: large;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    margin: auto;
+}
+select
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: rgb(224, 223, 223);
+    color: black;
+    box-sizing: border-box;
+    border-style:solid;
+    min-height: 40px;
+    font-size: large;
+    position: relative;
+    margin-left: 39%;
+}
+.floatleft{
+    /* background-color: #ffffff; */
+    float: left;
+    width: 50%
+}
+
+.floatright {
+    float: right;
+    /* background-color: #ffffff;*/
+    width: 50%;
+}
+.container
+{
+    display: flex;
+}
+.mike
+{
+    align-items: center;
+}
+.css-pzoh7t-MuiAvatar-root
+{
+    margin: auto;
+    margin-bottom: 10px;
+
+}
+.css-1u3bzj6-MuiFormControl-root-MuiTextField-root
+{
+    position: relative;
+    margin-top: 10px;
+
+    display: -webkit-inline-box;
+    display: -webkit-inline-flex;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    padding: 0;
+    margin: auto;
+    border: 0;
+    margin-left: 25%;
+    margin-top: 10px;
+    vertical-align: top;
+}

@@ -8,7 +8,7 @@ import InputIcon from '@mui/icons-material/Input';
 import TimeRangePicker from '@wojtekmaj/react-timerange-picker'
 import Axios from 'axios';
 
-function Admin() {
+function AdminEdit() {
     const [courseId, setCourseId] = useState("");
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
@@ -27,6 +27,7 @@ function Admin() {
             major: major,
             minor: minor,
             concentration: concentration,
+
         }).then((response) => {
             console.log(response);
         });
@@ -42,11 +43,11 @@ function Admin() {
                 {/* navbar from w3schools */}
                 <div className="navbar">
                     <div className="dropdown">
-                        <button className="dropbtn">Create ▼
+                        <button className="dropbtn"> Edit ▼
                             <i className="fa fa-caret-down"></i>
                         </button>
                         <div className="dropdown-content">
-                            <a href="/adminedit">Edit</a>
+                            <a href="/admin">Create</a>
                             <a href="/adminupload">Upload</a>
                         </div>
                     </div>
@@ -71,7 +72,7 @@ function Admin() {
                     </Button>
                 </div>
               
-                <h1>Please enter course information</h1>
+                <h1>Please enter the course to edit</h1>
                 <p style={{ color: 'red' }}>Fields marked with * are required</p>
                 <div className="inputContainer">
                     <form>
@@ -85,6 +86,9 @@ function Admin() {
                                 setCourseId(e.target.value)
                             }} 
                         />
+
+
+
                         <TextField 
                              
                             fullWidth 
@@ -180,4 +184,4 @@ function Admin() {
 
 }
 
-export default Admin;
+export default AdminEdit;
