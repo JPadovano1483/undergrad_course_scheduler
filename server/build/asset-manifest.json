@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.9e2bcb81.css",
+    "main.js": "/static/js/main.ec71b6af.js",
+    "static/js/787.fe9c6713.chunk.js": "/static/js/787.fe9c6713.chunk.js",
+    "static/media/MessiahLogo.JPG": "/static/media/MessiahLogo.1bc362887a0154c3910a.JPG",
+    "index.html": "/index.html",
+    "main.9e2bcb81.css.map": "/static/css/main.9e2bcb81.css.map",
+    "main.ec71b6af.js.map": "/static/js/main.ec71b6af.js.map",
+    "787.fe9c6713.chunk.js.map": "/static/js/787.fe9c6713.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9e2bcb81.css",
+    "static/js/main.ec71b6af.js"
+  ]
+}

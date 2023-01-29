@@ -1,8 +1,10 @@
+require('newrelic');
 const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
 const Mailjet = require('node-mailjet');
+const path = require('path');
 
 app.use(cors());
 app.use(express.json());
@@ -106,6 +108,16 @@ app.post("/email", (req, res) => {
       console.log('error => ', err)
   })
 });
+
+// trying to get server started with app
+// app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, '../src/build')));
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'This is the api endpoint'
+  })
+})
+
 
 app.post("/login", (req, res) => {
   const email = req.body.email;
@@ -280,6 +292,10 @@ app.post("/deleteCourse", (req, res) => {
     }
   )
 })
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/../src/build/index.html'));
+});
 
 const PORT = 3001;
 
