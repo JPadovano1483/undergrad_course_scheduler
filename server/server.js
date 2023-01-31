@@ -1,4 +1,6 @@
+// import userCtrlCheck from "./utils.js";
 require('newrelic');
+
 const express = require("express");
 const app = express();
 const mysql = require("mysql");
@@ -10,21 +12,18 @@ app.use(cors());
 app.use(express.json());
 
 // cleardb in heroku
-// const db = mysql.createConnection({
-//   host: "us-cdbr-east-06.cleardb.net",
-//   user: "ba47d98a7b19bc",
-//   password: "f4d6ec6d",
-//   database: "heroku_a19411dd68d921e",
-// });
+const db = mysql.createConnection({
+  host: "us-cdbr-east-06.cleardb.net",
+  user: "ba47d98a7b19bc",
+  password: "f4d6ec6d",
+  database: "heroku_a19411dd68d921e"
+});
 
-
- //localhost database - copy of cleardb
- const db = mysql.createConnection({
-   user: "root",
-   host: "localhost",
-   password: "buckwheat2010",
-   database: "undergrad",
- });
+const userCtrlCheck = (reqUser, targetUser, role) => {
+  let checker = false;
+  if (role == 1 || reqUser == targetUser) checker = true;
+  return checker;
+}
 
 app.post("/course", (req, res) => {
   const courseId = req.body.courseId;
@@ -215,51 +214,86 @@ app.get("/profile",(req, res) => {
   
 });
 
+app.get("/accountInfo",(req, res) => {
+  db.query("SELECT * FROM user WHERE username = ?",
+  'jamie_padovano',
+  (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+    });
+  
+});
+
 app.get("/plan/:id", (req, res) => {
   const user_id = req.params.id;
-  db.query(`SELECT semester_id, course_id, course_name, credit_num FROM user JOIN semester using(user_id) JOIN user_course using(semester_id) JOIN course using(course_id) WHERE user.user_id=?`,
-    user_id,
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    });
+  const reqUser = req.body.reqUser;
+  const targetUser = req.body.targetUser;
+  const role = req.body.role;
+
+  let userValidation = userCtrlCheck(reqUser, targetUser, role);
+
+  if (userValidation) {
+    db.query(`SELECT semester_id, course_id, course_name, credit_num FROM user JOIN semester using(user_id) JOIN user_course using(semester_id) JOIN course using(course_id) WHERE user.user_id=?`,
+      user_id,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send(result);
+        }
+      });
+  }
+  else {
+    console.log("Not Authorized");
+  }
 });
 
 app.get("/semester/:id", (req, res) => {
   const semester_id = req.params.id;
-  db.query(`SELECT course_id, course_name, credit_num, semester_id FROM user JOIN semester using(user_id) JOIN user_course using(semester_id) JOIN course using(course_id) WHERE semester_id=?`,
-    semester_id,
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    });
+  const reqUser = req.body.reqUser;
+  const targetUser = req.body.targetUser;
+  const role = req.body.role;
+
+  let userValidation = userCtrlCheck(reqUser, targetUser, role);
+
+  if (userValidation) {
+    db.query(`SELECT course_id, course_name, credit_num, semester_id FROM user JOIN semester using(user_id) JOIN user_course using(semester_id) JOIN course using(course_id) WHERE semester_id=?`,
+      semester_id,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send(result);
+        }
+      });
+  }
+  else {
+    console.log("Not Authorized");
+  }
 });
 
 app.post("/reset", (req, res) => {
   const password = req.body.password;
   const confPassword = req.body.confPassword;
   const email = req.body.email;
-  if (password == confPassword) {
-    db.query(`UPDATE user SET password = ? WHERE username = ?`,
-      [password, email],
-      (err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("Password changed.");
-          res.send(result);
-        }
-      });
-  }
-  else {
-    console.log("Passwords do not match.");
-    res.send("Passwords do not match.");
+    if (password == confPassword) {
+      db.query(`UPDATE user SET password = ? WHERE username = ?`,
+        [password, email],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("Password changed.");
+            res.send(result);
+          }
+        });
+    }
+    else {
+      console.log("Passwords do not match.");
+      res.send("Passwords do not match.");
   }
 });
 
