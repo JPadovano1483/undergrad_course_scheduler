@@ -21,6 +21,17 @@ function Home() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
 
+    const [accountInfo, setAccountInfo] = useState({});
+    const getaccountInfo = () => {
+        Axios.get(`http://localhost:3001/accountInfo`).then((response) => {
+            setAccountInfo(response.data);
+
+        });
+    }
+    useEffect(() =>{
+        getaccountInfo();
+    },[]);
+
     const [userId, setUserId] = useState(44);
     const [semNum, setSemNum] = useState(8);
 
@@ -56,7 +67,11 @@ function Home() {
 
     const [plan, setPlan] = useState([]);
     const getPlan = (setPlan, userId) => {
-        Axios.get(`http://localhost:3001/plan/${userId}`).then((response) => {
+        Axios.get(`http://localhost:3001/plan/${userId}`, {
+            reqUser: accountInfo[0]?.user_id,
+            targetUser: accountInfo[0]?.user_id,
+            role: accountInfo[0]?.is_admin
+        }).then((response) => {
             setPlan(response);
         });
     }
@@ -66,7 +81,11 @@ function Home() {
     }, []);
 
     const getSemester = (setSem, id) => {
-        Axios.get(`http://localhost:3001/semester/${id}`).then((response) => {
+        Axios.get(`http://localhost:3001/semester/${id}`, {
+            reqUser: accountInfo[0]?.user_id,
+            targetUser: accountInfo[0]?.user_id,
+            role: accountInfo[0]?.is_admin
+        }).then((response) => {
             setSem(response.data);
         });
     }
