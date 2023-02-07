@@ -37,6 +37,7 @@
     "server": "cd server && node server.js",
     "heroku-postbuild": "cd src && npm install && cd ../ && npm run build",
     "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "buildcopy": "npm run build && (cp -r build ./server/)"
   },
