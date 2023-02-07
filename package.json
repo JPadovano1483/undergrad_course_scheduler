@@ -32,12 +32,12 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts --optimize_for_size --max_old_space_size=4096 start",
+    "start": "react-app-rewired --optimize_for_size --max_old_space_size=4096 start",
     "src": "cd src && npm start",
     "server": "cd server && node server.js",
     "heroku-postbuild": "cd src && npm install && cd ../ && npm run build",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "buildcopy": "npm run build && (cp -r build ./server/)"
   },
