@@ -250,41 +250,39 @@ function Home() {
                     <Table aria-label="simple table">
                         <TableBody>
                             {element.map((row) => (
-                                <Draggable>
-                                    <TableRow>
-                                        <TableCell>{row.course_id}</TableCell>
-                                        <TableCell onClick={handleDialogOpen}>{row.course_name}</TableCell>
-                                        <TableCell>{row.credits}</TableCell>
-                                        <TableCell>
-                                            <Button color="error" onClick={() => handleDeleteCourse(row, element)}>
+                                <TableRow key={row.id}>
+                                    <TableCell>{row.course_id}</TableCell>
+                                    <TableCell onClick={handleDialogOpen}>{row.course_name}</TableCell>
+                                    <TableCell>{row.credit_num}</TableCell>
+                                    <TableCell>
+                                        <Button color="error" onClick={() => handleDeleteCourse(row, element)}>
+                                            <DeleteIcon></DeleteIcon>
+                                        </Button>
+                                        {/* <Button color = "error" onClick={handleClickOpen}>
                                                 <DeleteIcon></DeleteIcon>
                                             </Button>
-                                            {/* <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                overlayStyle={{backgroundColor: 'transparent'}}
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
-                                                <Button onClick={handleClickClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>  */}
-                                        </TableCell>
-                                        <SimpleDialog
-                                            open={dialogOpen}
-                                            onClose={handleClose}
-                                        />
-                                    </TableRow>
-                                </Draggable>
+                                            <Dialog
+                                            open={open}
+                                            
+                                            aria-labelledby="alert-dialog-title"
+                                            aria-describedby="alert-dialog-description"
+                                            overlayStyle={{backgroundColor: 'transparent'}}
+                                            >
+                                            <DialogTitle id="alert-dialog-title">
+                                            </DialogTitle>
+                                            <DialogActions>
+                                            <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
+                                            <Button onClick={handleClickClose} autoFocus>
+                                            Cancel
+                                            </Button>
+                                            </DialogActions>
+                                            </Dialog>  */}
+                                    </TableCell>
+                                    <SimpleDialog
+                                        open={dialogOpen}
+                                        onClose={handleClose}
+                                    />
+                                </TableRow>
                             ))}
                         </TableBody>
                     </Table>
@@ -383,10 +381,10 @@ function Home() {
                         <Table aria-label="simple table">
                             <TableBody>
                                 {filteredCourses.map((row) => (
-                                    <TableRow onClick={() => addCourse(row)}>
+                                    <TableRow key={row.id}  onClick={() => addCourse(row)}>
                                         <TableCell>{row.course_id}</TableCell>
                                         <TableCell>{row.course_name}</TableCell>
-                                        <TableCell>{row.credits}</TableCell>
+                                        <TableCell>{row.credit_num}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

@@ -1,5 +1,5 @@
 // import userCtrlCheck from "./utils.js";
-require('newrelic');
+// require('newrelic');
 
 const express = require("express");
 const app = express();
@@ -43,6 +43,17 @@ app.post("/course", (req, res) => {
 
 app.get("/allCourses", (req, res) => {
   db.query("SELECT * FROM course",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/adminCourses", (req, res) => {
+  db.query("SELECT * FROM course LEFT JOIN course_schedule using (course_id)",
     (err, result) => {
       if (err) {
         console.log(err);
