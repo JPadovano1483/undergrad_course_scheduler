@@ -226,7 +226,9 @@ function Home() {
 
     const semesterBlocks = (semester) => {
         let blocks = [];
-        let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eigth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
+        let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
+
+
         // trying to take in all plan and split it into the semesters
         // let semesters = [];
 
@@ -243,9 +245,36 @@ function Home() {
         //             }
         //         }
         //     };
+
+        const countCredits = (semester, id) => {
+            let count = 0;
+            for (const course of semester) {
+                count += course.credit_num;
+            }
+
+            creditWarning(id, count);
+
+            return count;
+        }
+
+        const creditWarning = (elementId, creditCount) => {
+            let element = document.querySelector(`#${elementId}`);
+            if (element != null) {
+                if (creditCount < 12 || creditCount > 18) {
+                    element.style.color = 'red';
+                }
+                else {
+                    element.style.color = 'black';
+                }
+            }
+        }
+
+
         for (const [index, element] of semester.entries()) {
+            let creditId = 'credit_count' + index;
             blocks.push(<Grid item={true} xs={6} className='tableGrid'>
                 <h2>{numbers[index]} Semester</h2>
+                <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4>
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                         <TableBody>
