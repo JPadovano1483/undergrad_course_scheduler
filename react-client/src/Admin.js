@@ -1,21 +1,67 @@
 import Navigation from "./navigation";
 import './css/home.css';
 import * as React from 'react';
-import { useState } from 'react';
-import { Checkbox, FormControlLabel, FormGroup, TextField} from "@mui/material";
-import Button from '@mui/material/Button';
+import { useState, useEffect } from 'react';
+import { Checkbox, FormControlLabel, FormGroup, TextField, Paper, Table, TableCell, TableContainer, TableBody, TableRow, Button} from "@mui/material";
 import InputIcon from '@mui/icons-material/Input';
 import TimeRangePicker from '@wojtekmaj/react-timerange-picker'
 import Axios from 'axios';
+
 
 function Admin() {
     const [courseId, setCourseId] = useState("");
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
     const [credits, setCredits] = useState(0);
-    const [major, setMajor] = useState("");
-    const [minor, setMinor] = useState("");
-    const [concentration, setConcentration] = useState("");
+    const [semester, setSemester] = useState("");
+    const [year, setYear] = useState("");
+
+
+    //get all courses
+    const [courseList, setCourseList] = useState([]);
+    const getCourses = async (set) => {
+        Axios.post(`http://localhost:3001/adminCourses`).then((response) => {
+            setCourseList(response.data);
+        });
+    }
+    useEffect(() => {
+        getCourses();
+    }, []);
+
+    let [searchedCourse, setSearchedCourse] = useState(null);
+
+    const searchCourse = () => {
+        let search = document.querySelector('#course_search_input').value;
+        setSearchedCourse(courseList.find(course => course.course_id == search || course.course_name == search));
+        console.log(searchedCourse);
+    }
+
+    function Search(props) {
+        let course = props.course;
+        if (course) {
+            return (
+                // TODO: make this prettier
+                <TableContainer component={Paper}>
+                    <Table aria-label="simple table">
+                        <TableBody>
+                            <TableRow>
+                                <TableCell>{course.course_id}</TableCell>
+                                <TableCell>{course.course_name}</TableCell>
+                                <TableCell>{course.course_description}</TableCell>
+                                <TableCell>{course.credit_num}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>{course.scheduled_semester}</TableCell>
+                                <TableCell>{course.scheduled_year}</TableCell>
+                                <TableCell>{course.time}</TableCell>
+                                <TableCell>{course.day}</TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )
+        }
+    }
 
     const [accountInfo, setAccountInfo] = useState(() => {
         let loggedInUser = localStorage.getItem("user");
@@ -40,9 +86,8 @@ function Admin() {
             courseName: courseName,
             courseDescription: courseDescription,
             credits: credits,
-            major: major,
-            minor: minor,
-            concentration: concentration,
+            semester: semester,
+            year: year,
         }).then((response) => {
             console.log(response);
         });
@@ -72,27 +117,28 @@ function Admin() {
                 </h1>
                 <div>
                     <TextField
-                        id="course_name_input"
-                        label="Course Name"
-                        sx={{}}
-                        />
+                        id="course_search_input"
+                        label="Course ID or Name"
+                    />
                 </div>
                 <div>
                     <Button
                         type="submit" 
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
+                        onClick={searchCourse}
                         >
                             Search
                     </Button>
                 </div>
+
+                <Search course={searchedCourse}></Search>
               
                 <h1>Please enter course information</h1>
                 <p style={{ color: 'red' }}>Fields marked with * are required</p>
                 <div className="inputContainer">
                     <form>
                         <TextField 
-                             
                             label="Course ID *" 
                             id="courseID" 
                             variant="filled" 
@@ -102,7 +148,6 @@ function Admin() {
                             }} 
                         />
                         <TextField 
-                             
                             fullWidth 
                             label="Name of the Class *" 
                             id="name" 
@@ -129,37 +174,25 @@ function Admin() {
                         <TextField 
                              
                              fullWidth 
-                             label="Major" 
+                             label="Semester" 
                              id="name" 
                              sx={{ my: 1, width: '50%' }} 
                              variant="filled"
                              onChange={(e) => {
-                                 setMajor(e.target.value)
+                                 setSemester(e.target.value)
                              }}
                          />
                           <TextField 
                              
                              fullWidth 
-                             label="Minor" 
+                             label="Year" 
                              id="name" 
                              sx={{ my: 1, width: '50%' }} 
                              variant="filled"
                              onChange={(e) => {
-                                 setMinor(e.target.value)
+                                 setYear(e.target.value)
                              }}
                          />
-                            <TextField 
-                             
-                             fullWidth 
-                             label="Concentration" 
-                             id="name" 
-                             sx={{ my: 1, width: '50%' }} 
-                             variant="filled"
-                             onChange={(e) => {
-                                 setConcentration(e.target.value)
-                             }}
-                         />
-                         
                          
                         <TextField 
                              
@@ -174,16 +207,6 @@ function Admin() {
                             }} 
                         />
                         <br></br>
-                        <h4>Days class will be offered: </h4>
-                        <FormGroup>
-                            <FormControlLabel control={<Checkbox />} label="Monday" />
-                            <FormControlLabel control={<Checkbox />} label="Tuesday" />
-                            <FormControlLabel control={<Checkbox />} label="Wednesday" />
-                            <FormControlLabel control={<Checkbox />} label="Thursday" />
-                            <FormControlLabel control={<Checkbox />} label="Friday" />
-                        </FormGroup>
-                        <h6>Time:</h6>
-                        <TimeRangePicker clock={null} />
                         <Button variant="contained" startIcon={<InputIcon />} sx={{ left: '87%' }} onClick={addCourse}>
                             <input hidden type="submit" value="Submit"/>
                             Submit

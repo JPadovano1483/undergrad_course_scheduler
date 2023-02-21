@@ -13,6 +13,20 @@ function Account() {
     const [minor, setMinor] = useState("");
     const [password, setPassword] = useState("");
 
+    const handleMajorChange = (event) => {
+   
+        setMajor(event.target.value);
+      };
+  
+      const handleMinorChange = (event) => {
+     
+          setMinor(event.target.value);
+        };
+      const handleConcentrationChange = (event) => {
+     
+          setConcentration(event.target.value);
+        };
+
     const updateAccount = () => {
         console.log("Updating user.");
         Axios.post(`http://localhost:3001/account`, {
@@ -56,10 +70,13 @@ function Account() {
      let last_name = accountInfo[0]?.last_name;
      let username = accountInfo[0]?.username;
      let grade_level = accountInfo[0]?.grade_level;
+     let majorH = accountInfo[0]?.program_name;
      const profileName = first_name?.concat(" ", last_name);
      const firstChar = first_name?.substr(0, 1);
      const secondChar = last_name?.substr(0, 1);
      const profileInitials = firstChar?.concat(secondChar);
+
+     
 
     return (
         <>
@@ -81,6 +98,7 @@ function Account() {
                             <h2 className ='userinfo'> Grade Level </h2>
                             <h2> {grade_level} </h2> 
                             <h2 className ='userinfo'> Major </h2>
+                            <h2 className ='infoName'> {majorH} </h2>
                             <h2 className ='userinfo'> Minor </h2>
                             <h2 className ='userinfo'> Concentration </h2>
 
@@ -91,36 +109,40 @@ function Account() {
                         <h2 className='account'>Update User Information</h2>
                     
                             <div class ="Major"> Select your Major</div>
-                            <form>
-                                <select id = "Test">
-                                    <option value="option">Computer Science</option>
-                                    <option value="option">CyberSecurity</option>
-                                    <option value="option">Criminal Justice</option>
-                                    <option value="option">Undeclared</option>
-                                </select>
-                            </form>                   
+                            <form class = "Move">
+                                    <select value={major} onChange={handleMajorChange}>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="CyberSecurity">CyberSecurity</option>
+                                    <option value="Criminal Justice">Criminal Justice</option>
+                                    <option value="Undeclared">Undeclared</option>
+                                    </select>
+                            </form>               
                                                 
                             <div class ="Minor"> Select your Minor</div>
                             <form>
-                                <select id = "Test">
-                                    <option value="option">Spanish</option>
-                                    <option value="option">Business</option>
-                                    <option value="option">Music</option>
-                                    <option value="option" selected>--No Minor--</option>
+                                    <select value={minor} onChange={handleMinorChange}>
+                                    <option value="Spanish">Spanish</option>
+                                    <option value="Business">Business</option>
+                                    <option value="Music">Music</option>
+                                    <option value="None">--No Minor--</option>
                                 </select>
-                            </form>                   
+                            </form>                  
                         
                                                 
                             <div class ="Concentration"> Select your Concentration</div>
                             <form>
-                                <select id = "Test">
-                                    <option value="option">Computer Science</option>
-                                    <option value="option">CyberSecurity</option>
-                                    <option value="option">Criminal Justice</option>
-                                    <option value="option">Undeclared</option>
-                                    <option value="option" selected>--No Concentration--</option>
+                                    <select value={concentration} onChange={handleConcentrationChange}>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Web Development">Web Development</option>
+                                    <option value="Criminal Justice">Criminal Justice</option>
+                                    <option value="Undeclared">Undeclared</option>
+                                    <option value="None">--No Concentration--</option>
                                 </select>
-                            </form>                   
+
+                                <h4> Major: {major} </h4>
+                                <h4> Minor: {minor} </h4>
+                                <h4> Concentration: {concentration} </h4>
+                            </form>  
                         <TextField
                         sx={{my : 5, ml : 30}}
                             label="New Password" 

@@ -12,8 +12,11 @@ import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SimpleDialog from './Dialog';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
 
 function Home() {
+    const user_id = window.sessionStorage.getItem("user_id");
     SimpleDialog.propTypes = {
         onClose: PropTypes.func.isRequired,
         open: PropTypes.bool.isRequired,
@@ -47,7 +50,90 @@ function Home() {
     }
     useEffect(() => {
         getSemNum();
-    },[]);
+    }, []);
+    
+    const getaccountInfo = () => {
+        Axios.get(`http://localhost:3001/accountInfo`).then((response) => {
+            setAccountInfo(response.data);
+        });
+    }
+    useEffect(() =>{
+        getaccountInfo();
+    }, []);
+
+    // requirement checking 
+    
+    // const [requirements, setRequirements] = useState([]);
+    // const getUserRequirements = () => {
+    //     Axios.post(`http://localhost:3001/userRequirements`, {
+    //         user_id: user_id
+    //     }).then((response) => {
+    //         setRequirements(response.data);
+    //     });
+    // }
+    // useEffect(() => {
+    //     getUserRequirements();
+    // }, []);
+
+    // const handleRequirements = (requirements) => {
+    //     console.log(requirements);
+    //     let newRequirements = [];
+    //     let currId = null;
+    //     let arrayToPush = [];
+    //     requirements.forEach((element, index) => {
+    //         if (index != 0) {
+    //             if (element.req_id == currId) {
+    //                 arrayToPush.push(element);
+    //             }
+    //             else {
+    //                 newRequirements.push(arrayToPush);
+    //                 arrayToPush = [];
+    //                 arrayToPush.push(element);
+    //                 currId = element.req_id;
+    //             }
+    //         }
+    //         else {
+    //             currId = element.req_id;
+    //             arrayToPush.push(element);
+    //         }
+    //     });
+    //     if(newRequirements.length != 0) setRequirements(newRequirements);
+    // }
+
+    // if (requirements.length != 0) {
+    //     handleRequirements(requirements);
+    // }
+
+    // console.log(requirements);
+
+    // const [userCourses, setUserCourses] = useState([]);
+    // const getUserCourses = (user_id) => {
+    //     Axios.post(`http://localhost:3001/allUserCourses`, {
+    //         user_id: user_id
+    //     }).then((response) => {
+    //         setUserCourses(response.data);
+    //     });
+    // }
+    // useEffect(() => {
+    //     getUserCourses();
+    // }, []);
+
+    // const checkRequirements = (requirements, userCourses) => {
+    //     let courseArr = [];
+    //     let requirementsLeft = [];
+    //     if (requirements?.length != 0 && userCourses?.length != 0) {
+    //         for (const element of userCourses) {
+    //             courseArr.push(element.course_id);
+    //         }
+
+    //         // check courses that you need to take (no options)
+    //         for (const element of requirements) {
+    //             if (element.req_type == "all") {
+                    
+    //             }
+    //         }
+    //     }
+    // }
 
     const handleDialogOpen = () => {
         setDialogOpen(true);
@@ -224,9 +310,72 @@ function Home() {
         setSemNum(semNum - 1);
     }
 
+    // credit popup
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handlePopoverOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handlePopoverClose = () => {
+        setAnchorEl(null);
+    };
+
+    const openPopup = Boolean(anchorEl);
+
+    const creditWarningPopup = (creditId, creditNum) => {
+        if (creditNum < 12 || creditNum > 18) {
+            return (
+                <div>
+                    <Typography
+                        id={creditId}
+                        aria-owns={openPopup ? 'mouse-over-popover' : undefined}
+                        aria-haspopup="true"
+                        onMouseEnter={handlePopoverOpen}
+                        onMouseLeave={handlePopoverClose}
+                    >
+                        Credits: {creditNum}
+                    </Typography>
+                    <Popover
+                        id="mouse-over-popover"
+                        sx={{
+                            pointerEvents: 'none',
+                        }}
+                        open={openPopup}
+                        anchorEl={anchorEl}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'center',
+                        }}
+                        transformOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                        onClose={handlePopoverClose}
+                        disableRestoreFocus
+                    >
+                        <Typography sx={{ p: 1 }}>You must have 12-18 credits per semester. Please contact your advisor if you plan to underload/overload a semester.</Typography>
+                    </Popover>
+                </div>
+            );
+        }
+        else {
+            return (
+                <div>
+                    <Typography
+                        id={creditId}
+                    >
+                        Credits: {creditNum}
+                    </Typography>
+                </div>
+            )
+        }
+    }
+
     const semesterBlocks = (semester) => {
         let blocks = [];
         let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
+
         // trying to take in all plan and split it into the semesters
         // let semesters = [];
 
@@ -243,48 +392,75 @@ function Home() {
         //             }
         //         }
         //     };
+
+        const countCredits = (semester, id) => {
+            let count = 0;
+            for (const course of semester) {
+                count += course.credit_num;
+            }
+
+            creditWarning(id, count);
+
+            return count;
+        }
+
+        const creditWarning = (elementId, creditCount) => {
+            let element = document.querySelector(`#${elementId}`);
+            if (element != null) {
+                if (creditCount < 12 || creditCount > 18) {
+                    element.style.color = 'red';
+                }
+                else {
+                    element.style.color = 'black';
+                }
+            }
+        }
+
+
         for (const [index, element] of semester.entries()) {
+            let creditId = 'credit_count' + index;
+            let creditCount = countCredits(element, creditId);
             blocks.push(<Grid item={true} xs={6} className='tableGrid'>
                 <h2>{numbers[index]} Semester</h2>
+                {/* <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4> */}
+                {creditWarningPopup(creditId, creditCount)}
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                         <TableBody>
                             {element.map((row) => (
-                                <Draggable>
-                                    <TableRow>
-                                        <TableCell>{row.course_id}</TableCell>
-                                        <TableCell onClick={handleDialogOpen}>{row.course_name}</TableCell>
-                                        <TableCell>{row.credits}</TableCell>
-                                        <TableCell>
-                                            <Button color="error" onClick={() => handleDeleteCourse(row, element)}>
+                                <TableRow key={row.id}>
+                                    <TableCell>{row.course_id}</TableCell>
+                                    <TableCell onClick={handleDialogOpen}>{row.course_name}</TableCell>
+                                    <TableCell>{row.credit_num}</TableCell>
+                                    <TableCell>
+                                        <Button color="error" onClick={() => handleDeleteCourse(row, element)}>
+                                            <DeleteIcon></DeleteIcon>
+                                        </Button>
+                                        {/* <Button color = "error" onClick={handleClickOpen}>
                                                 <DeleteIcon></DeleteIcon>
                                             </Button>
-                                            {/* <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                overlayStyle={{backgroundColor: 'transparent'}}
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
-                                                <Button onClick={handleClickClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>  */}
-                                        </TableCell>
-                                        <SimpleDialog
-                                            open={dialogOpen}
-                                            onClose={handleClose}
-                                        />
-                                    </TableRow>
-                                </Draggable>
+                                            <Dialog
+                                            open={open}
+                                            
+                                            aria-labelledby="alert-dialog-title"
+                                            aria-describedby="alert-dialog-description"
+                                            overlayStyle={{backgroundColor: 'transparent'}}
+                                            >
+                                            <DialogTitle id="alert-dialog-title">
+                                            </DialogTitle>
+                                            <DialogActions>
+                                            <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
+                                            <Button onClick={handleClickClose} autoFocus>
+                                            Cancel
+                                            </Button>
+                                            </DialogActions>
+                                            </Dialog>  */}
+                                    </TableCell>
+                                    <SimpleDialog
+                                        open={dialogOpen}
+                                        onClose={handleClose}
+                                    />
+                                </TableRow>
                             ))}
                         </TableBody>
                     </Table>
@@ -411,10 +587,10 @@ function Home() {
                         <Table aria-label="simple table">
                             <TableBody>
                                 {filteredCourses.map((row) => (
-                                    <TableRow onClick={() => addCourse(row)}>
+                                    <TableRow key={row.id}  onClick={() => addCourse(row)}>
                                         <TableCell>{row.course_id}</TableCell>
                                         <TableCell>{row.course_name}</TableCell>
-                                        <TableCell>{row.credits}</TableCell>
+                                        <TableCell>{row.credit_num}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

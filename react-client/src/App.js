@@ -29,6 +29,7 @@ export default function SignIn() {
         const userData = response.data[0];
         console.log(userData);
         localStorage.setItem("user", JSON.stringify(userData));
+        window.sessionStorage.setItem("user_id", response.data[0].user_id);
         window.location.href = "http://localhost:3000/home";
       }
       else 

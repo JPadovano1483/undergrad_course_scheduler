@@ -2,10 +2,9 @@ import Navigation from "./navigation";
 import './css/home.css';
 import * as React from 'react';
 import { useState } from 'react';
-import { Checkbox, FormControlLabel, FormGroup, TextField} from "@mui/material";
+import {TextField} from "@mui/material";
 import Button from '@mui/material/Button';
 import InputIcon from '@mui/icons-material/Input';
-import TimeRangePicker from '@wojtekmaj/react-timerange-picker'
 import Axios from 'axios';
 
 function AdminEdit() {
@@ -13,9 +12,8 @@ function AdminEdit() {
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
     const [credits, setCredits] = useState(0);
-    const [major, setMajor] = useState("");
-    const [minor, setMinor] = useState("");
-    const [concentration, setConcentration] = useState("");
+    const [semester, setSemester] = useState("");
+    const [year, setYear] = useState("");
 
     const [accountInfo, setAccountInfo] = useState(() => {
         let loggedInUser = localStorage.getItem("user");
@@ -33,17 +31,15 @@ function AdminEdit() {
         }
     });
 
-    const addCourse = () => {
-        console.log("Adding course.");
-        Axios.post(`http://localhost:3001/course`, {
+    const editCourse = () => {
+        console.log("Deleting and Updating Course.");
+        Axios.post(`http://localhost:3001/courseEdit`, {
             courseId: courseId,
             courseName: courseName,
             courseDescription: courseDescription,
             credits: credits,
-            major: major,
-            minor: minor,
-            concentration: concentration,
-
+            semester: semester,
+            year: year,
         }).then((response) => {
             console.log(response);
         });
@@ -59,7 +55,7 @@ function AdminEdit() {
                 {/* navbar from w3schools */}
                 <div className="navbar">
                     <div className="dropdown">
-                        <button className="dropbtn"> Edit ▼
+                        <button className="dropbtn">Edit ▼
                             <i className="fa fa-caret-down"></i>
                         </button>
                         <div className="dropdown-content">
@@ -88,7 +84,7 @@ function AdminEdit() {
                     </Button>
                 </div>
               
-                <h1>Please enter the course to edit</h1>
+                <h1>Please enter course information to be edited</h1>
                 <p style={{ color: 'red' }}>Fields marked with * are required</p>
                 <div className="inputContainer">
                     <form>
@@ -102,9 +98,6 @@ function AdminEdit() {
                                 setCourseId(e.target.value)
                             }} 
                         />
-
-
-
                         <TextField 
                              
                             fullWidth 
@@ -133,37 +126,25 @@ function AdminEdit() {
                         <TextField 
                              
                              fullWidth 
-                             label="Major" 
+                             label="Semester" 
                              id="name" 
                              sx={{ my: 1, width: '50%' }} 
                              variant="filled"
                              onChange={(e) => {
-                                 setMajor(e.target.value)
+                                 setSemester(e.target.value)
                              }}
                          />
                           <TextField 
                              
                              fullWidth 
-                             label="Minor" 
+                             label="Year" 
                              id="name" 
                              sx={{ my: 1, width: '50%' }} 
                              variant="filled"
                              onChange={(e) => {
-                                 setMinor(e.target.value)
+                                 setYear(e.target.value)
                              }}
                          />
-                            <TextField 
-                             
-                             fullWidth 
-                             label="Concentration" 
-                             id="name" 
-                             sx={{ my: 1, width: '50%' }} 
-                             variant="filled"
-                             onChange={(e) => {
-                                 setConcentration(e.target.value)
-                             }}
-                         />
-                         
                          
                         <TextField 
                              
@@ -178,17 +159,7 @@ function AdminEdit() {
                             }} 
                         />
                         <br></br>
-                        <h4>Days class will be offered: </h4>
-                        <FormGroup>
-                            <FormControlLabel control={<Checkbox />} label="Monday" />
-                            <FormControlLabel control={<Checkbox />} label="Tuesday" />
-                            <FormControlLabel control={<Checkbox />} label="Wednesday" />
-                            <FormControlLabel control={<Checkbox />} label="Thursday" />
-                            <FormControlLabel control={<Checkbox />} label="Friday" />
-                        </FormGroup>
-                        <h6>Time:</h6>
-                        <TimeRangePicker clock={null} />
-                        <Button variant="contained" startIcon={<InputIcon />} sx={{ left: '87%' }} onClick={addCourse}>
+                        <Button variant="contained" startIcon={<InputIcon />} sx={{ left: '87%' }} onClick={editCourse}>
                             <input hidden type="submit" value="Submit"/>
                             Submit
                         </Button>

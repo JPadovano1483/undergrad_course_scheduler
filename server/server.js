@@ -1,5 +1,5 @@
 // import userCtrlCheck from "./utils.js";
-require('newrelic');
+// require('newrelic');
 
 const express = require("express");
 const app = express();
@@ -11,7 +11,7 @@ const path = require('path');
 app.use(cors());
 app.use(express.json());
 
-// cleardb in heroku
+//cleardb in heroku
 const db = mysql.createConnection({
   host: "us-cdbr-east-06.cleardb.net",
   user: "ba47d98a7b19bc",
@@ -30,8 +30,42 @@ app.post("/course", (req, res) => {
   const courseName = req.body.courseName;
   const courseDescription = req.body.courseDescription;
   const credits = req.body.credits;
-  db.query("INSERT INTO course (course_id, course_name, course_description, credit_num) VALUES (?,?,?,?)",
-    [courseId, courseName, courseDescription, credits],
+  const semester = req.body.semester;
+  const year = req.body.year;
+  db.query("INSERT INTO course (course_id, course_name, course_description, credit_num, semester, year) VALUES (?,?,?,?,?,?)",
+    [courseId, courseName, courseDescription, credits, semester, year],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+app.post("/courseEdit", (req, res) => {
+  const courseId = req.body.courseId;
+  const courseName = req.body.courseName;
+  const courseDescription = req.body.courseDescription;
+  const credits = req.body.credits;
+  const semester = req.body.semester;
+  const year = req.body.year;
+
+  db.query("DELETE FROM course WHERE course_id = ?",
+  [courseId],)
+  
+  db.query("INSERT INTO course (course_id, course_name, course_description, credit_num, semester, year) VALUES (?,?,?,?,?,?)",
+    [courseId, courseName, courseDescription, credits, semester, year],
+    (err, result) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.get("/allCourses", (req, res) => {
+  db.query("SELECT * FROM course",
     (err, result) => {
       if (err) {
         console.log(err);
@@ -41,8 +75,8 @@ app.post("/course", (req, res) => {
     });
 });
 
-app.get("/allCourses", (req, res) => {
-  db.query("SELECT * FROM course",
+app.post("/adminCourses", (req, res) => {
+  db.query("SELECT * FROM course LEFT JOIN course_schedule using (course_id)",
     (err, result) => {
       if (err) {
         console.log(err);
@@ -91,28 +125,29 @@ app.post("/email", (req, res) => {
     .apiConnect('a4d0148c05371f7107bdd333b86d9797', '3d1fb5bf7ab1b63f9c889840f053e513')
 
   client
-    .post('send', {'version': 'v3.1'})
-    .request({ "Messages":[
-      {
-      "From": {
-          "Email": "andrewcoldsmith@gmail.com"
-      },
-      "To": [
-          {
-          "Email": email
-          }
-      ],
-      "Subject": "Password Reset",
-      "HTMLPart": `<h4>To reset your password, click <a href='http://localhost:3000/reset?email=${email}'>here</a>.</h4>`,
-      }
-    ]
-  })
-  .then(response => {
+    .post('send', { 'version': 'v3.1' })
+    .request({
+      "Messages": [
+        {
+          "From": {
+            "Email": "andrewcoldsmith@gmail.com"
+          },
+          "To": [
+            {
+              "Email": email
+            }
+          ],
+          "Subject": "Password Reset",
+          "HTMLPart": `<h4>To reset your password, click <a href='http://localhost:3000/reset?email=${email}'>here</a>.</h4>`,
+        }
+      ]
+    })
+    .then(response => {
       console.log('response => ', response.body)
-  })
-  .catch(err => {
+    })
+    .catch(err => {
       console.log('error => ', err)
-  })
+    })
 });
 
 // trying to get server started with app
@@ -148,10 +183,13 @@ app.post("/signup", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const confPassword = req.body.confPassword;
+  const first_name = req.body.first_name;
+  const last_name = req.body.last_name;
+  const grade_level = req.body.grade_level;
 
   if (password == confPassword) {
-    db.query("INSERT INTO user (username, password) VALUES (?,?)",
-      [email, password],
+    db.query("INSERT INTO user (username, password, first_name, last_name, grade_level) VALUES (?,?,?,?,?)",
+      [email, password, first_name, last_name, grade_level],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -191,9 +229,10 @@ app.post("/account", (req, res) => {
   const major = req.body.major;
   const concentration = req.body.concentration;
   const minor = req.body.minor;
+  const password = req.body.password;
 
-  db.query("UPDATE user SET major_name = ?, concentration_name = ?, minor_name = ? WHERE username = ?",
-    [major, concentration, minor, 'jamie_padovano'],
+  db.query("UPDATE user SET major_name = ?, concentration_name = ?, minor_name = ?, password = ? WHERE username = ?",
+    [major, concentration, minor, password, 'jamie_padovano'],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -203,26 +242,39 @@ app.post("/account", (req, res) => {
     });
 });
 
-// app.get("/profile",(req, res) => {
-//   const first_name = req.body.first_name;
-//   const last_name = req.body.last_name;
-//   const username = req.body.username;
-//   //const grade_level = req.body.grade_level;
+app.get("/profile", (req, res) => {
+  const first_name = req.body.first_name;
+  const last_name = req.body.last_name;
+  const username = req.body.username;
+  //const grade_level = req.body.grade_level;
 
-//   db.query("SELECT first_name, last_name, username, grade_level FROM user WHERE username = ?",
-//   'jamie_padovano',
-//   (err, result) => {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       res.send(result);
-//     }
-//     });
-  
-// });
+  db.query("SELECT first_name, last_name, username, grade_level FROM user WHERE username = ?",
+    'jamie_padovano',
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
 
-app.post("/plan/:id", (req, res) => {
-  const userId = req.params.id;
+});
+
+app.get("/accountInfo", (req, res) => {
+  db.query("SELECT * FROM user WHERE username = ?",
+    'jamie_padovano',
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+
+});
+
+app.get("/plan/:id", (req, res) => {
+  const user_id = req.params.id;
   const reqUser = req.body.reqUser;
   const targetUser = req.body.targetUser;
   const role = req.body.role;
@@ -364,6 +416,40 @@ app.post("/deleteSemester", (req, res) => {
     }
   )
 });
+app.post("/userRequirements", (req, res) => {
+  const user_id = req.body.user_id;
+  db.query(`SELECT req_id, req_type, req_type_num, course_id FROM user
+  JOIN user_program using (user_id)
+  JOIN program using (program_id)
+  JOIN requirement using (program_id)
+  JOIN requirement_course using (req_id)
+  WHERE user_id=?
+  ORDER BY req_id;`,
+    user_id,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(result);
+      }
+    }
+  );
+});
+
+app.post("/allUserCourses", (req, res) => {
+  const user_id = req.body.user_id;
+  db.query(`SELECT course_id from user JOIN semester using (user_id) JOIN user_course using (semester_id) JOIN course using (course_id) where user.user_id=4`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(result);
+      }
+    }
+  );
+})
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname + '/../src/build/index.html'));
