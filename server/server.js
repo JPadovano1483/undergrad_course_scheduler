@@ -364,6 +364,41 @@ app.post("/deleteCourse", (req, res) => {
       }
     }
   )
+});
+
+app.post("/userRequirements", (req, res) => {
+  const user_id = req.body.user_id;
+  db.query(`SELECT req_id, req_type, req_type_num, course_id FROM user
+  JOIN user_program using (user_id)
+  JOIN program using (program_id)
+  JOIN requirement using (program_id)
+  JOIN requirement_course using (req_id)
+  WHERE user_id=?
+  ORDER BY req_id;`,
+    user_id,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(result);
+      }
+    }
+  );
+});
+
+app.post("/allUserCourses", (req, res) => {
+  const user_id = req.body.user_id;
+  db.query(`SELECT course_id from user JOIN semester using (user_id) JOIN user_course using (semester_id) JOIN course using (course_id) where user.user_id=4`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(result);
+      }
+    }
+  );
 })
 
 app.get('/*', (req, res) => {
@@ -375,10 +410,6 @@ const PORT = 3001;
 app.listen(process.env.PORT || PORT, () => {
   console.log(`Your server is running on port ${PORT}`);
 });
-
-setInterval(function () {
-  db.query('SELECT 1');
-}, 5000);
 
 setInterval(function () {
   db.query('SELECT 1');

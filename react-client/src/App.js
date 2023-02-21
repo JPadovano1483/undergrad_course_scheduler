@@ -25,6 +25,7 @@ export default function SignIn() {
       if (response.data[0].username !== undefined) {
         console.log(response.data[0].username);
         console.log(response.data[0].password);
+        window.sessionStorage.setItem("user_id", response.data[0].user_id);
         window.location.href = "http://localhost:3000/home";
       }
       else 

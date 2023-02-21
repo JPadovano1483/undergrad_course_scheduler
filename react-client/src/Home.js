@@ -12,8 +12,11 @@ import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SimpleDialog from './Dialog';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
 
 function Home() {
+    const user_id = window.sessionStorage.getItem("user_id");
     SimpleDialog.propTypes = {
         onClose: PropTypes.func.isRequired,
         open: PropTypes.bool.isRequired,
@@ -25,12 +28,85 @@ function Home() {
     const getaccountInfo = () => {
         Axios.get(`http://localhost:3001/accountInfo`).then((response) => {
             setAccountInfo(response.data);
-
         });
     }
     useEffect(() =>{
         getaccountInfo();
-    },[]);
+    }, []);
+
+    // requirement checking 
+    
+    // const [requirements, setRequirements] = useState([]);
+    // const getUserRequirements = () => {
+    //     Axios.post(`http://localhost:3001/userRequirements`, {
+    //         user_id: user_id
+    //     }).then((response) => {
+    //         setRequirements(response.data);
+    //     });
+    // }
+    // useEffect(() => {
+    //     getUserRequirements();
+    // }, []);
+
+    // const handleRequirements = (requirements) => {
+    //     console.log(requirements);
+    //     let newRequirements = [];
+    //     let currId = null;
+    //     let arrayToPush = [];
+    //     requirements.forEach((element, index) => {
+    //         if (index != 0) {
+    //             if (element.req_id == currId) {
+    //                 arrayToPush.push(element);
+    //             }
+    //             else {
+    //                 newRequirements.push(arrayToPush);
+    //                 arrayToPush = [];
+    //                 arrayToPush.push(element);
+    //                 currId = element.req_id;
+    //             }
+    //         }
+    //         else {
+    //             currId = element.req_id;
+    //             arrayToPush.push(element);
+    //         }
+    //     });
+    //     if(newRequirements.length != 0) setRequirements(newRequirements);
+    // }
+
+    // if (requirements.length != 0) {
+    //     handleRequirements(requirements);
+    // }
+
+    // console.log(requirements);
+
+    // const [userCourses, setUserCourses] = useState([]);
+    // const getUserCourses = (user_id) => {
+    //     Axios.post(`http://localhost:3001/allUserCourses`, {
+    //         user_id: user_id
+    //     }).then((response) => {
+    //         setUserCourses(response.data);
+    //     });
+    // }
+    // useEffect(() => {
+    //     getUserCourses();
+    // }, []);
+
+    // const checkRequirements = (requirements, userCourses) => {
+    //     let courseArr = [];
+    //     let requirementsLeft = [];
+    //     if (requirements?.length != 0 && userCourses?.length != 0) {
+    //         for (const element of userCourses) {
+    //             courseArr.push(element.course_id);
+    //         }
+
+    //         // check courses that you need to take (no options)
+    //         for (const element of requirements) {
+    //             if (element.req_type == "all") {
+                    
+    //             }
+    //         }
+    //     }
+    // }
 
     const [userId, setUserId] = useState(44);
     const [semNum, setSemNum] = useState(8);
@@ -224,6 +300,68 @@ function Home() {
         setSemNum(semNum - 1);
     }
 
+    // credit popup
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handlePopoverOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handlePopoverClose = () => {
+        setAnchorEl(null);
+    };
+
+    const openPopup = Boolean(anchorEl);
+
+    const creditWarningPopup = (creditId, creditNum) => {
+        if (creditNum < 12 || creditNum > 18) {
+            return (
+                <div>
+                    <Typography
+                        id={creditId}
+                        aria-owns={openPopup ? 'mouse-over-popover' : undefined}
+                        aria-haspopup="true"
+                        onMouseEnter={handlePopoverOpen}
+                        onMouseLeave={handlePopoverClose}
+                    >
+                        Credits: {creditNum}
+                    </Typography>
+                    <Popover
+                        id="mouse-over-popover"
+                        sx={{
+                            pointerEvents: 'none',
+                        }}
+                        open={openPopup}
+                        anchorEl={anchorEl}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'center',
+                        }}
+                        transformOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                        onClose={handlePopoverClose}
+                        disableRestoreFocus
+                    >
+                        <Typography sx={{ p: 1 }}>You must have 12-18 credits per semester. Please contact your advisor if you plan to underload/overload a semester.</Typography>
+                    </Popover>
+                </div>
+            );
+        }
+        else {
+            return (
+                <div>
+                    <Typography
+                        id={creditId}
+                    >
+                        Credits: {creditNum}
+                    </Typography>
+                </div>
+            )
+        }
+    }
+
     const semesterBlocks = (semester) => {
         let blocks = [];
         let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
@@ -272,9 +410,11 @@ function Home() {
 
         for (const [index, element] of semester.entries()) {
             let creditId = 'credit_count' + index;
+            let creditCount = countCredits(element, creditId);
             blocks.push(<Grid item={true} xs={6} className='tableGrid'>
                 <h2>{numbers[index]} Semester</h2>
-                <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4>
+                {/* <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4> */}
+                {creditWarningPopup(creditId, creditCount)}
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                         <TableBody>
