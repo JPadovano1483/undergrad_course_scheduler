@@ -12,11 +12,18 @@ app.use(cors());
 app.use(express.json());
 
 // cleardb in heroku
-const db = mysql.createConnection({
-  host: "us-cdbr-east-06.cleardb.net",
-  user: "ba47d98a7b19bc",
-  password: "f4d6ec6d",
-  database: "heroku_a19411dd68d921e"
+// const db = mysql.createConnection({
+//   host: "us-cdbr-east-06.cleardb.net",
+//   user: "ba47d98a7b19bc",
+//   password: "f4d6ec6d",
+//   database: "heroku_a19411dd68d921e"
+// });
+ //localhost database - copy of cleardb
+ const db = mysql.createConnection({
+  user: "root",
+  host: "localhost",
+  password: "buckwheat2010",
+  database: "undergrad",
 });
 
 const userCtrlCheck = (reqUser, targetUser, role) => {
@@ -32,6 +39,27 @@ app.post("/course", (req, res) => {
   const credits = req.body.credits;
   const semester = req.body.semester;
   const year = req.body.year;
+  db.query("INSERT INTO course (course_id, course_name, course_description, credit_num, semester, year, semester, year) VALUES (?,?,?,?,?,?,?,?)",
+    [courseId, courseName, courseDescription, credits, semester, year, semester, year],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+app.post("/courseEdit", (req, res) => {
+  const courseId = req.body.courseId;
+  const courseName = req.body.courseName;
+  const courseDescription = req.body.courseDescription;
+  const credits = req.body.credits;
+  const semester = req.body.semester;
+  const year = req.body.year;
+
+  db.query("DELETE FROM course WHERE course_id = ?"),
+  [courseId],
+  
   db.query("INSERT INTO course (course_id, course_name, course_description, credit_num, semester, year) VALUES (?,?,?,?,?,?)",
     [courseId, courseName, courseDescription, credits, semester, year],
     (err, result) => {
@@ -144,10 +172,13 @@ app.post("/signup", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const confPassword = req.body.confPassword;
+  const first_name = req.body.first_name;
+  const last_name = req.body.last_name;
+  const grade_level = req.body.grade_level;
 
   if (password == confPassword) {
-    db.query("INSERT INTO user (username, password) VALUES (?,?)",
-      [email, password],
+    db.query("INSERT INTO user (username, password, first_name, last_name, grade_level) VALUES (?,?,?,?,?)",
+      [email, password, first_name, last_name, grade_level],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -339,6 +370,10 @@ const PORT = 3001;
 app.listen(process.env.PORT || PORT, () => {
   console.log(`Your server is running on port ${PORT}`);
 });
+
+setInterval(function () {
+  db.query('SELECT 1');
+}, 5000);
 
 setInterval(function () {
   db.query('SELECT 1');
