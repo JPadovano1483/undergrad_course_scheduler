@@ -10,6 +10,9 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [grade_level, setGradeLevel] = useState("");
 
   const addUser = () => {
       console.log("Adding user.");
@@ -17,6 +20,9 @@ export default function SignUp() {
           email: email,
           password: password,
           confPassword: confPassword,
+          first_name: first_name,
+          last_name: last_name,
+          grade_level: grade_level,
       }).then((response) => {
           console.log(response);
       });
@@ -55,6 +61,9 @@ export default function SignUp() {
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  onChange={(e) => {
+                    setFirstName(e.target.value)
+                  }} 
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -65,6 +74,22 @@ export default function SignUp() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  onChange={(e) => {
+                    setLastName(e.target.value)
+                  }} 
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="Grade"
+                  label="Grade"
+                  name="Grade"
+                  autoComplete="family-name"
+                  onChange={(e) => {
+                    setGradeLevel(e.target.value)
+                  }} 
                 />
               </Grid>
               <Grid item xs={12}>
@@ -110,7 +135,7 @@ export default function SignUp() {
               </Grid>
               
             </Grid>
-            {/* <Link to ="/home"> */}
+             <Link to ="/Program"> 
             <Button
               fullWidth
               variant="contained"
@@ -119,7 +144,7 @@ export default function SignUp() {
             >
               Sign Up
             </Button>
-            {/* </Link> */}
+             </Link> 
             <Grid container justifyContent="flex-end">
             <Link to ="/">
               <Grid item

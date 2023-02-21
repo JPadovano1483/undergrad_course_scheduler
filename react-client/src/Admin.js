@@ -13,9 +13,9 @@ function Admin() {
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
     const [credits, setCredits] = useState(0);
-    const [major, setMajor] = useState("");
-    const [minor, setMinor] = useState("");
-    const [concentration, setConcentration] = useState("");
+    const [semester, setSemester] = useState("");
+    const [year, setYear] = useState("");
+
 
     const addCourse = () => {
         console.log("Adding course.");
@@ -24,9 +24,8 @@ function Admin() {
             courseName: courseName,
             courseDescription: courseDescription,
             credits: credits,
-            major: major,
-            minor: minor,
-            concentration: concentration,
+            semester: semester,
+            year: year,
         }).then((response) => {
             console.log(response);
         });
@@ -113,37 +112,25 @@ function Admin() {
                         <TextField 
                              
                              fullWidth 
-                             label="Major" 
+                             label="Semester" 
                              id="name" 
                              sx={{ my: 1, width: '50%' }} 
                              variant="filled"
                              onChange={(e) => {
-                                 setMajor(e.target.value)
+                                 setSemester(e.target.value)
                              }}
                          />
                           <TextField 
                              
                              fullWidth 
-                             label="Minor" 
+                             label="Year" 
                              id="name" 
                              sx={{ my: 1, width: '50%' }} 
                              variant="filled"
                              onChange={(e) => {
-                                 setMinor(e.target.value)
+                                 setYear(e.target.value)
                              }}
                          />
-                            <TextField 
-                             
-                             fullWidth 
-                             label="Concentration" 
-                             id="name" 
-                             sx={{ my: 1, width: '50%' }} 
-                             variant="filled"
-                             onChange={(e) => {
-                                 setConcentration(e.target.value)
-                             }}
-                         />
-                         
                          
                         <TextField 
                              
@@ -158,16 +145,6 @@ function Admin() {
                             }} 
                         />
                         <br></br>
-                        <h4>Days class will be offered: </h4>
-                        <FormGroup>
-                            <FormControlLabel control={<Checkbox />} label="Monday" />
-                            <FormControlLabel control={<Checkbox />} label="Tuesday" />
-                            <FormControlLabel control={<Checkbox />} label="Wednesday" />
-                            <FormControlLabel control={<Checkbox />} label="Thursday" />
-                            <FormControlLabel control={<Checkbox />} label="Friday" />
-                        </FormGroup>
-                        <h6>Time:</h6>
-                        <TimeRangePicker clock={null} />
                         <Button variant="contained" startIcon={<InputIcon />} sx={{ left: '87%' }} onClick={addCourse}>
                             <input hidden type="submit" value="Submit"/>
                             Submit
