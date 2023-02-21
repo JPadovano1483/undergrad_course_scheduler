@@ -14,6 +14,7 @@ import EmailConfirm from './EmailConfirm';
 import Reset from './Reset';
 import AdminEdit from './AdminEdit';
 import AdminUpload from './AdminUpload';
+import Program from './Program';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -30,6 +31,7 @@ root.render(
       <Route path='reset' element={<Reset />} />
       <Route path='adminedit' element={<AdminEdit />} />
       <Route path='adminupload' element={<AdminUpload />} />
+      <Route path='program' element={<Program />} />
     </Routes>
   </BrowserRouter>
 );
