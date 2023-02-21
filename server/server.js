@@ -30,11 +30,13 @@ app.post("/course", (req, res) => {
   const courseName = req.body.courseName;
   const courseDescription = req.body.courseDescription;
   const credits = req.body.credits;
-  db.query("INSERT INTO course (course_id, course_name, course_description, credit_num) VALUES (?,?,?,?)",
-    [courseId, courseName, courseDescription, credits],
+  const semester = req.body.semester;
+  const year = req.body.year;
+  db.query("INSERT INTO course (course_id, course_name, course_description, credit_num, semester, year) VALUES (?,?,?,?,?,?)",
+    [courseId, courseName, courseDescription, credits, semester, year],
     (err, result) => {
       if (err) {
-        console.log(err);
+        res.send(err);
       } else {
         res.send(result);
       }
@@ -84,28 +86,29 @@ app.post("/email", (req, res) => {
     .apiConnect('a4d0148c05371f7107bdd333b86d9797', '3d1fb5bf7ab1b63f9c889840f053e513')
 
   client
-    .post('send', {'version': 'v3.1'})
-    .request({ "Messages":[
-      {
-      "From": {
-          "Email": "andrewcoldsmith@gmail.com"
-      },
-      "To": [
-          {
-          "Email": email
-          }
-      ],
-      "Subject": "Password Reset",
-      "HTMLPart": `<h4>To reset your password, click <a href='http://localhost:3000/reset?email=${email}'>here</a>.</h4>`,
-      }
-    ]
-  })
-  .then(response => {
+    .post('send', { 'version': 'v3.1' })
+    .request({
+      "Messages": [
+        {
+          "From": {
+            "Email": "andrewcoldsmith@gmail.com"
+          },
+          "To": [
+            {
+              "Email": email
+            }
+          ],
+          "Subject": "Password Reset",
+          "HTMLPart": `<h4>To reset your password, click <a href='http://localhost:3000/reset?email=${email}'>here</a>.</h4>`,
+        }
+      ]
+    })
+    .then(response => {
       console.log('response => ', response.body)
-  })
-  .catch(err => {
+    })
+    .catch(err => {
       console.log('error => ', err)
-  })
+    })
 });
 
 // trying to get server started with app
@@ -196,35 +199,35 @@ app.post("/account", (req, res) => {
     });
 });
 
-app.get("/profile",(req, res) => {
+app.get("/profile", (req, res) => {
   const first_name = req.body.first_name;
   const last_name = req.body.last_name;
   const username = req.body.username;
   //const grade_level = req.body.grade_level;
 
   db.query("SELECT first_name, last_name, username, grade_level FROM user WHERE username = ?",
-  'jamie_padovano',
-  (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
+    'jamie_padovano',
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
     });
-  
+
 });
 
-app.get("/accountInfo",(req, res) => {
+app.get("/accountInfo", (req, res) => {
   db.query("SELECT * FROM user WHERE username = ?",
-  'jamie_padovano',
-  (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
+    'jamie_padovano',
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
     });
-  
+
 });
 
 app.get("/plan/:id", (req, res) => {
@@ -279,21 +282,21 @@ app.post("/reset", (req, res) => {
   const password = req.body.password;
   const confPassword = req.body.confPassword;
   const email = req.body.email;
-    if (password == confPassword) {
-      db.query(`UPDATE user SET password = ? WHERE username = ?`,
-        [password, email],
-        (err, result) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("Password changed.");
-            res.send(result);
-          }
-        });
-    }
-    else {
-      console.log("Passwords do not match.");
-      res.send("Passwords do not match.");
+  if (password == confPassword) {
+    db.query(`UPDATE user SET password = ? WHERE username = ?`,
+      [password, email],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Password changed.");
+          res.send(result);
+        }
+      });
+  }
+  else {
+    console.log("Passwords do not match.");
+    res.send("Passwords do not match.");
   }
 });
 
@@ -336,3 +339,7 @@ const PORT = 3001;
 app.listen(process.env.PORT || PORT, () => {
   console.log(`Your server is running on port ${PORT}`);
 });
+
+setInterval(function () {
+  db.query('SELECT 1');
+}, 5000);
