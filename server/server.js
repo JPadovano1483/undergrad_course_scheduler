@@ -39,8 +39,8 @@ app.post("/course", (req, res) => {
   const credits = req.body.credits;
   const semester = req.body.semester;
   const year = req.body.year;
-  db.query("INSERT INTO course (course_id, course_name, course_description, credit_num, semester, year, semester, year) VALUES (?,?,?,?,?,?,?,?)",
-    [courseId, courseName, courseDescription, credits, semester, year, semester, year],
+  db.query("INSERT INTO course (course_id, course_name, course_description, credit_num, semester, year) VALUES (?,?,?,?,?,?)",
+    [courseId, courseName, courseDescription, credits, semester, year],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -57,8 +57,8 @@ app.post("/courseEdit", (req, res) => {
   const semester = req.body.semester;
   const year = req.body.year;
 
-  db.query("DELETE FROM course WHERE course_id = ?"),
-  [courseId],
+  db.query("DELETE FROM course WHERE course_id = ?",
+  [courseId],)
   
   db.query("INSERT INTO course (course_id, course_name, course_description, credit_num, semester, year) VALUES (?,?,?,?,?,?)",
     [courseId, courseName, courseDescription, credits, semester, year],
@@ -218,9 +218,10 @@ app.post("/account", (req, res) => {
   const major = req.body.major;
   const concentration = req.body.concentration;
   const minor = req.body.minor;
+  const password = req.body.password;
 
-  db.query("UPDATE user SET major_name = ?, concentration_name = ?, minor_name = ? WHERE username = ?",
-    [major, concentration, minor, 'jamie_padovano'],
+  db.query("UPDATE user SET major_name = ?, concentration_name = ?, minor_name = ?, password = ? WHERE username = ?",
+    [major, concentration, minor, password, 'jamie_padovano'],
     (err, result) => {
       if (err) {
         console.log(err);

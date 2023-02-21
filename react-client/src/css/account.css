@@ -67,7 +67,7 @@ row {
     width: 40%;
     text-align: center;
     margin-bottom: 10px;
-    margin-top: 10px;
+    margin-top: 15px;
    
 }
 
@@ -124,6 +124,25 @@ row {
     text-align: center;
     margin: auto;
 }
+.Select
+{
+    display: grid;
+    background-color: #002856;
+    color:  white;
+    border: groove #002856;
+    border-radius: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    width: 50%;
+    font-size: large;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    margin: auto;
+}
+
 select
 {
     margin-top: 10px;
@@ -135,7 +154,7 @@ select
     min-height: 40px;
     font-size: large;
     position: relative;
-    margin-left: 39%;
+    margin-left: 25%;
 }
 .floatleft{
     /* background-color: #ffffff; */
