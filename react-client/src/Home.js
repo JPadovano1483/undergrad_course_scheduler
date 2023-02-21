@@ -24,7 +24,34 @@ function Home() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const [accountInfo, setAccountInfo] = useState({});
+    const [accountInfo, setAccountInfo] = useState(() => {
+        let loggedInUser = localStorage.getItem("user");
+        if (loggedInUser != null) {
+            loggedInUser = JSON.parse(loggedInUser);
+            return loggedInUser;
+        }
+        else {
+            window.location.href = "http://localhost:3000";
+        }
+    });
+    
+    const [semNum, setSemNum] = useState(0);
+    const getSemNum = () => {
+        Axios.post(`http://localhost:3001/semCount`, {
+            userId: accountInfo.user_id
+        }).then((response) => {
+            if (response.data[0] !== undefined) {
+                setSemNum(response.data[0].semester_num);
+            }
+            else {
+                setSemNum(0);
+            }
+        });
+    }
+    useEffect(() => {
+        getSemNum();
+    }, []);
+    
     const getaccountInfo = () => {
         Axios.get(`http://localhost:3001/accountInfo`).then((response) => {
             setAccountInfo(response.data);
@@ -108,9 +135,6 @@ function Home() {
     //     }
     // }
 
-    const [userId, setUserId] = useState(44);
-    const [semNum, setSemNum] = useState(8);
-
     const handleDialogOpen = () => {
         setDialogOpen(true);
         console.log('hello');
@@ -141,26 +165,26 @@ function Home() {
     const [sem11, setSem11] = useState([]);
     const [sem12, setSem12] = useState([]);
 
-    const [plan, setPlan] = useState([]);
-    const getPlan = (setPlan, userId) => {
-        Axios.get(`http://localhost:3001/plan/${userId}`, {
-            reqUser: accountInfo[0]?.user_id,
-            targetUser: accountInfo[0]?.user_id,
-            role: accountInfo[0]?.is_admin
-        }).then((response) => {
-            setPlan(response);
-        });
-    }
+    // const [plan, setPlan] = useState([]);
+    // const getPlan = (setPlan, userId) => {
+    //     Axios.get(`http://localhost:3001/plan/${userId}`, {
+    //         reqUser: accountInfo.user_id,
+    //         targetUser: accountInfo.user_id,
+    //         role: accountInfo.is_admin
+    //     }).then((response) => {
+    //         setPlan(response);
+    //     });
+    // }
 
-    useEffect(() => {
-        getPlan(setPlan, userId)
-    }, []);
+    // useEffect(() => {
+    //     getPlan(setPlan, accountInfo.user_id)
+    // }, []);
 
     const getSemester = (setSem, id) => {
-        Axios.get(`http://localhost:3001/semester/${id}`, {
-            reqUser: accountInfo[0]?.user_id,
-            targetUser: accountInfo[0]?.user_id,
-            role: accountInfo[0]?.is_admin
+        Axios.post(`http://localhost:3001/semester/${id}`, {
+            reqUser: accountInfo.user_id,
+            targetUser: accountInfo.user_id,
+            role: accountInfo.is_admin
         }).then((response) => {
             setSem(response.data);
         });
@@ -201,21 +225,6 @@ function Home() {
     useEffect(() => {
         getSemester(setSem12, 12);
     }, []);
-
-    const checkPrereq = (courseId, sem1, sem2, sem3, sem4, sem5, sem6, sem7) => {
-        Axios.get(`http://localhost:3001/prereq`, {
-            courseId: courseId,
-            sem1: sem1,
-            sem2: sem2,
-            sem3: sem3,
-            sem4: sem4,
-            sem5: sem5,
-            sem6: sem6,
-            sem7: sem7,
-        }).then((response) => {
-            return response;
-        });
-    };
 
     const [courseList, setCourseList] = useState([]);
     const getCourses = (set) => {
@@ -281,22 +290,23 @@ function Home() {
         });
     }
 
-    const handleAddSemester = (user, semesterNumber) => {
-        // Axios.post(`http://localhost:3001/addSemester`, {
-        //     user_id: user,
-        //     semester_num: semesterNumber
-        // }).then((response) => {
-        //     console.log(response);
-        // });
-        setSemNum(semNum + 1);
+    const handleAddSemester = () => {
+        Axios.post(`http://localhost:3001/addSemester`, {
+            user_id: accountInfo.user_id,
+            semester_num: semNum + 1
+        }).then((response) => {
+            console.log(response);
+            setSemNum(semNum + 1);
+        });
     }
 
-    const handleDeleteSemester = (user) => {
-        // Axios.post(`http://localhost:3001/deleteSemester`, {
-        //     user_id: user
-        // }).then((response) => {
-        //     console.log(response);
-        // });
+    const handleDeleteSemester = () => {
+        Axios.post(`http://localhost:3001/deleteSemester`, {
+            user_id: accountInfo.user_id,
+            semester_num: semNum
+        }).then((response) => {
+            console.log(response);
+        });
         setSemNum(semNum - 1);
     }
 
@@ -365,7 +375,6 @@ function Home() {
     const semesterBlocks = (semester) => {
         let blocks = [];
         let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
-
 
         // trying to take in all plan and split it into the semesters
         // let semesters = [];
@@ -463,9 +472,10 @@ function Home() {
     }
 
     let semesters = [];
-    for (let i = 1; i <= semNum; i++) {
+    for (let i = 1; i < semNum + 1; i++) {
         semesters.push(eval("sem" + i));
     }
+    console.log(semesters);
 
     const [selectedSemester, setSelectedSemester] = useState("");
 
@@ -474,15 +484,42 @@ function Home() {
         setDrawerOpen(true);
     }
 
+    // const checkPrereq = (courseId) => {
+    //     Axios.post(`http://localhost:3001/prereq`, {
+    //         semesterId: selectedSemester[0].semesterId,
+    //         semesters: semesters,
+    //         courseId: courseId,
+    //     }).then((response) => {
+    //         console.log(response.data);
+    //         return response.data;
+    //     });
+    // };
+
     const addCourse = (course) => {
         if (selectedSemester != "") {
-            selectedSemester.push(course);
-            Axios.post(`http://localhost:3001/addCourse`, {
-                user_id: 1,
-                semester_id: selectedSemester[0].semester_id,
-                course_id: course.course_id
+            console.log("semsterId " + selectedSemester);
+            console.log("semesters " + semesters[0]);
+            console.log("courseId " + course.courseId);
+            Axios.post(`http://localhost:3001/prereq`, {
+                semesterId: selectedSemester[0].semesterId,
+                semesters: semesters,
+                courseId: course.courseId,
             }).then((response) => {
-                console.log(response);
+                console.log(response.data);
+                if (response.data) {
+                    console.log("Prerequisites have been met!");
+                    selectedSemester.push(course);
+                    Axios.post(`http://localhost:3001/addCourse`, {
+                        user_id: accountInfo.user_id,
+                        semester_id: selectedSemester[0].semester_id,
+                        course_id: course.course_id
+                    }).then((response) => {
+                        console.log(response);
+                    });
+                }
+                else {
+                    console.log("Prerequisites not met.");
+                }
             });
         }
     }
@@ -560,15 +597,15 @@ function Home() {
                         </Table>
                     </TableContainer>
                 </Drawer>
-                <h1>{/*{Object.values(plan).length()} */}Semester Plan</h1>
+                <h1>{semNum} Semester Plan</h1>
                 <Grid container spacing={0}>
                     {semesterBlocks(semesters)}
                 </Grid>
                 <div>
-                    <Button onClick={() => handleAddSemester(userId, semNum)}>Add One Semester</Button>
+                    <Button onClick={() => handleAddSemester(accountInfo.user_id, semNum)}>Add One Semester</Button>
                 </div>
                 <div>
-                    <Button onClick={() => handleDeleteSemester(userId)}>Remove One Semester</Button>
+                    <Button onClick={() => handleDeleteSemester(accountInfo.user_id, semNum)}>Remove One Semester</Button>
                 </div>
             </div>
         </div >

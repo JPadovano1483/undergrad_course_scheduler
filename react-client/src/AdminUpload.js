@@ -7,6 +7,26 @@ import { useCSVReader, lightenDarkenColor, formatFileSize, useCSVDownloader } fr
 import { Button } from "@mui/material";
 
 function AdminUpload() {
+    const [course_id, setCourse_id] = useState("");
+    const [course_name, setCourse_name] = useState("");
+    const [course_description, setCourse_description] = useState("");
+    const [course_credits, setCourse_credits] = useState("");
+
+    const [accountInfo, setAccountInfo] = useState(() => {
+        let loggedInUser = localStorage.getItem("user");
+        if (loggedInUser != null) {
+            loggedInUser = JSON.parse(loggedInUser);
+            if (loggedInUser.is_admin) {
+                return loggedInUser;
+            }
+            else {
+                window.location.href = "http://localhost:3000/home";
+            }
+        }
+        else {
+            window.location.href = "http://localhost:3000";
+        }
+    });
 
     const addCourse = (e) => {
         console.log("Adding  courses.");

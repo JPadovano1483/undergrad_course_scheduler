@@ -63,6 +63,22 @@ function Admin() {
         }
     }
 
+    const [accountInfo, setAccountInfo] = useState(() => {
+        let loggedInUser = localStorage.getItem("user");
+        if (loggedInUser != null) {
+            loggedInUser = JSON.parse(loggedInUser);
+            if (loggedInUser.is_admin) {
+                return loggedInUser;
+            }
+            else {
+                window.location.href = "http://localhost:3000/home";
+            }
+        }
+        else {
+            window.location.href = "http://localhost:3000";
+        }
+    });
+
     const addCourse = () => {
         console.log("Adding course.");
         Axios.post(`http://localhost:3001/course`, {

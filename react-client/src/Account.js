@@ -39,7 +39,17 @@ function Account() {
         });
     }
 
-    const [accountInfo, setAccountInfo] = useState({});
+    const [accountInfo, setAccountInfo] = useState(() => {
+        let loggedInUser = localStorage.getItem("user");
+        if (loggedInUser != null) {
+            loggedInUser = JSON.parse(loggedInUser);
+            return loggedInUser;
+        }
+        else {
+            window.location.href = "http://localhost:3000";
+        }
+    });  
+
     const getaccountInfo = () => {
             Axios.get(`http://localhost:3001/profile`).then((response) => {
                 setAccountInfo(response.data);
