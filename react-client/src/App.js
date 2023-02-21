@@ -17,7 +17,8 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const login = () => {
+  const login = async e => {
+    e.preventDefault();
     Axios.post("http://localhost:3001/login", {
       email: email,
       password: password,
@@ -25,6 +26,9 @@ export default function SignIn() {
       if (response.data[0].username !== undefined) {
         console.log(response.data[0].username);
         console.log(response.data[0].password);
+        const userData = response.data[0];
+        console.log(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
         window.location.href = "http://localhost:3000/home";
       }
       else 

@@ -7,6 +7,17 @@ import { useState, useEffect } from 'react';
 function AllCourses() {
     const [courses, setCourseList] = useState([]);
 
+    const [accountInfo, setAccountInfo] = useState(() => {
+        let loggedInUser = localStorage.getItem("user");
+        if (loggedInUser != null) {
+            loggedInUser = JSON.parse(loggedInUser);
+            return loggedInUser;
+        }
+        else {
+            window.location.href = "http://localhost:3000";
+        }
+    });
+    
     const getCourses = (setCourseList) => {
         Axios.get(`http://localhost:3001/courses`).then((response) => {
             setCourseList(response.data);
