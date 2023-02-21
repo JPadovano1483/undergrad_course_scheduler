@@ -7,22 +7,20 @@ import { useCSVReader, lightenDarkenColor, formatFileSize, useCSVDownloader } fr
 import { Button } from "@mui/material";
 
 function AdminUpload() {
-    const [course_id, setCourse_id] = useState("");
-    const [course_name, setCourse_name] = useState("");
-    const [course_description, setCourse_description] = useState("");
-    const [course_credits, setCourse_credits] = useState("");
-    const addCourse = () => {
+
+    const addCourse = (e) => {
         console.log("Adding  courses.");
         Axios.post(`http://localhost:3001/course`, {
-            courseId: course_id,
-            courseName: course_name,
-            courseDescription: course_description,
-            credit: course_credits,
+            courseId: e.course_id,
+            courseName: e.course_name,
+            courseDescription: e.course_description,
+            credits: e.credits,
+            semester: e.semester,
+            year: e.year,
         }).then((response) => {
             console.log(response);
         });
     }
-    const [parsedCsvData, setParsedCsvData] = useState([]);
     const { CSVDownloader, Type } = useCSVDownloader();
     const GREY = '#CCC';
     const GREY_LIGHT = 'rgba(255, 255, 255, 0.4)';
@@ -131,12 +129,7 @@ function AdminUpload() {
                         onUploadAccepted={(results) => {
                             console.log(results.data);
                             results.data.forEach(element => {
-                                console.log(element);
-                                setCourse_id(element.course_id);
-                                setCourse_name(element.course_name);
-                                setCourse_description(element.course_description);
-                                setCourse_credits(element.credits);
-                                addCourse();
+                                addCourse(element);
                             });
                             setZoneHover(false);
                         }}
@@ -176,6 +169,7 @@ function AdminUpload() {
                                                         {formatFileSize(acceptedFile.size)}
                                                     </span>
                                                     <span style={styles.name}>{acceptedFile.name}</span>
+                                                    <span style={styles.name}>Upload Successfull</span>
                                                 </div>
                                                 <div style={styles.progressBar}>
                                                     <ProgressBar />
