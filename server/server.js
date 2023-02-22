@@ -36,7 +36,7 @@ app.post("/course", (req, res) => {
     [courseId, courseName, courseDescription, credits, semester, year],
     (err, result) => {
       if (err) {
-        console.log(err);
+        res.send(err);
       } else {
         res.send(result);
       }
@@ -51,8 +51,8 @@ app.post("/courseEdit", (req, res) => {
   const year = req.body.year;
 
   db.query("DELETE FROM course WHERE course_id = ?",
-  [courseId],)
-  
+    [courseId],)
+
   db.query("INSERT INTO course (course_id, course_name, course_description, credit_num, semester, year) VALUES (?,?,?,?,?,?)",
     [courseId, courseName, courseDescription, credits, semester, year],
     (err, result) => {
@@ -249,7 +249,7 @@ app.get("/profile", (req, res) => {
   //const grade_level = req.body.grade_level;
 
   db.query("SELECT first_name, last_name, username, grade_level FROM user WHERE username = ?",
-    'jamie_padovano',
+    username,
     (err, result) => {
       if (err) {
         console.log(err);
@@ -282,15 +282,15 @@ app.get("/plan/:id", (req, res) => {
   let userValidation = userCtrlCheck(reqUser, targetUser, role);
 
   if (userValidation) {
-  db.query(`SELECT semester_id, course_id, course_name, credit_num FROM user JOIN semester using(user_id) JOIN user_course using(semester_id) JOIN course using(course_id) WHERE user.user_id=?`,
-    [userId],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    });
+    db.query(`SELECT semester_id, course_id, course_name, credit_num FROM user JOIN semester using(user_id) JOIN user_course using(semester_id) JOIN course using(course_id) WHERE user.user_id=?`,
+      [userId],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send(result);
+        }
+      });
   }
   else {
     console.log("Not Authorized");
@@ -307,14 +307,14 @@ app.post("/semester/:id", (req, res) => {
 
   if (userValidation) {
     db.query("SELECT course_id, course_name, credit_num, semester_id, user.user_id FROM course JOIN user_course using(course_id) JOIN semester using(semester_id) INNER JOIN user ON user_course.user_id=user.user_id WHERE semester_id=? AND user.user_id=?",
-    [semesterId, reqUser],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    });
+      [semesterId, reqUser],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send(result);
+        }
+      });
   }
   else {
     console.log("Not Authorized");

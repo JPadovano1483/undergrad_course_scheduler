@@ -34,7 +34,7 @@ function Home() {
             window.location.href = "http://localhost:3000";
         }
     });
-    
+
     const [semNum, setSemNum] = useState(0);
     const getSemNum = () => {
         Axios.post(`http://localhost:3001/semCount`, {
@@ -51,18 +51,18 @@ function Home() {
     useEffect(() => {
         getSemNum();
     }, []);
-    
+
     const getaccountInfo = () => {
         Axios.get(`http://localhost:3001/accountInfo`).then((response) => {
             setAccountInfo(response.data);
         });
     }
-    useEffect(() =>{
+    useEffect(() => {
         getaccountInfo();
     }, []);
 
     // requirement checking 
-    
+
     // const [requirements, setRequirements] = useState([]);
     // const getUserRequirements = () => {
     //     Axios.post(`http://localhost:3001/userRequirements`, {
@@ -129,7 +129,7 @@ function Home() {
     //         // check courses that you need to take (no options)
     //         for (const element of requirements) {
     //             if (element.req_type == "all") {
-                    
+
     //             }
     //         }
     //     }
@@ -292,7 +292,7 @@ function Home() {
 
     const handleAddSemester = () => {
         Axios.post(`http://localhost:3001/addSemester`, {
-            user_id: accountInfo.user_id,
+            user_id: accountInfo[0].user_id,
             semester_num: semNum + 1
         }).then((response) => {
             console.log(response);
@@ -302,7 +302,7 @@ function Home() {
 
     const handleDeleteSemester = () => {
         Axios.post(`http://localhost:3001/deleteSemester`, {
-            user_id: accountInfo.user_id,
+            user_id: accountInfo[0].user_id,
             semester_num: semNum
         }).then((response) => {
             console.log(response);
@@ -496,6 +496,7 @@ function Home() {
     // };
 
     const addCourse = (course) => {
+        console.log(selectedSemester)
         if (selectedSemester != "") {
             console.log("semsterId " + selectedSemester);
             console.log("semesters " + semesters[0]);
@@ -510,7 +511,7 @@ function Home() {
                     console.log("Prerequisites have been met!");
                     selectedSemester.push(course);
                     Axios.post(`http://localhost:3001/addCourse`, {
-                        user_id: accountInfo.user_id,
+                        user_id: accountInfo[0].user_id,
                         semester_id: selectedSemester[0].semester_id,
                         course_id: course.course_id
                     }).then((response) => {
@@ -587,7 +588,7 @@ function Home() {
                         <Table aria-label="simple table">
                             <TableBody>
                                 {filteredCourses.map((row) => (
-                                    <TableRow key={row.id}  onClick={() => addCourse(row)}>
+                                    <TableRow key={row.id} onClick={() => addCourse(row)}>
                                         <TableCell>{row.course_id}</TableCell>
                                         <TableCell>{row.course_name}</TableCell>
                                         <TableCell>{row.credit_num}</TableCell>

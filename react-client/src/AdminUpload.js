@@ -28,7 +28,7 @@ function AdminUpload() {
         }
     });
 
-    const addCourse = (e) => {
+    const addCourse = (e, c) => {
         console.log("Adding  courses.");
         Axios.post(`http://localhost:3001/course`, {
             courseId: e.course_id,
@@ -38,7 +38,9 @@ function AdminUpload() {
             semester: e.semester,
             year: e.year,
         }).then((response) => {
-            console.log(response);
+            if (response.data.errno == 1062) {
+                console.log('Error on row ' + c + ' of your upload file. Course already exists.');
+            }
         });
     }
     const { CSVDownloader, Type } = useCSVDownloader();
@@ -148,8 +150,10 @@ function AdminUpload() {
                     <CSVReader
                         onUploadAccepted={(results) => {
                             console.log(results.data);
+                            let count = 2;
                             results.data.forEach(element => {
-                                addCourse(element);
+                                addCourse(element, count);
+                                count++;
                             });
                             setZoneHover(false);
                         }}
