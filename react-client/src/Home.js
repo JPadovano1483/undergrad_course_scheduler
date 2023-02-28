@@ -62,61 +62,61 @@ function Home() {
     }, []);
 
     // requirement checking 
+    const [requirements, setRequirements] = useState([]);
+    const getUserRequirements = () => {
+        Axios.post(`http://localhost:3001/userRequirements`, {
+            user_id: accountInfo.user_id
+        }).then((response) => {
+            setRequirements(response.data);
+        });
+    }
+    useEffect(() => {
+        getUserRequirements();
+    }, []);
 
-    // const [requirements, setRequirements] = useState([]);
-    // const getUserRequirements = () => {
-    //     Axios.post(`http://localhost:3001/userRequirements`, {
-    //         user_id: user_id
-    //     }).then((response) => {
-    //         setRequirements(response.data);
-    //     });
-    // }
-    // useEffect(() => {
-    //     getUserRequirements();
-    // }, []);
+    const handleRequirements = (requirements) => {
+        let newRequirements = [];
+        let currId = null;
+        let arrayToPush = [];
+        requirements.forEach((element, index) => {
+            if (index != 0) {
+                if (element.req_id == currId) {
+                    arrayToPush.push(element);
+                }
+                else {
+                    newRequirements.push(arrayToPush);
+                    arrayToPush = [];
+                    arrayToPush.push(element);
+                    currId = element.req_id;
+                }
+            }
+            else {
+                currId = element.req_id;
+                arrayToPush.push(element);
+            }
+        });
+        if(newRequirements.length != 0) setRequirements(newRequirements);
+    }
 
-    // const handleRequirements = (requirements) => {
-    //     console.log(requirements);
-    //     let newRequirements = [];
-    //     let currId = null;
-    //     let arrayToPush = [];
-    //     requirements.forEach((element, index) => {
-    //         if (index != 0) {
-    //             if (element.req_id == currId) {
-    //                 arrayToPush.push(element);
-    //             }
-    //             else {
-    //                 newRequirements.push(arrayToPush);
-    //                 arrayToPush = [];
-    //                 arrayToPush.push(element);
-    //                 currId = element.req_id;
-    //             }
-    //         }
-    //         else {
-    //             currId = element.req_id;
-    //             arrayToPush.push(element);
-    //         }
-    //     });
-    //     if(newRequirements.length != 0) setRequirements(newRequirements);
-    // }
+    if (requirements.length != 0) {
+        handleRequirements(requirements);
+    }
 
-    // if (requirements.length != 0) {
-    //     handleRequirements(requirements);
-    // }
+    console.log(requirements);
 
-    // console.log(requirements);
+    const [userCourses, setUserCourses] = useState([]);
+    const getUserCourses = (user_id) => {
+        Axios.post(`http://localhost:3001/allUserCourses`, {
+            user_id: user_id
+        }).then((response) => {
+            setUserCourses(response.data);
+        });
+    }
+    useEffect(() => {
+        getUserCourses(accountInfo.user_id);
+    }, []);
 
-    // const [userCourses, setUserCourses] = useState([]);
-    // const getUserCourses = (user_id) => {
-    //     Axios.post(`http://localhost:3001/allUserCourses`, {
-    //         user_id: user_id
-    //     }).then((response) => {
-    //         setUserCourses(response.data);
-    //     });
-    // }
-    // useEffect(() => {
-    //     getUserCourses();
-    // }, []);
+    console.log(userCourses);
 
     // const checkRequirements = (requirements, userCourses) => {
     //     let courseArr = [];
@@ -475,7 +475,6 @@ function Home() {
     for (let i = 1; i < semNum + 1; i++) {
         semesters.push(eval("sem" + i));
     }
-    console.log(semesters);
 
     const [selectedSemester, setSelectedSemester] = useState("");
 
