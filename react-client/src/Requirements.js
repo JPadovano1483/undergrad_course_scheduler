@@ -2,8 +2,10 @@ import Navigation from "./navigation";
 import './css/home.css';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Checkbox, FormControlLabel, FormGroup, TextField, Paper, Table, TableCell, TableContainer, TableBody, TableRow, Button} from "@mui/material";
+import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, Box, Collapse, IconButton, Typography} from "@mui/material";
 import Axios from 'axios';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 function Requirements() {
   const user_id = JSON.parse(localStorage.getItem("user")).user_id;
@@ -66,8 +68,12 @@ function Requirements() {
 
   console.log(userCourses);
 
+  
+  
   // return components for requirement rules
-  const requirementRows = (reqs) => {
+  function RequirementRows(props) {
+    const [open, setOpen] = useState(false);
+    let reqs = props.reqs;
     console.log(reqs);
     let blocks = [];
     if (reqs.length != 0) {
@@ -76,14 +82,31 @@ function Requirements() {
           <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
             <Table aria-label="simple table">
               <TableBody>
+                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+                  <TableCell>
+                    <IconButton
+                      aria-label="expand row"
+                      size="small"
+                      onClick={() => setOpen(!open)}
+                    >
+                      {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </IconButton>
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    Choose 3 of the following: 
+                  </TableCell>
+                  <TableCell align="right">{element[0].req_type}</TableCell>
+                </TableRow>
                 {
                   element.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell>{row.course_id}</TableCell>
-                      <TableCell>{row.course_name}</TableCell>
-                      <TableCell>{row.credit_num}</TableCell>
-                      <TableCell>{row.grade}</TableCell>
-                    </TableRow>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                      <TableRow key={row.id}>
+                        <TableCell>{row.course_id}</TableCell>
+                        <TableCell>{row.course_name}</TableCell>
+                        <TableCell>{row.credit_num}</TableCell>
+                        <TableCell>{row.grade}</TableCell>
+                      </TableRow>
+                    </Collapse>
                   ))
                 }
               </TableBody>
@@ -99,7 +122,8 @@ function Requirements() {
         <div className="App">
             <Navigation />
             <div className='contentContainer'>
-              {requirementRows(handleRequirements(requirements))}
+              {/* {requirementRows(handleRequirements(requirements))} */}
+              <RequirementRows reqs={handleRequirements(requirements)} />
             </div>
         </div >
     );
