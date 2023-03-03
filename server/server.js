@@ -88,32 +88,17 @@ app.post("/adminCourses", (req, res) => {
 
 app.post("/prereq", (req, res) => {
   const semsterId = req.body.semesterId;
-  const semesters = req.body.semesters;
   const courseId = req.body.courseId;
   console.log("semsterId " + semsterId);
-  console.log("semesters " + semesters);
   console.log("courseId " + courseId);
-  // const sem = [req.body.sem1, req.body.sem2, req.body.sem3, req.body.sem4, req.body.sem5, req.body.sem6, req.body.sem7];
-  db.query("SELECT prerequisite_id FROM prerequisite WHERE course_id = ?",
+  db.query("SELECT prerequisite_id, grade_req FROM prerequisite WHERE course_id = ?",
     [courseId],
     (err, result) => {
       if (err) {
         console.log(err);
       }
-      else if (result.length > 0) {
-        console.log("result.length " + result.length);
-        let satisfied = true;
-        for (let i = 0; i < semsterId - 2; i++) {
-          console.log("i " + i);
-          if (!result.some(prereqId => semesters[i].includes(prereqId))) {
-            satisfied = false;
-          }
-        }
-        res.send(satisfied);
-      }
       else {
-        console.log("No prerequisites.");
-        res.send(true);
+        res.send(result);
       }
     });
 });
@@ -321,6 +306,31 @@ app.post("/semester/:id", (req, res) => {
   }
 });
 
+app.post("/allSemesters", (req, res) => {
+  const reqUser = req.body.reqUser;
+  const targetUser = req.body.targetUser;
+  const role = req.body.role;
+  const semNumSelected = req.body.semNumSelected
+  console.log(semNumSelected);
+
+  let userValidation = userCtrlCheck(reqUser, targetUser, role);
+
+  if (userValidation) {
+    db.query("SELECT course_id, course_name, credit_num, semester_id, user.user_id, user_course.grade FROM course JOIN user_course using(course_id) JOIN semester using(semester_id) INNER JOIN user ON user_course.user_id=user.user_id WHERE semester_id < ? AND user.user_id=?",
+    [semNumSelected, reqUser],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+  }
+  else {
+    console.log("Not Authorized");
+  }
+});
+
 app.post("/semCount", (req, res) => {
   const userId = req.body.userId;
   db.query(`SELECT semester_num FROM semester WHERE user_id=? ORDER BY semester_num DESC LIMIT 1`,
@@ -359,8 +369,9 @@ app.post("/reset", (req, res) => {
 app.post("/addCourse", (req, res) => {
   const semester_id = req.body.semester_id;
   const course_id = req.body.course_id;
-  db.query(`INSERT INTO user_course (semester_id, course_id) VALUES (?,?)`,
-    [semester_id, course_id],
+  const user_id = req.body.user_id;
+  db.query(`INSERT INTO user_course (semester_id, course_id, user_id) VALUES (?,?,?)`,
+    [semester_id, course_id, user_id],
     (err, result) => {
       if (err) {
         console.log(err);
