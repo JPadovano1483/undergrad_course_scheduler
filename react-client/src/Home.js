@@ -433,9 +433,10 @@ function Home() {
                 let satisfied = true;
                 if (response[0].data.length > 0) {
                     const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
+                    // checks if the perequisite courses are found in a previous semester and have a passing grade or have no grade yet
                     for (let i = 0; i < response[0].data.length; i++) {
                         const classPassed = response[1].data.some((course) => {
-                            return course.course_id == response[0].data[i].prerequisite_id && course.grade !== null && grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req);
+                            return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
                         });
                         console.log(!classPassed);
                         if (!classPassed) {
