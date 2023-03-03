@@ -409,28 +409,15 @@ function Home() {
         setDrawerOpen(true);
     }
 
-    // const checkPrereq = (courseId) => {
-    //     Axios.post(`http://localhost:3001/prereq`, {
-    //         semesterId: selectedSemester[0].semesterId,
-    //         semesters: semesters,
-    //         courseId: courseId,
-    //     }).then((response) => {
-    //         console.log(response.data);
-    //         return response.data;
-    //     });
-    // };
-
     const addCourse = (course) => {
         console.log(selectedSemester);
         if (selectedSemester !== "") {
             console.log(selectedSemester);
-            // console.log("semesters " + semesters[0]);
             console.log(course);
             console.log("courseId: " + course.course_id);
             Promise.all([
                 Axios.post(`http://localhost:3001/prereq`, {
                     semesterId: semNumSelected,
-                    // semesters: semesters,
                     courseId: course.course_id,
                 }),
                 Axios.post(`http://localhost:3001/allSemesters`, {
@@ -538,7 +525,7 @@ function Home() {
                         <Table aria-label="simple table">
                             <TableBody>
                                 {filteredCourses.map((row) => (
-                                    <TableRow key={row.id}  onClick={() => addCourse(row)}>
+                                    <TableRow key={row.id} onClick={() => addCourse(row)}>
                                         <TableCell>{row.course_id}</TableCell>
                                         <TableCell>{row.course_name}</TableCell>
                                         <TableCell>{row.credit_num}</TableCell>
