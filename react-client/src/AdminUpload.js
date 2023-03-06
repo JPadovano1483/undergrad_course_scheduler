@@ -10,29 +10,7 @@ function AdminUpload() {
     const [error, setError] = useState("");
     const [alert, setAlert] = useState(false);
     const [errorArray, setErrorArray] = useState([]);
-
-    let displayAlert;
-    // const alertDisplay = () => {
-    console.log(alert);
-    if (alert) {
-        displayAlert = <Alert severity="error">{error}</Alert>;
-    }
-    // }
-    // const [accountInfo, setAccountInfo] = useState(() => {
-    //     let loggedInUser = localStorage.getItem("user");
-    //     if (loggedInUser != null) {
-    //         loggedInUser = JSON.parse(loggedInUser);
-    //         if (loggedInUser.is_admin) {
-    //             return loggedInUser;
-    //         }
-    //         else {
-    //             window.location.href = "http://localhost:3000/home";
-    //         }
-    //     }
-    //     else {
-    //         window.location.href = "http://localhost:3000";
-    //     }
-    // });
+    const [message, setMessage] = useState("");
 
     const addCourse = (e, c) => {
         Axios.post(`http://localhost:3001/course`, {
@@ -43,12 +21,8 @@ function AdminUpload() {
             semester: e.semester,
             year: e.year,
         }).then((response) => {
-            setErrorArray(errorArray => [...errorArray, c])
-            let message = errorArray.toString()
             if (response.data.errno === 1062) {
-                setError('Error on row ' + message + ' of your upload file. Course already exists.');
-                setAlert(true);
-                // console.log(displayAlert);
+                setErrorArray(errorArray => [...errorArray, c]);
             }
         });
     }
@@ -132,6 +106,13 @@ function AdminUpload() {
     const [removeHoverColor, setRemoveHoverColor] = useState(
         DEFAULT_REMOVE_HOVER_COLOR
     );
+    const errorBlock = (errors) => {
+        let block = [];
+        for (const [index] of errors.entries()) {
+            block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">Error in row {errors[index]}. Course already exists.</Alert></div>);
+        };
+        return block;
+    }
 
     return (
         <>
@@ -252,7 +233,7 @@ function AdminUpload() {
                         >Download upload template</Button>
                     </CSVDownloader>
                 </div>
-                {displayAlert}
+                {errorBlock(errorArray)}
             </div>
         </>
     );
