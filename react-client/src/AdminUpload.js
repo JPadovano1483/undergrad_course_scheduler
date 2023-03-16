@@ -4,14 +4,51 @@ import * as React from 'react';
 import { useState } from 'react';
 import Axios from 'axios';
 import { useCSVReader, lightenDarkenColor, formatFileSize, useCSVDownloader } from "react-papaparse";
-import { Alert, Button } from "@mui/material";
+import { Alert, Button, ToggleButtonGroup, ToggleButton } from "@mui/material";
+import { response } from "express";
 
 function AdminUpload() {
-    const [error, setError] = useState("");
-    const [alert, setAlert] = useState(false);
-    const [errorArray, setErrorArray] = useState([]);
-    const [message, setMessage] = useState("");
+    const [alignment, setAlignment] = useState('Courses');
+    const [downloaderData, setDownloaderData] = useState([{
+        'course_id': null,
+        'course_name': null,
+        'course_description': null,
+        'credits': null,
+        'semester': null,
+        'year': null
+    }]);
+    const handleChange = (event, newAlignment) => {
+        setAlignment(newAlignment);
+        switch (newAlignment) {
+            case 'Courses':
+                setDownloaderData([{
+                    'course_id': null,
+                    'course_name': null,
+                    'course_description': null,
+                    'credits': null,
+                    'semester': null,
+                    'year': null
+                }]);
+                break;
+            case 'Programs':
+                setDownloaderData([{
+                    'program_name': null,
+                    'program_type': null,
+                    'concentration_req': null
+                }]);
+                break
+            default:
+                setDownloaderData(null);
+        }
+    };
 
+
+    const [errorArray, setErrorArray] = useState([]);
+    const getPrograms = () => {
+        Axios.get(`http://localhost:3001/allCourses`).then((response) => {
+            console.log(response);
+        });
+    }
     const addCourse = (e, c) => {
         Axios.post(`http://localhost:3001/course`, {
             courseId: e.course_id,
@@ -133,8 +170,22 @@ function AdminUpload() {
                         </div>
                     </div>
                 </div>
+                <div>
+                    <h3>What are you uploading?</h3>
+                    <ToggleButtonGroup
+                        color="primary"
+                        value={alignment}
+                        exclusive
+                        onChange={handleChange}
+                        aria-label="Platform"
+                    >
+                        <ToggleButton value="Courses">Courses</ToggleButton>
+                        <ToggleButton value="Programs">Programs</ToggleButton>
+                        <ToggleButton value="Requirements">Requirements</ToggleButton>
+                    </ToggleButtonGroup>
+                </div>
                 <h1>
-                    Course Schedule Upload
+                    {alignment} Upload
                 </h1>
                 <div className="inputContainer">
                     <CSVReader
@@ -142,7 +193,13 @@ function AdminUpload() {
                             setErrorArray([]);
                             let count = 2;
                             results.data.forEach(element => {
-                                addCourse(element, count);
+                                switch (alignment) {
+                                    case 'Courses':
+                                        addCourse(element, count);
+                                        break;
+                                    case 'Programs':
+
+                                }
                                 count++;
                             });
                             setZoneHover(false);
@@ -212,21 +269,12 @@ function AdminUpload() {
                         )}
                     </CSVReader>
                     <CSVDownloader
-                        filename={'course_upload_template'}
+                        filename={JSON.stringify(alignment) + 'upload_template'}
                         bom={true}
                         config={{
                             delimiter: ',',
                         }}
-                        data={[
-                            {
-                                'course_id': null,
-                                'course_name': null,
-                                'course_description': null,
-                                'credits': null,
-                                'semester': null,
-                                'year': null
-                            }
-                        ]}
+                        data={downloaderData}
                     >
                         <Button variant="contained"
                             sx={{ mt: 3, mb: 2 }}

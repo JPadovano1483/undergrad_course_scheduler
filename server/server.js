@@ -42,6 +42,20 @@ app.post("/course", (req, res) => {
       }
     });
 });
+app.post("/program", (req, res) => {
+  const programName = req.body.programName;
+  const programType = req.body.programType;
+  const concentrationReq = req.body.concentrationReq;
+  db.query("INSERT INTO program (program_name, program_type, concentration_req) VALUES (?,?,?)",
+    [programName, programType, concentrationReq],
+    (err, result) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
 app.post("/courseEdit", (req, res) => {
   const courseId = req.body.courseId;
   const courseName = req.body.courseName;
@@ -66,6 +80,17 @@ app.post("/courseEdit", (req, res) => {
 
 app.get("/allCourses", (req, res) => {
   db.query("SELECT * FROM course",
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.get("/allPrograms", (req, res) => {
+  db.query("SELECT * FROM program",
     (err, result) => {
       if (err) {
         console.log(err);
