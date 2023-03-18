@@ -80,17 +80,27 @@ function Admin() {
     });
 
     const addCourse = () => {
-        console.log("Adding course.");
-        Axios.post(`http://localhost:3001/course`, {
-            courseId: courseId,
-            courseName: courseName,
-            courseDescription: courseDescription,
-            credits: credits,
-            semester: semester,
-            year: year,
+        Axios.post(`http://localhost:3001/searchCourse`, {
+            course_id: courseId,
+            course_name: courseName
         }).then((response) => {
-            console.log(response);
-        });
+            if (response.data.length > 0) {
+                console.log("Course already exists!");
+            }
+            else {
+                console.log("Adding course.");
+                Axios.post(`http://localhost:3001/course`, {
+                    courseId: courseId,
+                    courseName: courseName,
+                    courseDescription: courseDescription,
+                    credits: credits,
+                    semester: semester,
+                    year: year,
+                }).then((response) => {
+                    console.log(response);
+                });
+            }
+        })
     }
 
     return (
