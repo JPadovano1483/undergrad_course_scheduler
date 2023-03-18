@@ -4,32 +4,37 @@ import * as React from 'react';
 import { useState } from 'react';
 import Axios from 'axios';
 import { useCSVReader, lightenDarkenColor, formatFileSize, useCSVDownloader } from "react-papaparse";
-import { Button } from "@mui/material";
+import { Alert, Button } from "@mui/material";
 
 function AdminUpload() {
-    const [course_id, setCourse_id] = useState("");
-    const [course_name, setCourse_name] = useState("");
-    const [course_description, setCourse_description] = useState("");
-    const [course_credits, setCourse_credits] = useState("");
+    const [error, setError] = useState("");
+    const [alert, setAlert] = useState(false);
+    const [errorArray, setErrorArray] = useState([]);
 
-    const [accountInfo, setAccountInfo] = useState(() => {
-        let loggedInUser = localStorage.getItem("user");
-        if (loggedInUser != null) {
-            loggedInUser = JSON.parse(loggedInUser);
-            if (loggedInUser.is_admin) {
-                return loggedInUser;
-            }
-            else {
-                window.location.href = "http://localhost:3000/home";
-            }
-        }
-        else {
-            window.location.href = "http://localhost:3000";
-        }
-    });
+    let displayAlert;
+    // const alertDisplay = () => {
+    console.log(alert);
+    if (alert) {
+        displayAlert = <Alert severity="error">{error}</Alert>;
+    }
+    // }
+    // const [accountInfo, setAccountInfo] = useState(() => {
+    //     let loggedInUser = localStorage.getItem("user");
+    //     if (loggedInUser != null) {
+    //         loggedInUser = JSON.parse(loggedInUser);
+    //         if (loggedInUser.is_admin) {
+    //             return loggedInUser;
+    //         }
+    //         else {
+    //             window.location.href = "http://localhost:3000/home";
+    //         }
+    //     }
+    //     else {
+    //         window.location.href = "http://localhost:3000";
+    //     }
+    // });
 
     const addCourse = (e, c) => {
-        console.log("Adding  courses.");
         Axios.post(`http://localhost:3001/course`, {
             courseId: e.course_id,
             courseName: e.course_name,
@@ -38,12 +43,16 @@ function AdminUpload() {
             semester: e.semester,
             year: e.year,
         }).then((response) => {
-            if (response.data.errno == 1062) {
-                console.log('Error on row ' + c + ' of your upload file. Course already exists.');
+            setErrorArray(errorArray => [...errorArray, c])
+            let message = errorArray.toString()
+            if (response.data.errno === 1062) {
+                setError('Error on row ' + message + ' of your upload file. Course already exists.');
+                setAlert(true);
+                // console.log(displayAlert);
             }
         });
     }
-    const { CSVDownloader, Type } = useCSVDownloader();
+    const { CSVDownloader } = useCSVDownloader();
     const GREY = '#CCC';
     const GREY_LIGHT = 'rgba(255, 255, 255, 0.4)';
     const DEFAULT_REMOVE_HOVER_COLOR = '#A01919';
@@ -149,7 +158,7 @@ function AdminUpload() {
                 <div className="inputContainer">
                     <CSVReader
                         onUploadAccepted={(results) => {
-                            console.log(results.data);
+                            setErrorArray([]);
                             let count = 2;
                             results.data.forEach(element => {
                                 addCourse(element, count);
@@ -243,6 +252,7 @@ function AdminUpload() {
                         >Download upload template</Button>
                     </CSVDownloader>
                 </div>
+                {displayAlert}
             </div>
         </>
     );
