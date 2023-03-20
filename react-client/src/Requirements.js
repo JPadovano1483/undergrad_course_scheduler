@@ -6,6 +6,10 @@ import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, Box, Coll
 import Axios from 'axios';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
+import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
+import { Icon } from '@mui/material';
 
 function Requirements() {
   const user_id = JSON.parse(localStorage.getItem("user")).user_id;
@@ -83,7 +87,7 @@ function Requirements() {
             <Table aria-label="simple table">
               <TableBody>
                 <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                  <TableCell>
+                  {/* <TableCell>
                     <IconButton
                       aria-label="expand row"
                       size="small"
@@ -91,22 +95,26 @@ function Requirements() {
                     >
                       {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
+                  </TableCell> */}
+                  <TableCell component="th" scope="row" aling="left">
+                    {getHeader(element)} 
                   </TableCell>
-                  <TableCell component="th" scope="row">
-                    Choose 3 of the following: 
-                  </TableCell>
-                  <TableCell align="right">{element[0].req_type}</TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
                 {
                   element.map((row) => (
-                    <Collapse in={open} timeout="auto" unmountOnExit>
+                    // <Collapse in={open} timeout="auto" unmountOnExit key={row.id}>
                       <TableRow key={row.id}>
-                        <TableCell>{row.course_id}</TableCell>
-                        <TableCell>{row.course_name}</TableCell>
-                        <TableCell>{row.credit_num}</TableCell>
-                        <TableCell>{row.grade}</TableCell>
+                        <TableCell align="left">{getIcon(row.course_id)}</TableCell>
+                        <TableCell align="left">{row.course_id}</TableCell>
+                        <TableCell align="left">{row.course_name}</TableCell>
+                        <TableCell align="left">{row.credit_num}</TableCell>
+                        <TableCell align="left">{getGrade(row.course_id)}</TableCell>
                       </TableRow>
-                    </Collapse>
+                    // </Collapse>
                   ))
                 }
               </TableBody>
@@ -116,6 +124,32 @@ function Requirements() {
       }
     }
     return blocks;
+  }
+
+  function getHeader(requirement) {
+    let requirementType = requirement[0].req_type;
+    let requirementNum = requirement[0].req_type_num;
+
+    if (requirementType == 'all') return 'All of the following:';
+    else if (requirementType == 'credits' || requirementType == 'courses') return `Choose ${requirementNum} ${requirementType} of the following:`;
+    else return '';
+  }
+
+  function getIcon(courseId) {
+    let course = userCourses.find(item => item.course_id == courseId);
+    if (course) {
+      console.log(course);
+      if (course.grade != null) return (<CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>);
+      else return (<TrackChangesIcon sx={{color: 'blue'}}></TrackChangesIcon>)
+    }
+    else {
+      return (<PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>);
+    }
+  }
+
+  function getGrade(courseId) {
+    let course = userCourses.find(item => item.course_id == courseId);
+    return course?.grade;
   }
   
   return (

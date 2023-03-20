@@ -359,8 +359,9 @@ app.post("/reset", (req, res) => {
 app.post("/addCourse", (req, res) => {
   const semester_id = req.body.semester_id;
   const course_id = req.body.course_id;
-  db.query(`INSERT INTO user_course (semester_id, course_id) VALUES (?,?)`,
-    [semester_id, course_id],
+  const user_id = req.body.user_id;
+  db.query(`INSERT INTO user_course (semester_id, course_id, user_id) VALUES (?,?,?)`,
+    [semester_id, course_id, user_id],
     (err, result) => {
       if (err) {
         console.log(err);

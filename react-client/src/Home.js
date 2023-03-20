@@ -102,8 +102,6 @@ function Home() {
         handleRequirements(requirements);
     }
 
-    console.log(requirements);
-
     const [userCourses, setUserCourses] = useState([]);
     const getUserCourses = (user_id) => {
         Axios.post(`http://localhost:3001/allUserCourses`, {
@@ -115,8 +113,6 @@ function Home() {
     useEffect(() => {
         getUserCourses(accountInfo.user_id);
     }, []);
-
-    console.log(userCourses);
 
     // const checkRequirements = (requirements, userCourses) => {
     //     let courseArr = [];
@@ -506,6 +502,7 @@ function Home() {
                 courseId: course.courseId,
             }).then((response) => {
                 console.log(response.data);
+                console.log(accountInfo[0].user_id);
                 if (response.data) {
                     console.log("Prerequisites have been met!");
                     selectedSemester.push(course);
