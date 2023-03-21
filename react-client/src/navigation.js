@@ -31,6 +31,7 @@ function Navigation()
         <AppBar position="static" sx={{ backgroundColor: '#002856;' }}>
             <Toolbar>
                 <Link to="/home" className='link'>Planning</Link>
+                <Link to="/requirements" className="link">Requirements</Link>
                 <Link to="/admin" className='link' hidden={!accountInfo.is_admin}>Admin</Link>
                 <Typography component="div" sx={{ flexGrow: 1 }}></Typography>
                 <Link onClick={() => {localStorage.clear(); sessionStorage.clear(); window.location.href = "http://localhost:3000";}} className='link'>Logout</Link>

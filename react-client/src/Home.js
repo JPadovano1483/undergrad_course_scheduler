@@ -9,6 +9,7 @@ import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useEffect } from 'react';
 import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
+import ErrorIcon from '@mui/icons-material/Error';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SimpleDialog from './Dialog';
@@ -57,11 +58,74 @@ function Home() {
         getSemTotal();
     }, []);
 
+    const getaccountInfo = () => {
+        Axios.get(`http://localhost:3001/accountInfo`).then((response) => {
+            setAccountInfo(response.data);
+        });
+    }
+    useEffect(() => {
+        getaccountInfo();
+    }, []);
+
+    // requirement checking 
+    const [requirements, setRequirements] = useState([]);
+    const getUserRequirements = () => {
+        Axios.post(`http://localhost:3001/userRequirements`, {
+            user_id: accountInfo.user_id
+        }).then((response) => {
+            setRequirements(response.data);
+        });
+    }
+    useEffect(() => {
+        getUserRequirements();
+    }, []);
+
+    const handleRequirements = (requirements) => {
+        let newRequirements = [];
+        let currId = null;
+        let arrayToPush = [];
+        requirements.forEach((element, index) => {
+            if (index != 0) {
+                if (element.req_id == currId) {
+                    arrayToPush.push(element);
+                }
+                else {
+                    newRequirements.push(arrayToPush);
+                    arrayToPush = [];
+                    arrayToPush.push(element);
+                    currId = element.req_id;
+                }
+            }
+            else {
+                currId = element.req_id;
+                arrayToPush.push(element);
+            }
+        });
+        if(newRequirements.length != 0) setRequirements(newRequirements);
+    }
+
+    if (requirements.length != 0) {
+        handleRequirements(requirements);
+    }
+
+    const [userCourses, setUserCourses] = useState([]);
+    const getUserCourses = (user_id) => {
+        Axios.post(`http://localhost:3001/allUserCourses`, {
+            user_id: user_id
+        }).then((response) => {
+            setUserCourses(response.data);
+        });
+    }
+    useEffect(() => {
+        getUserCourses(accountInfo.user_id);
+    }, []);
+
+    console.log(userCourses);
+
     const [semNumSelected, setSemNumSelected] = useState(0);
     
     const handleDialogOpen = () => {
         setDialogOpen(true);
-        console.log('hello');
     };
 
     const handleClose = (value) => {
@@ -88,21 +152,6 @@ function Home() {
     const [sem10, setSem10] = useState([]);
     const [sem11, setSem11] = useState([]);
     const [sem12, setSem12] = useState([]);
-
-    // const [plan, setPlan] = useState([]);
-    // const getPlan = (setPlan, userId) => {
-    //     Axios.get(`http://localhost:3001/plan/${userId}`, {
-    //         reqUser: accountInfo.user_id,
-    //         targetUser: accountInfo.user_id,
-    //         role: accountInfo.is_admin
-    //     }).then((response) => {
-    //         setPlan(response);
-    //     });
-    // }
-
-    // useEffect(() => {
-    //     getPlan(setPlan, accountInfo.user_id)
-    // }, []);
 
     const getSemester = (setSem, id) => {
         Axios.post(`http://localhost:3001/semester/${id}`, {
@@ -310,23 +359,6 @@ function Home() {
         let blocks = [];
         let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
 
-        // trying to take in all plan and split it into the semesters
-        // let semesters = [];
-
-        // if (plan.data) {
-        //     let numSemesters = plan.data[plan.data.length - 1].semester_id - plan.data[0].semester_id + 1;
-        //     let curSemId = plan.data[0].semester_id;
-        //     for (let i = 0; i < numSemesters; i++) {
-        //         for (let j = 0; j < plan.data.length; j++) {
-        //             if (plan.data[j].semester_id == curSemId) {
-        //                 semesters.push(plan.data[j]);
-        //             }
-        //             else {
-        //                 curSemId++;
-        //             }
-        //         }
-        //     };
-
         const countCredits = (semester, id) => {
             console.log(semester);
             let count = 0;
@@ -384,42 +416,43 @@ function Home() {
                                         {/* <Button color = "error" onClick={handleClickOpen}>
                                                 <DeleteIcon></DeleteIcon>
                                             </Button>
-                                            {/* <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                overlayStyle={{backgroundColor: 'transparent'}}
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
-                                                <Button onClick={handleClickClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>  */}
-                                        </TableCell>
-                                        <SimpleDialog
-                                            open={dialogOpen}
-                                            onClose={handleClose}
-                                        />
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <Button onClick={() => addToSemester(semesters[i], i + 1)}>Add</Button>
-                </Grid>);
-            // }
+                                            <Dialog
+                                            open={open}
+                                            
+                                            aria-labelledby="alert-dialog-title"
+                                            aria-describedby="alert-dialog-description"
+                                            overlayStyle={{backgroundColor: 'transparent'}}
+                                            >
+                                            <DialogTitle id="alert-dialog-title">
+                                            </DialogTitle>
+                                            <DialogActions>
+                                            <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
+                                            <Button onClick={handleClickClose} autoFocus>
+                                            Cancel
+                                            </Button>
+                                            </DialogActions>
+                                            </Dialog>  */}
+                                    </TableCell>
+                                    {checkFlag(row.course_id)}
+                                    <SimpleDialog
+                                        open={dialogOpen}
+                                        onClose={handleClose}
+                                    />
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Button onClick={() => addToSemester(semesters[i], i + 1)}>Add</Button>
+            </Grid>);
         }
         return blocks;
     }
 
+    let semesters = [];
+    for (let i = 1; i < semNum + 1; i++) {
+        semesters.push(eval("sem" + i));
+    }
     // let semesters = [];
     // for (let i = 1; i < semTotal + 1; i++) {
     //     semesters.push(eval("sem" + i));
@@ -488,15 +521,81 @@ function Home() {
         }
     }
 
-    // const saveSemesters = () => {
-    //     Axios.post(`http://localhost:3001/updateSemesters`, {
-    //         user_id: 1,
-    //         semesters: semesters
-    //   }).then((response) => {
-    //       console.log(response);
-    //   });
-    // }
+    const [userSemIDs, setUserSemIDs] = useState([]);
 
+    const getUserSemIDs = () => {
+        Axios.post(`http://localhost:3001/userSemeseterIDs`, {
+            user_id: user_id
+        }).then((response) => {
+            for (const elem of response.data) {
+                userSemIDs.push(elem.semester_id);
+            }
+        });
+    }
+
+    useEffect(() => {
+        getUserSemIDs();
+    }, []);
+
+    const [courseSemFlags, setCourseSemFlags] = useState([]);
+    const [courseYearFlags, setCourseYearFlags] = useState([]);
+
+    const courseFlagging = (userCourses) => {
+        // this is undefined rn
+        let isStartSemEven = accountInfo[0]?.start_year % 2 == 0;
+        console.log(isStartSemEven);
+        let isSemEven = false;
+        if (userSemIDs.length != 0 && userCourses.length != 0) {
+            for (const course of userCourses) {
+                // check semeseter placement
+                if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(course.semester_id) % 2 == 1) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(course.semester_id) % 2 == 0)) {
+                    console.log(course.course_id + ": wrong semester!");
+                    if (!courseSemFlags.includes(course.course_id)) courseSemFlags.push(course.course_id);
+                }
+
+                // flip bit for every spring semester
+                if (userSemIDs.indexOf(course.semester_id) % 3 != 0) isSemEven = !isStartSemEven;
+                else isSemEven = isStartSemEven;
+                console.log(userSemIDs.indexOf(course.semester_id));
+                console.log((course.year?.toLowerCase() == "even") && !isSemEven);
+            
+                // check year placement
+                if ((course.year?.toLowerCase() == "even" && !isSemEven) || (course.year?.toLowerCase() == "odd" && isSemEven)) {
+                    console.log(course.course_id + ": wrong year!");
+                    console.log(isSemEven);
+                    if (!courseYearFlags.includes(course.course_id)) courseYearFlags.push(course.course_id);
+                }
+            }
+        }
+    }
+
+    courseFlagging(userCourses);
+
+    const checkFlag = (courseId) => {
+        console.log(courseId);
+        console.log(courseSemFlags);
+        console.log(courseYearFlags);
+        let flags = [];
+
+        // 
+        if (courseSemFlags.includes(courseId)) {
+            flags.push(
+                <TableCell sx={{borderTop: "1px solid rgba(224,224,224,1)"}}>
+                    <ErrorIcon sx={{color: 'red'}}></ErrorIcon>
+                </TableCell>
+            )
+        }
+
+        if (courseYearFlags.includes(courseId)) {
+            flags.push(
+                <TableCell sx={{borderTop: "1px solid rgba(224,224,224,1)"}}>
+                    <ErrorIcon sx={{color: 'yellow'}}></ErrorIcon>
+                </TableCell>
+            )
+        }
+
+        return flags;
+    }
 
     return (
         <div className="App">

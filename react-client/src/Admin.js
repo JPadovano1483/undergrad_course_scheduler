@@ -95,17 +95,35 @@ function Admin() {
     });
 
     const addCourse = () => {
-        console.log("Adding course.");
-        Axios.post(`http://localhost:3001/course`, {
-            courseId: courseId,
-            courseName: courseName,
-            courseDescription: courseDescription,
-            credits: credits,
-            semester: semester,
-            year: year,
+        Axios.post(`http://localhost:3001/searchCourse`, {
+            course_id: courseId,
+            course_name: courseName
         }).then((response) => {
-            console.log(response);
-        });
+            if (response.data.length > 0) {
+                console.log("Course already exists!");
+                document.querySelector('#errorMessage').style.color = 'red';
+                document.querySelector('#errorMessage').innerHTML = "Course alredy exists!";
+            }
+            else {
+                console.log("Adding course.");
+                Axios.post(`http://localhost:3001/course`, {
+                    courseId: courseId,
+                    courseName: courseName,
+                    courseDescription: courseDescription,
+                    credits: credits,
+                    semester: semester,
+                    year: year,
+                }).then((response) => {
+                    console.log(response);
+                    document.querySelector('#courseID').value = "";
+                    document.querySelector('#courseName').value = "";
+                    document.querySelector('#description').value = "";
+                    document.querySelector('#credits').value = "";
+                    document.querySelector('#errorMessage').style.color = 'black';
+                    document.querySelector('#errorMessage').innerHTML = "Upload Successful!";
+                });
+            }
+        })
     }
 
     return (
@@ -165,7 +183,7 @@ function Admin() {
                         <TextField 
                             fullWidth 
                             label="Name of the Class *" 
-                            id="name" 
+                            id="courseName" 
                             sx={{ my: 1 }} 
                             variant="filled"
                             onChange={(e) => {
@@ -187,24 +205,19 @@ function Admin() {
                             }}
                         />
                         <div classname= "dropdown">
-                <form>
-                <select value={semester} onChange={handleSemesterChange}>
-                  <option value="Fall">Fall</option>
-                  <option value="Spring">Spring</option>
-                  <option value="Both">Both</option>
-                </select>
-                </form>
-                </div>
-                <div classname= "dropdown">
-                <form>
-                <select value={year} onChange={handleYearChange}>
-                  <option value="Even">Even</option>
-                  <option value="Odd">Odd</option>
-                  <option value="Both">Both</option>
-                </select>
-                </form>
-                </div>
-                         
+                            <select value={semester} onChange={handleSemesterChange}>
+                                <option value="Fall">Fall</option>
+                                <option value="Spring">Spring</option>
+                                <option value="Both">Both</option>
+                            </select>
+                        </div>
+                        <div classname= "dropdown">
+                            <select value={year} onChange={handleYearChange}>
+                                <option value="Even">Even</option>
+                                <option value="Odd">Odd</option>
+                                <option value="Both">Both</option>
+                            </select>
+                        </div>
                         <TextField 
                              
                             type={'number'} 
@@ -218,6 +231,7 @@ function Admin() {
                             }} 
                         />
                         <br></br>
+                        <p id="errorMessage"></p>
                         <Button variant="contained" startIcon={<InputIcon />} sx={{ left: '87%' }} onClick={addCourse}>
                             <input hidden type="submit" value="Submit"/>
                             Submit
