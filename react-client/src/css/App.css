@@ -77,3 +77,19 @@ main {
   padding-top: 20px;
 }
 
+
+#login-error-msg {
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.43;
+  letter-spacing: 0.01071em;
+  text-align: center;
+  margin: 0;
+  font-weight: 500;
+  color: #ffffff;
+  border: 1px solid #8a0000;
+  background-color: #d32f2f;
+  border-radius: 4px;
+  padding: 6px 16px;
+  display: none;
+}

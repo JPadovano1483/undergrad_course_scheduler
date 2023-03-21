@@ -267,6 +267,45 @@ app.post("/account", (req, res) => {
     });
 });
 
+app.post("/major", (req, res) => {
+  db.query("SELECT program_name FROM program WHERE program_type = ?",
+    ['major'],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/minor", (req, res) => {
+  db.query("SELECT program_name FROM program WHERE program_type = ?",
+    ['minor'],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+
+});
+
+app.post("/concentration:/major", (req, res) => {
+
+  const program = req.params.major;
+  db.query("SELECT program_name FROM program WHERE program_type = ? AND major_id IN (SELECT program_id FROM program WHERE program_name = ? AND program_type = ?)",
+  ['concentration', program, 'major'],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+
+});
 app.get("/profile", (req, res) => {
   const first_name = req.body.first_name;
   const last_name = req.body.last_name;
@@ -274,7 +313,7 @@ app.get("/profile", (req, res) => {
   //const grade_level = req.body.grade_level;
 
   db.query("SELECT first_name, last_name, username, grade_level FROM user WHERE username = ?",
-    username,
+    [username],
     (err, result) => {
       if (err) {
         console.log(err);
