@@ -12,7 +12,8 @@ import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import { Icon } from '@mui/material';
 
 function Requirements() {
-  const user_id = JSON.parse(localStorage.getItem("user")).user_id;
+  // const user_id = JSON.parse(localStorage.getItem("user")).user_id;
+  const user_id = 4;
 
   const [requirements, setRequirements] = useState([]);
   const getUserRequirements = () => {

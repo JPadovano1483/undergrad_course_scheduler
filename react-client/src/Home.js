@@ -517,29 +517,32 @@ function Home() {
         }
     }
 
-    const [userSemIDs, setUserSemIDs] = useState([]);
+    const [userSemIDs, setUserSemIDs] = useState([1,2,3,4,5,6,7,8]);
 
-    const getUserSemIDs = () => {
-        Axios.post(`http://localhost:3001/userSemeseterIDs`, {
-            user_id: user_id
-        }).then((response) => {
-            for (const elem of response.data) {
-                userSemIDs.push(elem.semester_id);
-            }
-        });
-    }
+    // const getUserSemIDs = () => {
+    //     Axios.post(`http://localhost:3001/userSemeseterIDs`, {
+    //         user_id: user_id
+    //     }).then((response) => {
+    //         for (const elem of response.data) {
+    //             userSemIDs.push(elem.semester_id);
+    //         }
+    //     });
+    // }
 
-    useEffect(() => {
-        getUserSemIDs();
-    }, []);
+    // useEffect(() => {
+    //     getUserSemIDs();
+    // }, []);
 
     const [courseSemFlags, setCourseSemFlags] = useState([]);
     const [courseYearFlags, setCourseYearFlags] = useState([]);
 
     const courseFlagging = (userCourses) => {
         // this is undefined rn
-        let isStartSemEven = accountInfo[0]?.start_year % 2 == 0;
+        // let isStartSemEven = accountInfo[0]?.start_year % 2 == 0;
+        let isStartSemEven = true;
         console.log(isStartSemEven);
+        console.log(userSemIDs);
+        console.log(userCourses);
         let isSemEven = false;
         if (userSemIDs.length != 0 && userCourses.length != 0) {
             for (const course of userCourses) {
@@ -585,7 +588,7 @@ function Home() {
         if (courseYearFlags.includes(courseId)) {
             flags.push(
                 <TableCell sx={{borderTop: "1px solid rgba(224,224,224,1)"}}>
-                    <ErrorIcon sx={{color: 'yellow'}}></ErrorIcon>
+                    <ErrorIcon sx={{color: 'orange'}}></ErrorIcon>
                 </TableCell>
             )
         }
