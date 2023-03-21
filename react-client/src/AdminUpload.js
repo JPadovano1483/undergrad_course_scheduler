@@ -5,7 +5,6 @@ import { useState } from 'react';
 import Axios from 'axios';
 import { useCSVReader, lightenDarkenColor, formatFileSize, useCSVDownloader } from "react-papaparse";
 import { Alert, Button, ToggleButtonGroup, ToggleButton } from "@mui/material";
-import { response } from "express";
 
 function AdminUpload() {
     const [alignment, setAlignment] = useState('Courses');
@@ -34,19 +33,44 @@ function AdminUpload() {
                 setDownloaderData([{
                     'program_name': null,
                     'program_type': null,
-                    'concentration_req': null
+                    'concentration_req': null,
+                    'major_id': null
                 }]);
                 break
             default:
                 setDownloaderData(null);
         }
     };
-
+    const [empty, setEmpty] = useState(false);
 
     const [errorArray, setErrorArray] = useState([]);
-    const getPrograms = () => {
-        Axios.get(`http://localhost:3001/allCourses`).then((response) => {
-            console.log(response);
+
+    const getPrograms = async (programToAdd, count) => {
+        let programArray = [];
+        await Axios.get(`http://localhost:3001/allPrograms`).then((response) => {
+            response.data.map((x, c) => {
+                programArray.push(response.data[c].program_name);
+            });
+        });
+        let add = true;
+        programArray.every(element => {
+            if (programToAdd.program_name === element) {
+                setErrorArray(errorArray => [...errorArray, count]);
+                add = false;
+                return false;
+            }
+            return true;
+        });
+        if (add) {
+            addPrograms(programToAdd);
+        }
+    }
+    const addPrograms = (e) => {
+        Axios.post(`http://localhost:3001/program`, {
+            programName: e.program_name,
+            programType: e.program_type,
+            concentrationReq: e.concentration_req,
+            major_id: e.major_id
         });
     }
     const addCourse = (e, c) => {
@@ -145,9 +169,13 @@ function AdminUpload() {
     );
     const errorBlock = (errors) => {
         let block = [];
-        for (const [index] of errors.entries()) {
-            block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">Error in row {errors[index]}. Course already exists.</Alert></div>);
-        };
+        if (empty) {
+            block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">The file is empty.</Alert></div>);
+        } else {
+            for (const [index] of errors.entries()) {
+                block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">Error in row {errors[index]}. Element already exists.</Alert></div>);
+            };
+        }
         return block;
     }
 
@@ -198,6 +226,14 @@ function AdminUpload() {
                                         addCourse(element, count);
                                         break;
                                     case 'Programs':
+                                        if (element.program_name === '') {
+                                            setEmpty(true);
+                                            break;
+                                        } else {
+                                            getPrograms(element, count);
+                                        }
+                                        //addPrograms(element, count);
+                                        break;
 
                                 }
                                 count++;
