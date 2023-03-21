@@ -14,6 +14,8 @@ import TextField from '@mui/material/TextField';
 import SimpleDialog from './Dialog';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
+import Checkbox from '@mui/material/Checkbox';
+import { green } from '@mui/material/colors';
 
 function Home() {
     const user_id = window.sessionStorage.getItem("user_id");
@@ -281,6 +283,14 @@ function Home() {
         setOpen(false);
     }
 
+    
+    const changeStyle = () => {
+        const element = document.getElementById("styleTest");
+        element.classList.toggle('green');
+    }
+
+
+    
     const handleDeleteCourse = (course, semester) => {
         Axios.post(`http://localhost:3001/deleteCourse`, {
             semester_id: course.semester_id,
@@ -428,7 +438,7 @@ function Home() {
                     <Table aria-label="simple table">
                         <TableBody>
                             {element.map((row) => (
-                                <TableRow key={row.id}>
+                                <TableRow id="styleTest" key={row.id}>
                                     <TableCell>{row.course_id}</TableCell>
                                     <TableCell onClick={handleDialogOpen}>{row.course_name}</TableCell>
                                     <TableCell>{row.credit_num}</TableCell>
@@ -436,6 +446,16 @@ function Home() {
                                         <Button color="error" onClick={() => handleDeleteCourse(row, element)}>
                                             <DeleteIcon></DeleteIcon>
                                         </Button>
+                                        <Button onClick={changeStyle}>
+                                        <Checkbox
+                                            sx={{
+                                                color: green[800],
+                                                '&.Mui-checked': {
+                                                color: green[600],
+                                                },
+                                            }}
+                                            /> 
+                                       </Button>
                                         {/* <Button color = "error" onClick={handleClickOpen}>
                                                 <DeleteIcon></DeleteIcon>
                                             </Button>

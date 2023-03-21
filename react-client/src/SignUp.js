@@ -14,6 +14,12 @@ export default function SignUp() {
   const [last_name, setLastName] = useState("");
   const [grade_level, setGradeLevel] = useState("");
 
+  const handleGradeChange = (event) => {
+   
+    setGradeLevel(event.target.value);
+   
+  };
+
   const addUser = () => {
       console.log("Adding user.");
       Axios.post(`http://localhost:3001/signup`, {
@@ -80,17 +86,14 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="Grade"
-                  label="Grade"
-                  name="Grade"
-                  autoComplete="family-name"
-                  onChange={(e) => {
-                    setGradeLevel(e.target.value)
-                  }} 
-                />
+                <form>
+                <select value={grade_level} onChange={handleGradeChange}>
+                  <option value="Firstyear">Firstyear</option>
+                  <option value="Sophomore">Sophomore</option>
+                  <option value="Junior">Junior</option>
+                  <option value="Senior">Senior</option>
+                </select>
+                </form>
               </Grid>
               <Grid item xs={12}>
                 <TextField
