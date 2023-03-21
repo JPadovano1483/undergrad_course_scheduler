@@ -441,7 +441,22 @@ app.post("/userRequirements", (req, res) => {
 
 app.post("/allUserCourses", (req, res) => {
   const user_id = req.body.user_id;
-  db.query(`SELECT course_id, grade from user_course where user_id=?`,
+  db.query(`SELECT course_id, grade, semester_id, semester, course.year FROM user_course JOIN course using (course_id) WHERE user_id=? ORDER BY semester_id;`,
+    [user_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(result);
+      }
+    }
+  );
+});
+
+app.post("/userSemeseterIDs", (req, res) => {
+  const user_id = req.body.user_id;
+  db.query(`SELECT semester_id FROM semester WHERE user_id=?`,
     [user_id],
     (err, result) => {
       if (err) {
@@ -457,7 +472,7 @@ app.post("/allUserCourses", (req, res) => {
 app.post("/searchCourse", (req, res) => {
   const course_id = req.body.course_id;
   const course_name = req.body.course_name;
-  db.query(`SELECT * from course WHERE course_name=? OR course_id=?`,
+  db.query(`SELECT * FROM course WHERE course_name=? OR course_id=?`,
     [course_name, course_id],
     (err, result) => {
       if (err) {
@@ -468,7 +483,7 @@ app.post("/searchCourse", (req, res) => {
       }
     }
   );
-})
+});
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname + '/../src/build/index.html'));

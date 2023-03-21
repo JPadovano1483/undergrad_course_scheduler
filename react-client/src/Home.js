@@ -114,26 +114,10 @@ function Home() {
         getUserCourses(accountInfo.user_id);
     }, []);
 
-    // const checkRequirements = (requirements, userCourses) => {
-    //     let courseArr = [];
-    //     let requirementsLeft = [];
-    //     if (requirements?.length != 0 && userCourses?.length != 0) {
-    //         for (const element of userCourses) {
-    //             courseArr.push(element.course_id);
-    //         }
-
-    //         // check courses that you need to take (no options)
-    //         for (const element of requirements) {
-    //             if (element.req_type == "all") {
-
-    //             }
-    //         }
-    //     }
-    // }
+    console.log(userCourses);
 
     const handleDialogOpen = () => {
         setDialogOpen(true);
-        console.log('hello');
     };
 
     const handleClose = (value) => {
@@ -160,21 +144,6 @@ function Home() {
     const [sem10, setSem10] = useState([]);
     const [sem11, setSem11] = useState([]);
     const [sem12, setSem12] = useState([]);
-
-    // const [plan, setPlan] = useState([]);
-    // const getPlan = (setPlan, userId) => {
-    //     Axios.get(`http://localhost:3001/plan/${userId}`, {
-    //         reqUser: accountInfo.user_id,
-    //         targetUser: accountInfo.user_id,
-    //         role: accountInfo.is_admin
-    //     }).then((response) => {
-    //         setPlan(response);
-    //     });
-    // }
-
-    // useEffect(() => {
-    //     getPlan(setPlan, accountInfo.user_id)
-    // }, []);
 
     const getSemester = (setSem, id) => {
         Axios.post(`http://localhost:3001/semester/${id}`, {
@@ -372,23 +341,6 @@ function Home() {
         let blocks = [];
         let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
 
-        // trying to take in all plan and split it into the semesters
-        // let semesters = [];
-
-        // if (plan.data) {
-        //     let numSemesters = plan.data[plan.data.length - 1].semester_id - plan.data[0].semester_id + 1;
-        //     let curSemId = plan.data[0].semester_id;
-        //     for (let i = 0; i < numSemesters; i++) {
-        //         for (let j = 0; j < plan.data.length; j++) {
-        //             if (plan.data[j].semester_id == curSemId) {
-        //                 semesters.push(plan.data[j]);
-        //             }
-        //             else {
-        //                 curSemId++;
-        //             }
-        //         }
-        //     };
-
         const countCredits = (semester, id) => {
             let count = 0;
             for (const course of semester) {
@@ -479,17 +431,6 @@ function Home() {
         setDrawerOpen(true);
     }
 
-    // const checkPrereq = (courseId) => {
-    //     Axios.post(`http://localhost:3001/prereq`, {
-    //         semesterId: selectedSemester[0].semesterId,
-    //         semesters: semesters,
-    //         courseId: courseId,
-    //     }).then((response) => {
-    //         console.log(response.data);
-    //         return response.data;
-    //     });
-    // };
-
     const addCourse = (course) => {
         console.log(selectedSemester)
         if (selectedSemester != "") {
@@ -521,15 +462,27 @@ function Home() {
         }
     }
 
-    // const saveSemesters = () => {
-    //     Axios.post(`http://localhost:3001/updateSemesters`, {
-    //         user_id: 1,
-    //         semesters: semesters
-    //   }).then((response) => {
-    //       console.log(response);
-    //   });
-    // }
+    const [userSemIDs, setUserSemIDs] = useState([]);
 
+    const getUserSemIDs = () => {
+        Axios.post(`http://localhost:3001/userSemeseterIDs`, {
+            user_id: user_id
+        }).then((response) => {
+            for (const elem of response.data) {
+                userSemIDs.push(elem.semester_id);
+            }
+        });
+    }
+
+    useEffect(() => {
+        getUserSemIDs();
+    }, []);
+
+    const courseFlagging = (userCourses) => {
+        for (const course of userCourses) {
+            if ()
+        }
+    }
 
     return (
         <div className="App">
