@@ -4,36 +4,75 @@ import * as React from 'react';
 import { useState } from 'react';
 import Axios from 'axios';
 import { useCSVReader, lightenDarkenColor, formatFileSize, useCSVDownloader } from "react-papaparse";
-import { Alert, Button } from "@mui/material";
+import { Alert, Button, ToggleButtonGroup, ToggleButton } from "@mui/material";
 
 function AdminUpload() {
-    const [error, setError] = useState("");
-    const [alert, setAlert] = useState(false);
+    const [alignment, setAlignment] = useState('Courses');
+    const [downloaderData, setDownloaderData] = useState([{
+        'course_id': null,
+        'course_name': null,
+        'course_description': null,
+        'credits': null,
+        'semester': null,
+        'year': null
+    }]);
+    const handleChange = (event, newAlignment) => {
+        setAlignment(newAlignment);
+        switch (newAlignment) {
+            case 'Courses':
+                setDownloaderData([{
+                    'course_id': null,
+                    'course_name': null,
+                    'course_description': null,
+                    'credits': null,
+                    'semester': null,
+                    'year': null
+                }]);
+                break;
+            case 'Programs':
+                setDownloaderData([{
+                    'program_name': null,
+                    'program_type': null,
+                    'concentration_req': null,
+                    'major_id': null
+                }]);
+                break
+            default:
+                setDownloaderData(null);
+        }
+    };
+    const [empty, setEmpty] = useState(false);
+
     const [errorArray, setErrorArray] = useState([]);
 
-    let displayAlert;
-    // const alertDisplay = () => {
-    console.log(alert);
-    if (alert) {
-        displayAlert = <Alert severity="error">{error}</Alert>;
+    const getPrograms = async (programToAdd, count) => {
+        let programArray = [];
+        await Axios.get(`http://localhost:3001/allPrograms`).then((response) => {
+            response.data.map((x, c) => {
+                programArray.push(response.data[c].program_name);
+            });
+        });
+        let add = true;
+        programArray.every(element => {
+            if (programToAdd.program_name === element) {
+                setErrorArray(errorArray => [...errorArray, count]);
+                add = false;
+                return false;
+            }
+            return true;
+        });
+        if (add) {
+            addPrograms(programToAdd);
+        }
     }
-    // }
-    // const [accountInfo, setAccountInfo] = useState(() => {
-    //     let loggedInUser = localStorage.getItem("user");
-    //     if (loggedInUser != null) {
-    //         loggedInUser = JSON.parse(loggedInUser);
-    //         if (loggedInUser.is_admin) {
-    //             return loggedInUser;
-    //         }
-    //         else {
-    //             window.location.href = "http://localhost:3000/home";
-    //         }
-    //     }
-    //     else {
-    //         window.location.href = "http://localhost:3000";
-    //     }
-    // });
-
+    const addPrograms = (e) => {
+        Axios.post(`http://localhost:3001/program`, {
+            programName: e.program_name,
+            programType: e.program_type,
+            concentrationReq: e.concentration_req,
+            major_id: e.major_id
+        });
+    }
     const addCourse = (e, c) => {
         Axios.post(`http://localhost:3001/course`, {
             courseId: e.course_id,
@@ -43,12 +82,8 @@ function AdminUpload() {
             semester: e.semester,
             year: e.year,
         }).then((response) => {
-            setErrorArray(errorArray => [...errorArray, c])
-            let message = errorArray.toString()
             if (response.data.errno === 1062) {
-                setError('Error on row ' + message + ' of your upload file. Course already exists.');
-                setAlert(true);
-                // console.log(displayAlert);
+                setErrorArray(errorArray => [...errorArray, c]);
             }
         });
     }
@@ -132,6 +167,17 @@ function AdminUpload() {
     const [removeHoverColor, setRemoveHoverColor] = useState(
         DEFAULT_REMOVE_HOVER_COLOR
     );
+    const errorBlock = (errors) => {
+        let block = [];
+        if (empty) {
+            block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">The file is empty.</Alert></div>);
+        } else {
+            for (const [index] of errors.entries()) {
+                block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">Error in row {errors[index]}. Element already exists.</Alert></div>);
+            };
+        }
+        return block;
+    }
 
     return (
         <>
@@ -152,8 +198,22 @@ function AdminUpload() {
                         </div>
                     </div>
                 </div>
+                <div>
+                    <h3>What are you uploading?</h3>
+                    <ToggleButtonGroup
+                        color="primary"
+                        value={alignment}
+                        exclusive
+                        onChange={handleChange}
+                        aria-label="Platform"
+                    >
+                        <ToggleButton value="Courses">Courses</ToggleButton>
+                        <ToggleButton value="Programs">Programs</ToggleButton>
+                        <ToggleButton value="Requirements">Requirements</ToggleButton>
+                    </ToggleButtonGroup>
+                </div>
                 <h1>
-                    Course Schedule Upload
+                    {alignment} Upload
                 </h1>
                 <div className="inputContainer">
                     <CSVReader
@@ -161,7 +221,21 @@ function AdminUpload() {
                             setErrorArray([]);
                             let count = 2;
                             results.data.forEach(element => {
-                                addCourse(element, count);
+                                switch (alignment) {
+                                    case 'Courses':
+                                        addCourse(element, count);
+                                        break;
+                                    case 'Programs':
+                                        if (element.program_name === '') {
+                                            setEmpty(true);
+                                            break;
+                                        } else {
+                                            getPrograms(element, count);
+                                        }
+                                        //addPrograms(element, count);
+                                        break;
+
+                                }
                                 count++;
                             });
                             setZoneHover(false);
@@ -231,28 +305,19 @@ function AdminUpload() {
                         )}
                     </CSVReader>
                     <CSVDownloader
-                        filename={'course_upload_template'}
+                        filename={JSON.stringify(alignment) + 'upload_template'}
                         bom={true}
                         config={{
                             delimiter: ',',
                         }}
-                        data={[
-                            {
-                                'course_id': null,
-                                'course_name': null,
-                                'course_description': null,
-                                'credits': null,
-                                'semester': null,
-                                'year': null
-                            }
-                        ]}
+                        data={downloaderData}
                     >
                         <Button variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >Download upload template</Button>
                     </CSVDownloader>
                 </div>
-                {displayAlert}
+                {errorBlock(errorArray)}
             </div>
         </>
     );
