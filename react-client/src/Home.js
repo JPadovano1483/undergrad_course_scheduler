@@ -19,40 +19,43 @@ import Checkbox from '@mui/material/Checkbox';
 import { green } from '@mui/material/colors';
 
 function Home() {
-    const user_id = window.sessionStorage.getItem("user_id");
-    SimpleDialog.propTypes = {
-        onClose: PropTypes.func.isRequired,
-        open: PropTypes.bool.isRequired,
-    };
+    let accountInfo = {};
+    if (localStorage.getItem("user") !== null) {
+        const loggedInUser = JSON.parse(localStorage.getItem("user"));
+        accountInfo = loggedInUser;
+    }
+    else if (sessionStorage.getItem("user") !== null) {
+        const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
+        accountInfo = loggedInUser;
+    }
+    else {
+        window.location.href = "http://localhost:3000";
+    }
+    console.log(accountInfo);
+
+    // const user_id = window.sessionStorage.getItem("user_id");
+    // SimpleDialog.propTypes = {
+    //     onClose: PropTypes.func.isRequired,
+    //     open: PropTypes.bool.isRequired,
+    // };
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-
-    const [accountInfo, setAccountInfo] = useState(() => {
-        let loggedInUser = localStorage.getItem("user");
-        if (loggedInUser != null) {
-            loggedInUser = JSON.parse(loggedInUser);
-            return loggedInUser;
-        }
-        else {
-            window.location.href = "http://localhost:3000";
-        }
-    });
-
-    const [semNum, setSemNum] = useState(0);
-    const getSemNum = () => {
+    
+    const [semTotal, setSemTotal] = useState(0);
+    const getSemTotal = () => {
         Axios.post(`http://localhost:3001/semCount`, {
             userId: accountInfo.user_id
         }).then((response) => {
             if (response.data[0] !== undefined) {
-                setSemNum(response.data[0].semester_num);
+                setSemTotal(response.data[0].semester_num);
             }
             else {
-                setSemNum(0);
+                setSemTotal(0);
             }
         });
     }
     useEffect(() => {
-        getSemNum();
+        getSemTotal();
     }, []);
 
     const getaccountInfo = () => {
@@ -119,6 +122,8 @@ function Home() {
 
     console.log(userCourses);
 
+    const [semNumSelected, setSemNumSelected] = useState(0);
+    
     const handleDialogOpen = () => {
         setDialogOpen(true);
     };
@@ -268,22 +273,22 @@ function Home() {
 
     const handleAddSemester = () => {
         Axios.post(`http://localhost:3001/addSemester`, {
-            user_id: accountInfo[0].user_id,
-            semester_num: semNum + 1
+            user_id: accountInfo.user_id,
+            semester_num: semTotal + 1
         }).then((response) => {
             console.log(response);
-            setSemNum(semNum + 1);
         });
+        setSemTotal(semTotal + 1);
     }
 
     const handleDeleteSemester = () => {
         Axios.post(`http://localhost:3001/deleteSemester`, {
-            user_id: accountInfo[0].user_id,
-            semester_num: semNum
+            user_id: accountInfo.user_id,
+            semester_num: semTotal
         }).then((response) => {
             console.log(response);
         });
-        setSemNum(semNum - 1);
+        setSemTotal(semTotal - 1);
     }
 
     // credit popup
@@ -348,11 +353,14 @@ function Home() {
         }
     }
 
-    const semesterBlocks = (semester) => {
+    const semesterBlocks = (semTotal, sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12) => {
+        const semesters = [sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12];
+        console.log(semesters);
         let blocks = [];
         let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
 
         const countCredits = (semester, id) => {
+            console.log(semester);
             let count = 0;
             for (const course of semester) {
                 count += course.credit_num;
@@ -375,24 +383,24 @@ function Home() {
             }
         }
 
-
-        for (const [index, element] of semester.entries()) {
-            let creditId = 'credit_count' + index;
-            let creditCount = countCredits(element, creditId);
-            blocks.push(<Grid item={true} xs={6} className='tableGrid'>
-                <h2>{numbers[index]} Semester</h2>
-                {/* <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4> */}
-                {creditWarningPopup(creditId, creditCount)}
-                <TableContainer component={Paper}>
-                    <Table aria-label="simple table">
-                        <TableBody>
-                            {element.map((row) => (
-                                <TableRow id="styleTest" key={row.id}>
-                                    <TableCell>{row.course_id}</TableCell>
-                                    <TableCell onClick={handleDialogOpen}>{row.course_name}</TableCell>
-                                    <TableCell>{row.credit_num}</TableCell>
-                                    <TableCell>
-                                        <Button color="error" onClick={() => handleDeleteCourse(row, element)}>
+        for (let i = 0; i < semTotal; i++) {
+            // if (semesters[i][0] !== undefined) {
+                let creditId = 'credit_count' + i;
+                let creditCount = countCredits(semesters[i], creditId);
+                blocks.push(<Grid item={true} xs={6} className='tableGrid'>
+                    <h2>{numbers[i]} Semester</h2>
+                    {/* <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4> */}
+                    {creditWarningPopup(creditId, creditCount)}
+                    <TableContainer component={Paper}>
+                        <Table aria-label="simple table">
+                            <TableBody>
+                                {semesters[i].map((row) => (
+                                    <TableRow key={row?.id}>
+                                        <TableCell>{row?.course_id}</TableCell>
+                                        <TableCell onClick={handleDialogOpen}>{row?.course_name}</TableCell>
+                                        <TableCell>{row?.credit_num}</TableCell>
+                                        <TableCell>
+                                            <Button color="error" onClick={() => handleDeleteCourse(row, semesters[i])}>
                                             <DeleteIcon></DeleteIcon>
                                         </Button>
                                         <Button onClick={changeStyle}>
@@ -435,7 +443,7 @@ function Home() {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Button onClick={() => addToSemester(element)}>Add</Button>
+                <Button onClick={() => addToSemester(semesters[i], i + 1)}>Add</Button>
             </Grid>);
         }
         return blocks;
@@ -445,34 +453,62 @@ function Home() {
     for (let i = 1; i < semNum + 1; i++) {
         semesters.push(eval("sem" + i));
     }
+    // let semesters = [];
+    // for (let i = 1; i < semTotal + 1; i++) {
+    //     semesters.push(eval("sem" + i));
+    // }
+    // console.log(semesters);
 
     const [selectedSemester, setSelectedSemester] = useState("");
 
-    const addToSemester = (semester) => {
+    const addToSemester = (semester, semesterNum) => {
         setSelectedSemester(semester);
+        setSemNumSelected(semesterNum);
         setDrawerOpen(true);
     }
 
     const addCourse = (course) => {
-        console.log(selectedSemester)
-        if (selectedSemester != "") {
-            console.log("semsterId " + selectedSemester);
-            console.log("semesters " + semesters[0]);
-            console.log("courseId " + course.courseId);
-            Axios.post(`http://localhost:3001/prereq`, {
-                semesterId: selectedSemester[0].semesterId,
-                semesters: semesters,
-                courseId: course.courseId,
-            }).then((response) => {
-                console.log(response.data);
-                console.log(accountInfo[0].user_id);
-                if (response.data) {
+        console.log(selectedSemester);
+        if (selectedSemester !== "") {
+            console.log(selectedSemester);
+            console.log(course);
+            console.log("courseId: " + course.course_id);
+            Promise.all([
+                Axios.post(`http://localhost:3001/prereq`, {
+                    semesterId: semNumSelected,
+                    courseId: course.course_id,
+                }),
+                Axios.post(`http://localhost:3001/allSemesters`, {
+                    reqUser: accountInfo.user_id,
+                    targetUser: accountInfo.user_id,
+                    role: accountInfo.is_admin,
+                    semNumSelected: semNumSelected
+                })
+            ]).then((response) => {
+                console.log(response);
+                console.log(response[0].data);
+                console.log(response[1].data);
+                let satisfied = true;
+                if (response[0].data.length > 0) {
+                    const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
+                    // checks if the perequisite courses are found in a previous semester and have a passing grade or have no grade yet
+                    for (let i = 0; i < response[0].data.length; i++) {
+                        const classPassed = response[1].data.some((course) => {
+                            return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
+                        });
+                        console.log(!classPassed);
+                        if (!classPassed) {
+                            satisfied = false;
+                        }
+                    }
+                }
+                if (satisfied) {
                     console.log("Prerequisites have been met!");
                     selectedSemester.push(course);
                     Axios.post(`http://localhost:3001/addCourse`, {
-                        user_id: accountInfo[0].user_id,
-                        semester_id: selectedSemester[0].semester_id,
-                        course_id: course.course_id
+                        semester_id: semNumSelected,
+                        course_id: course.course_id,
+                        user_id: accountInfo.user_id
                     }).then((response) => {
                         console.log(response);
                     });
@@ -481,6 +517,7 @@ function Home() {
                     console.log("Prerequisites not met.");
                 }
             });
+            
         }
     }
 
@@ -623,15 +660,15 @@ function Home() {
                         </Table>
                     </TableContainer>
                 </Drawer>
-                <h1>{semNum} Semester Plan</h1>
+                <h1>{semTotal} Semester Plan</h1>
                 <Grid container spacing={0}>
-                    {semesterBlocks(semesters)}
+                    {semesterBlocks(semTotal, sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12)}
                 </Grid>
                 <div>
-                    <Button onClick={() => handleAddSemester(accountInfo.user_id, semNum)}>Add One Semester</Button>
+                    <Button onClick={() => handleAddSemester()}>Add One Semester</Button>
                 </div>
                 <div>
-                    <Button onClick={() => handleDeleteSemester(accountInfo.user_id, semNum)}>Remove One Semester</Button>
+                    <Button onClick={() => handleDeleteSemester()}>Remove One Semester</Button>
                 </div>
             </div>
         </div >

@@ -9,7 +9,17 @@ export default function Reset() {
     const [email, setEmail] = useState("");
 
     const sendEmail = () => {
+        const code = (Math.floor(Math.random() * 90000000) + 10000000).toString();
+
+        Axios.post(`http://localhost:3001/resetCode`, {
+            code: code,
+            email: email,
+        }).then((response) => {
+            console.log("code set");
+        });
+
         Axios.post(`http://localhost:3001/email`, {
+            code: code,
             email: email,
         }).then((response) => {
             console.log("sent");

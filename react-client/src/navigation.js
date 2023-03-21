@@ -9,9 +9,12 @@ import { Avatar, AppBar, Toolbar, Typography } from '@mui/material';
 function Navigation()
 {
     const [accountInfo, setAccountInfo] = useState(() => {
-        let loggedInUser = localStorage.getItem("user");
-        if (loggedInUser != null) {
-            loggedInUser = JSON.parse(loggedInUser);
+        if (localStorage.getItem("user") !== null) {
+            const loggedInUser = JSON.parse(localStorage.getItem("user"));
+            return loggedInUser;
+        }
+        else if (sessionStorage.getItem("user") !== null) {
+            const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
             return loggedInUser;
         }
         else {
@@ -31,7 +34,7 @@ function Navigation()
                 <Link to="/requirements" className="link">Requirements</Link>
                 <Link to="/admin" className='link' hidden={!accountInfo.is_admin}>Admin</Link>
                 <Typography component="div" sx={{ flexGrow: 1 }}></Typography>
-                <Link onClick={() => {localStorage.clear(); window.location.href = "http://localhost:3000";}} className='link'>Logout</Link>
+                <Link onClick={() => {localStorage.clear(); sessionStorage.clear(); window.location.href = "http://localhost:3000";}} className='link'>Logout</Link>
                 <Avatar sx={{ bgcolor: '#D6742A' }} className='accountLink'>
                     <Link to="/account">{profileInitials}</Link>
                 </Avatar>

@@ -10,6 +10,14 @@ import { useState } from 'react';
 //import { connect } from 'react-redux';
 
 export default function SignIn() {
+  if (localStorage.getItem("user") !== null) {
+    sessionStorage.clear();
+    window.location.href = "http://localhost:3000/home";
+  }
+  else if (sessionStorage.getItem("user") !== null) {
+    window.location.href = "http://localhost:3000/home";
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
   };
@@ -17,6 +25,8 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const loginErrorMsg = document.getElementById("login-error-msg");
+
+  const [remember, setRemember] = useState(false);
 
   const login = async e => {
     e.preventDefault();
@@ -29,8 +39,13 @@ export default function SignIn() {
         console.log(response.data[0].password);
         const userData = response.data[0];
         console.log(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-        window.sessionStorage.setItem("user_id", response.data[0].user_id);
+        if (remember) {
+          localStorage.setItem("user", JSON.stringify(userData));
+        }
+        else {
+          sessionStorage.setItem("user", JSON.stringify(userData));
+        }
+        // window.sessionStorage.setItem("user_id", response.data[0].user_id);
         window.location.href = "http://localhost:3000/home";
       }
       else 
@@ -100,7 +115,7 @@ export default function SignIn() {
               }}
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox checked={remember} onChange={e => setRemember(e.target.checked)} color="primary" />}
               label="Remember me"
             />
             <div id = "login-error-msg">
