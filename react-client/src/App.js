@@ -1,8 +1,8 @@
 import './css/App.css';
 import * as React from 'react';
-import logo from './images/MessiahLogo.JPG';
+import logo from './images/LogoCheckRound.JPG';
 import { Avatar, Button, TextField, FormControlLabel } from '@mui/material';
-import { Checkbox, Grid, Box, Typography, Container, Alert} from '@mui/material';
+import { Checkbox, Grid, Box, Typography, Container} from '@mui/material';
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import { useState } from 'react';
@@ -16,8 +16,10 @@ export default function SignIn() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const loginErrorMsg = document.getElementById("login-error-msg");
 
-  const login = () => {
+  const login = async e => {
+    e.preventDefault();
     Axios.post("http://localhost:3001/login", {
       email: email,
       password: password,
@@ -25,17 +27,17 @@ export default function SignIn() {
       if (response.data[0].username !== undefined) {
         console.log(response.data[0].username);
         console.log(response.data[0].password);
+        const userData = response.data[0];
+        console.log(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
+        window.sessionStorage.setItem("user_id", response.data[0].user_id);
         window.location.href = "http://localhost:3000/home";
       }
       else 
       {
         console.log(response.data)
-        let form = document.getElementById("alert_test");
-        form.style.visibility = 'visible';
-        //document.getElementById('dip').hidden = true
-         
-
-          
+        loginErrorMsg.style.display = 'block';
+  
       }
     });
   }
@@ -101,12 +103,9 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <Alert component = 'alert_test' variant = "filled" severity ="error"
-            sx = {{
-              visibility:'hidden'
-            }}>
-              Warning! Email or password is incorrect
-            </Alert>
+            <div id = "login-error-msg">
+                 Warning! Email or password is incorrect
+            </div>
             <Button
               type="submit"
               fullWidth

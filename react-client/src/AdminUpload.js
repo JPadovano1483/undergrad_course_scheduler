@@ -4,26 +4,90 @@ import * as React from 'react';
 import { useState } from 'react';
 import Axios from 'axios';
 import { useCSVReader, lightenDarkenColor, formatFileSize, useCSVDownloader } from "react-papaparse";
-import { Button } from "@mui/material";
+import { Alert, Button, ToggleButtonGroup, ToggleButton } from "@mui/material";
 
 function AdminUpload() {
-    const [course_id, setCourse_id] = useState("");
-    const [course_name, setCourse_name] = useState("");
-    const [course_description, setCourse_description] = useState("");
-    const [course_credits, setCourse_credits] = useState("");
-    const addCourse = () => {
-        console.log("Adding  courses.");
-        Axios.post(`http://localhost:3001/course`, {
-            courseId: course_id,
-            courseName: course_name,
-            courseDescription: course_description,
-            credit: course_credits,
-        }).then((response) => {
-            console.log(response);
+    const [alignment, setAlignment] = useState('Courses');
+    const [downloaderData, setDownloaderData] = useState([{
+        'course_id': null,
+        'course_name': null,
+        'course_description': null,
+        'credits': null,
+        'semester': null,
+        'year': null
+    }]);
+    const handleChange = (event, newAlignment) => {
+        setAlignment(newAlignment);
+        switch (newAlignment) {
+            case 'Courses':
+                setDownloaderData([{
+                    'course_id': null,
+                    'course_name': null,
+                    'course_description': null,
+                    'credits': null,
+                    'semester': null,
+                    'year': null
+                }]);
+                break;
+            case 'Programs':
+                setDownloaderData([{
+                    'program_name': null,
+                    'program_type': null,
+                    'concentration_req': null,
+                    'major_id': null
+                }]);
+                break
+            default:
+                setDownloaderData(null);
+        }
+    };
+    const [empty, setEmpty] = useState(false);
+
+    const [errorArray, setErrorArray] = useState([]);
+
+    const getPrograms = async (programToAdd, count) => {
+        let programArray = [];
+        await Axios.get(`http://localhost:3001/allPrograms`).then((response) => {
+            response.data.map((x, c) => {
+                programArray.push(response.data[c].program_name);
+            });
+        });
+        let add = true;
+        programArray.every(element => {
+            if (programToAdd.program_name === element) {
+                setErrorArray(errorArray => [...errorArray, count]);
+                add = false;
+                return false;
+            }
+            return true;
+        });
+        if (add) {
+            addPrograms(programToAdd);
+        }
+    }
+    const addPrograms = (e) => {
+        Axios.post(`http://localhost:3001/program`, {
+            programName: e.program_name,
+            programType: e.program_type,
+            concentrationReq: e.concentration_req,
+            major_id: e.major_id
         });
     }
-    const [parsedCsvData, setParsedCsvData] = useState([]);
-    const { CSVDownloader, Type } = useCSVDownloader();
+    const addCourse = (e, c) => {
+        Axios.post(`http://localhost:3001/course`, {
+            courseId: e.course_id,
+            courseName: e.course_name,
+            courseDescription: e.course_description,
+            credits: e.credits,
+            semester: e.semester,
+            year: e.year,
+        }).then((response) => {
+            if (response.data.errno === 1062) {
+                setErrorArray(errorArray => [...errorArray, c]);
+            }
+        });
+    }
+    const { CSVDownloader } = useCSVDownloader();
     const GREY = '#CCC';
     const GREY_LIGHT = 'rgba(255, 255, 255, 0.4)';
     const DEFAULT_REMOVE_HOVER_COLOR = '#A01919';
@@ -103,6 +167,17 @@ function AdminUpload() {
     const [removeHoverColor, setRemoveHoverColor] = useState(
         DEFAULT_REMOVE_HOVER_COLOR
     );
+    const errorBlock = (errors) => {
+        let block = [];
+        if (empty) {
+            block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">The file is empty.</Alert></div>);
+        } else {
+            for (const [index] of errors.entries()) {
+                block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">Error in row {errors[index]}. Element already exists.</Alert></div>);
+            };
+        }
+        return block;
+    }
 
     return (
         <>
@@ -123,20 +198,45 @@ function AdminUpload() {
                         </div>
                     </div>
                 </div>
+                <div>
+                    <h3>What are you uploading?</h3>
+                    <ToggleButtonGroup
+                        color="primary"
+                        value={alignment}
+                        exclusive
+                        onChange={handleChange}
+                        aria-label="Platform"
+                    >
+                        <ToggleButton value="Courses">Courses</ToggleButton>
+                        <ToggleButton value="Programs">Programs</ToggleButton>
+                        <ToggleButton value="Requirements">Requirements</ToggleButton>
+                    </ToggleButtonGroup>
+                </div>
                 <h1>
-                    Course Schedule Upload
+                    {alignment} Upload
                 </h1>
                 <div className="inputContainer">
                     <CSVReader
                         onUploadAccepted={(results) => {
-                            console.log(results.data);
+                            setErrorArray([]);
+                            let count = 2;
                             results.data.forEach(element => {
-                                console.log(element);
-                                setCourse_id(element.course_id);
-                                setCourse_name(element.course_name);
-                                setCourse_description(element.course_description);
-                                setCourse_credits(element.credits);
-                                addCourse();
+                                switch (alignment) {
+                                    case 'Courses':
+                                        addCourse(element, count);
+                                        break;
+                                    case 'Programs':
+                                        if (element.program_name === '') {
+                                            setEmpty(true);
+                                            break;
+                                        } else {
+                                            getPrograms(element, count);
+                                        }
+                                        //addPrograms(element, count);
+                                        break;
+
+                                }
+                                count++;
                             });
                             setZoneHover(false);
                         }}
@@ -176,6 +276,7 @@ function AdminUpload() {
                                                         {formatFileSize(acceptedFile.size)}
                                                     </span>
                                                     <span style={styles.name}>{acceptedFile.name}</span>
+                                                    <span style={styles.name}>Upload Successfull</span>
                                                 </div>
                                                 <div style={styles.progressBar}>
                                                     <ProgressBar />
@@ -204,27 +305,19 @@ function AdminUpload() {
                         )}
                     </CSVReader>
                     <CSVDownloader
-                        filename={'course_upload_template'}
+                        filename={JSON.stringify(alignment) + 'upload_template'}
                         bom={true}
                         config={{
                             delimiter: ',',
                         }}
-                        data={[
-                            {
-                                'course_id': null,
-                                'course_name': null,
-                                'course_description': null,
-                                'credits': null,
-                                'semester': null,
-                                'year': null
-                            }
-                        ]}
+                        data={downloaderData}
                     >
                         <Button variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >Download upload template</Button>
                     </CSVDownloader>
                 </div>
+                {errorBlock(errorArray)}
             </div>
         </>
     );

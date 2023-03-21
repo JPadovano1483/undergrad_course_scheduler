@@ -2,31 +2,53 @@ import Navigation from "./navigation";
 import './css/home.css';
 import * as React from 'react';
 import { useState } from 'react';
-import { Checkbox, FormControlLabel, FormGroup, TextField} from "@mui/material";
+import {TextField} from "@mui/material";
 import Button from '@mui/material/Button';
 import InputIcon from '@mui/icons-material/Input';
-import TimeRangePicker from '@wojtekmaj/react-timerange-picker'
 import Axios from 'axios';
 
-function Admin() {
+function AdminEdit() {
     const [courseId, setCourseId] = useState("");
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
     const [credits, setCredits] = useState(0);
-    const [major, setMajor] = useState("");
-    const [minor, setMinor] = useState("");
-    const [concentration, setConcentration] = useState("");
+    const [semester, setSemester] = React.useState('Fall');
+    const [year, setYear] = React.useState('Even');
 
-    const addCourse = () => {
-        console.log("Adding course.");
-        Axios.post(`http://localhost:3001/course`, {
+    const handleSemesterChange = (event) => {
+   
+        setSemester(event.target.value);
+      };
+    const handleYearChange = (event) => {
+   
+        setYear(event.target.value);   
+      };
+
+    const [accountInfo, setAccountInfo] = useState(() => {
+        let loggedInUser = localStorage.getItem("user");
+        if (loggedInUser != null) {
+            loggedInUser = JSON.parse(loggedInUser);
+            if (loggedInUser.is_admin) {
+                return loggedInUser;
+            }
+            else {
+                window.location.href = "http://localhost:3000/home";
+            }
+        }
+        else {
+            window.location.href = "http://localhost:3000";
+        }
+    });
+
+    const editCourse = () => {
+        console.log("Deleting and Updating Course.");
+        Axios.post(`http://localhost:3001/courseEdit`, {
             courseId: courseId,
             courseName: courseName,
             courseDescription: courseDescription,
             credits: credits,
-            major: major,
-            minor: minor,
-            concentration: concentration,
+            semester: semester,
+            year: year,
         }).then((response) => {
             console.log(response);
         });
@@ -42,11 +64,11 @@ function Admin() {
                 {/* navbar from w3schools */}
                 <div className="navbar">
                     <div className="dropdown">
-                        <button className="dropbtn">Create ▼
+                        <button className="dropbtn">Edit ▼
                             <i className="fa fa-caret-down"></i>
                         </button>
                         <div className="dropdown-content">
-                            <a href="/adminedit">Edit</a>
+                            <a href="/admin">Create</a>
                             <a href="/adminupload">Upload</a>
                         </div>
                     </div>
@@ -71,7 +93,7 @@ function Admin() {
                     </Button>
                 </div>
               
-                <h1>Please enter course information</h1>
+                <h1>Please enter course information to be edited</h1>
                 <p style={{ color: 'red' }}>Fields marked with * are required</p>
                 <div className="inputContainer">
                     <form>
@@ -110,41 +132,23 @@ function Admin() {
                                 setCourseDescription(e.target.value)
                             }}
                         />
-                        <TextField 
-                             
-                             fullWidth 
-                             label="Major" 
-                             id="name" 
-                             sx={{ my: 1, width: '50%' }} 
-                             variant="filled"
-                             onChange={(e) => {
-                                 setMajor(e.target.value)
-                             }}
-                         />
-                          <TextField 
-                             
-                             fullWidth 
-                             label="Minor" 
-                             id="name" 
-                             sx={{ my: 1, width: '50%' }} 
-                             variant="filled"
-                             onChange={(e) => {
-                                 setMinor(e.target.value)
-                             }}
-                         />
-                            <TextField 
-                             
-                             fullWidth 
-                             label="Concentration" 
-                             id="name" 
-                             sx={{ my: 1, width: '50%' }} 
-                             variant="filled"
-                             onChange={(e) => {
-                                 setConcentration(e.target.value)
-                             }}
-                         />
-                         
-                         
+                <div classname= "dropdown">
+                <form>
+                <select value={semester} onChange={handleSemesterChange}>
+                  <option value="Fall">Fall</option>
+                  <option value="Spring">Spring</option>
+                  <option value="Both">Both</option>
+                </select>
+                </form>
+                </div>
+                <div classname= "dropdown">
+                <form>
+                <select value={year} onChange={handleYearChange}>
+                  <option value="EVEN">Even</option>
+                  <option value="ODD">Odd</option>
+                </select>
+                </form>
+                </div>
                         <TextField 
                              
                             type={'number'} 
@@ -158,17 +162,7 @@ function Admin() {
                             }} 
                         />
                         <br></br>
-                        <h4>Days class will be offered: </h4>
-                        <FormGroup>
-                            <FormControlLabel control={<Checkbox />} label="Monday" />
-                            <FormControlLabel control={<Checkbox />} label="Tuesday" />
-                            <FormControlLabel control={<Checkbox />} label="Wednesday" />
-                            <FormControlLabel control={<Checkbox />} label="Thursday" />
-                            <FormControlLabel control={<Checkbox />} label="Friday" />
-                        </FormGroup>
-                        <h6>Time:</h6>
-                        <TimeRangePicker clock={null} />
-                        <Button variant="contained" startIcon={<InputIcon />} sx={{ left: '87%' }} onClick={addCourse}>
+                        <Button variant="contained" startIcon={<InputIcon />} sx={{ left: '87%' }} onClick={editCourse}>
                             <input hidden type="submit" value="Submit"/>
                             Submit
                         </Button>
@@ -180,4 +174,4 @@ function Admin() {
 
 }
 
-export default Admin;
+export default AdminEdit;

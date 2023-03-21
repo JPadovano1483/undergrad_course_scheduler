@@ -132,3 +132,15 @@ TableRow {
     display: block;
 }
 /* ^ w3schools ^ */
+#styleTest
+{
+    border:2px solid #090909;
+    width:100px;
+    height:100px;
+    background-color: #ffffff;
+}
+.green
+{
+    background-color: rgb(7, 145, 83) !important;
+    color:#ffffff;
+}
