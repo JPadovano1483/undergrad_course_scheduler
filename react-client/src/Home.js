@@ -9,6 +9,7 @@ import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useEffect } from 'react';
 import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
+import ErrorIcon from '@mui/icons-material/Error';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SimpleDialog from './Dialog';
@@ -404,6 +405,7 @@ function Home() {
                                             </DialogActions>
                                             </Dialog>  */}
                                     </TableCell>
+                                    {checkFlag(row.course_id)}
                                     <SimpleDialog
                                         open={dialogOpen}
                                         onClose={handleClose}
@@ -478,9 +480,29 @@ function Home() {
         getUserSemIDs();
     }, []);
 
+    const [courseFlags, setCourseFlags] = useState([]);
+
     const courseFlagging = (userCourses) => {
         for (const course of userCourses) {
-            if ()
+            // check semeseter placement
+            if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(course.semester_id) % 2 != 0) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(course.semester_id) % 2 != 1)) {
+                console.log(course.course_id + ": wrong semester!");
+                if (!courseFlags.includes(course.course_id)) courseFlags.push(course.course_id);
+            }
+        }
+    }
+
+    courseFlagging(userCourses);
+
+    const checkFlag = (courseId) => {
+        console.log(courseId);
+        console.log(courseFlags);
+        if (courseFlags.includes(courseId)) {
+            return (
+                <TableCell>
+                    <ErrorIcon sx={{color: 'red'}}></ErrorIcon>
+                </TableCell>
+            )
         }
     }
 
