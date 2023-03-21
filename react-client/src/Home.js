@@ -351,24 +351,24 @@ function Home() {
             }
         }
 
-
-        for (const [index, element] of semester.entries()) {
-            let creditId = 'credit_count' + index;
-            let creditCount = countCredits(element, creditId);
-            blocks.push(<Grid item={true} xs={6} className='tableGrid'>
-                <h2>{numbers[index]} Semester</h2>
-                {/* <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4> */}
-                {creditWarningPopup(creditId, creditCount)}
-                <TableContainer component={Paper}>
-                    <Table aria-label="simple table">
-                        <TableBody>
-                            {element.map((row) => (
-                                <TableRow id="styleTest" key={row.id}>
-                                    <TableCell>{row.course_id}</TableCell>
-                                    <TableCell onClick={handleDialogOpen}>{row.course_name}</TableCell>
-                                    <TableCell>{row.credit_num}</TableCell>
-                                    <TableCell>
-                                        <Button color="error" onClick={() => handleDeleteCourse(row, element)}>
+        for (let i = 0; i < semTotal; i++) {
+            // if (semesters[i][0] !== undefined) {
+                let creditId = 'credit_count' + i;
+                let creditCount = countCredits(semesters[i], creditId);
+                blocks.push(<Grid item={true} xs={6} className='tableGrid'>
+                    <h2>{numbers[i]} Semester</h2>
+                    {/* <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4> */}
+                    {creditWarningPopup(creditId, creditCount)}
+                    <TableContainer component={Paper}>
+                        <Table aria-label="simple table">
+                            <TableBody>
+                                {semesters[i].map((row) => (
+                                    <TableRow key={row?.id}>
+                                        <TableCell>{row?.course_id}</TableCell>
+                                        <TableCell onClick={handleDialogOpen}>{row?.course_name}</TableCell>
+                                        <TableCell>{row?.credit_num}</TableCell>
+                                        <TableCell>
+                                            <Button color="error" onClick={() => handleDeleteCourse(row, semesters[i])}>
                                             <DeleteIcon></DeleteIcon>
                                         </Button>
                                         <Button onClick={changeStyle}>
