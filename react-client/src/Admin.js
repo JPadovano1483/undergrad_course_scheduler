@@ -86,6 +86,8 @@ function Admin() {
         }).then((response) => {
             if (response.data.length > 0) {
                 console.log("Course already exists!");
+                document.querySelector('#errorMessage').style.color = 'red';
+                document.querySelector('#errorMessage').innerHTML = "Course alredy exists!";
             }
             else {
                 console.log("Adding course.");
@@ -98,6 +100,14 @@ function Admin() {
                     year: year,
                 }).then((response) => {
                     console.log(response);
+                    document.querySelector('#courseID').value = "";
+                    document.querySelector('#courseName').value = "";
+                    document.querySelector('#description').value = "";
+                    document.querySelector('#semester').value = "";
+                    document.querySelector('#year').value = "";
+                    document.querySelector('#credits').value = "";
+                    document.querySelector('#errorMessage').style.color = 'black';
+                    document.querySelector('#errorMessage').innerHTML = "Upload Successful!";
                 });
             }
         })
@@ -160,7 +170,7 @@ function Admin() {
                         <TextField 
                             fullWidth 
                             label="Name of the Class *" 
-                            id="name" 
+                            id="courseName" 
                             sx={{ my: 1 }} 
                             variant="filled"
                             onChange={(e) => {
@@ -185,7 +195,7 @@ function Admin() {
                              
                              fullWidth 
                              label="Semester" 
-                             id="name" 
+                             id="semester" 
                              sx={{ my: 1, width: '50%' }} 
                              variant="filled"
                              onChange={(e) => {
@@ -196,7 +206,7 @@ function Admin() {
                              
                              fullWidth 
                              label="Year" 
-                             id="name" 
+                             id="year" 
                              sx={{ my: 1, width: '50%' }} 
                              variant="filled"
                              onChange={(e) => {
@@ -217,6 +227,7 @@ function Admin() {
                             }} 
                         />
                         <br></br>
+                        <p id="errorMessage"></p>
                         <Button variant="contained" startIcon={<InputIcon />} sx={{ left: '87%' }} onClick={addCourse}>
                             <input hidden type="submit" value="Submit"/>
                             Submit

@@ -456,7 +456,7 @@ app.post("/allUserCourses", (req, res) => {
 
 app.post("/userSemeseterIDs", (req, res) => {
   const user_id = req.body.user_id;
-  db.query(`SELECT semester_id FROM semester WHERE user_id=?`,
+  db.query(`SELECT semester_id FROM semester WHERE user_id=? ORDER BY semester_id`,
     [user_id],
     (err, result) => {
       if (err) {

@@ -480,14 +480,34 @@ function Home() {
         getUserSemIDs();
     }, []);
 
-    const [courseFlags, setCourseFlags] = useState([]);
+    const [courseSemFlags, setCourseSemFlags] = useState([]);
+    const [courseYearFlags, setCourseYearFlags] = useState([]);
 
     const courseFlagging = (userCourses) => {
-        for (const course of userCourses) {
-            // check semeseter placement
-            if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(course.semester_id) % 2 != 0) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(course.semester_id) % 2 != 1)) {
-                console.log(course.course_id + ": wrong semester!");
-                if (!courseFlags.includes(course.course_id)) courseFlags.push(course.course_id);
+        // this is undefined rn
+        let isStartSemEven = accountInfo[0]?.start_year % 2 == 0;
+        console.log(isStartSemEven);
+        let isSemEven = false;
+        if (userSemIDs.length != 0 && userCourses.length != 0) {
+            for (const course of userCourses) {
+                // check semeseter placement
+                if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(course.semester_id) % 2 == 1) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(course.semester_id) % 2 == 0)) {
+                    console.log(course.course_id + ": wrong semester!");
+                    if (!courseSemFlags.includes(course.course_id)) courseSemFlags.push(course.course_id);
+                }
+
+                // flip bit for every spring semester
+                if (userSemIDs.indexOf(course.semester_id) % 3 != 0) isSemEven = !isStartSemEven;
+                else isSemEven = isStartSemEven;
+                console.log(userSemIDs.indexOf(course.semester_id));
+                console.log((course.year?.toLowerCase() == "even") && !isSemEven);
+            
+                // check year placement
+                if ((course.year?.toLowerCase() == "even" && !isSemEven) || (course.year?.toLowerCase() == "odd" && isSemEven)) {
+                    console.log(course.course_id + ": wrong year!");
+                    console.log(isSemEven);
+                    if (!courseYearFlags.includes(course.course_id)) courseYearFlags.push(course.course_id);
+                }
             }
         }
     }
@@ -496,14 +516,28 @@ function Home() {
 
     const checkFlag = (courseId) => {
         console.log(courseId);
-        console.log(courseFlags);
-        if (courseFlags.includes(courseId)) {
-            return (
-                <TableCell>
+        console.log(courseSemFlags);
+        console.log(courseYearFlags);
+        let flags = [];
+
+        // 
+        if (courseSemFlags.includes(courseId)) {
+            flags.push(
+                <TableCell sx={{borderTop: "1px solid rgba(224,224,224,1)"}}>
                     <ErrorIcon sx={{color: 'red'}}></ErrorIcon>
                 </TableCell>
             )
         }
+
+        if (courseYearFlags.includes(courseId)) {
+            flags.push(
+                <TableCell sx={{borderTop: "1px solid rgba(224,224,224,1)"}}>
+                    <ErrorIcon sx={{color: 'yellow'}}></ErrorIcon>
+                </TableCell>
+            )
+        }
+
+        return flags;
     }
 
     return (

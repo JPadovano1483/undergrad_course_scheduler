@@ -96,23 +96,23 @@ function Requirements() {
                       {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                   </TableCell> */}
-                  <TableCell component="th" scope="row" aling="left">
+                  <TableCell component="th" scope="row" align="left" sx={{width: "20%"}}>
                     {getHeader(element)} 
                   </TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
+                  <TableCell sx={{width: "20%"}}>Course ID:</TableCell>
+                  <TableCell sx={{width: "20%"}}>Course Name:</TableCell>
+                  <TableCell sx={{width: "20%"}}>Credits:</TableCell>
+                  <TableCell sx={{width: "20%"}}>Grade:</TableCell>
                 </TableRow>
                 {
                   element.map((row) => (
                     // <Collapse in={open} timeout="auto" unmountOnExit key={row.id}>
                       <TableRow key={row.id}>
-                        <TableCell align="left">{getIcon(row.course_id)}</TableCell>
-                        <TableCell align="left">{row.course_id}</TableCell>
-                        <TableCell align="left">{row.course_name}</TableCell>
-                        <TableCell align="left">{row.credit_num}</TableCell>
-                        <TableCell align="left">{getGrade(row.course_id)}</TableCell>
+                        <TableCell align="left" sx={{width: "20%"}}>{getIcon(row.course_id)}</TableCell>
+                        <TableCell align="left" sx={{width: "20%"}}>{row.course_id}</TableCell>
+                        <TableCell align="left" sx={{width: "20%"}}>{row.course_name}</TableCell>
+                        <TableCell align="left" sx={{width: "20%"}}>{row.credit_num}</TableCell>
+                        <TableCell align="left" sx={{width: "20%"}}>{getGrade(row.course_id)}</TableCell>
                       </TableRow>
                     // </Collapse>
                   ))
@@ -156,7 +156,6 @@ function Requirements() {
         <div className="App">
             <Navigation />
             <div className='contentContainer'>
-              {/* {requirementRows(handleRequirements(requirements))} */}
               <RequirementRows reqs={handleRequirements(requirements)} />
             </div>
         </div >
