@@ -14,6 +14,8 @@ import TextField from '@mui/material/TextField';
 import SimpleDialog from './Dialog';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
+import Checkbox from '@mui/material/Checkbox';
+import { green } from '@mui/material/colors';
 
 function Home() {
     let accountInfo = {};
@@ -203,6 +205,14 @@ function Home() {
         setOpen(false);
     }
 
+    
+    const changeStyle = () => {
+        const element = document.getElementById("styleTest");
+        element.classList.toggle('green');
+    }
+
+
+    
     const handleDeleteCourse = (course, semester) => {
         Axios.post(`http://localhost:3001/deleteCourse`, {
             semester_id: course.semester_id,
@@ -342,24 +352,36 @@ function Home() {
         }
 
 
-        for (let i = 0; i < semTotal; i++) {
-            // if (semesters[i][0] !== undefined) {
-                let creditId = 'credit_count' + i;
-                let creditCount = countCredits(semesters[i], creditId);
-                blocks.push(<Grid item={true} xs={6} className='tableGrid'>
-                    <h2>{numbers[i]} Semester</h2>
-                    {/* <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4> */}
-                    {creditWarningPopup(creditId, creditCount)}
-                    <TableContainer component={Paper}>
-                        <Table aria-label="simple table">
-                            <TableBody>
-                                {semesters[i].map((row) => (
-                                    <TableRow key={row?.id}>
-                                        <TableCell>{row?.course_id}</TableCell>
-                                        <TableCell onClick={handleDialogOpen}>{row?.course_name}</TableCell>
-                                        <TableCell>{row?.credit_num}</TableCell>
-                                        <TableCell>
-                                            <Button color="error" onClick={() => handleDeleteCourse(row, semesters[i])}>
+        for (const [index, element] of semester.entries()) {
+            let creditId = 'credit_count' + index;
+            let creditCount = countCredits(element, creditId);
+            blocks.push(<Grid item={true} xs={6} className='tableGrid'>
+                <h2>{numbers[index]} Semester</h2>
+                {/* <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4> */}
+                {creditWarningPopup(creditId, creditCount)}
+                <TableContainer component={Paper}>
+                    <Table aria-label="simple table">
+                        <TableBody>
+                            {element.map((row) => (
+                                <TableRow id="styleTest" key={row.id}>
+                                    <TableCell>{row.course_id}</TableCell>
+                                    <TableCell onClick={handleDialogOpen}>{row.course_name}</TableCell>
+                                    <TableCell>{row.credit_num}</TableCell>
+                                    <TableCell>
+                                        <Button color="error" onClick={() => handleDeleteCourse(row, element)}>
+                                            <DeleteIcon></DeleteIcon>
+                                        </Button>
+                                        <Button onClick={changeStyle}>
+                                        <Checkbox
+                                            sx={{
+                                                color: green[800],
+                                                '&.Mui-checked': {
+                                                color: green[600],
+                                                },
+                                            }}
+                                            /> 
+                                       </Button>
+                                        {/* <Button color = "error" onClick={handleClickOpen}>
                                                 <DeleteIcon></DeleteIcon>
                                             </Button>
                                             {/* <Button color = "error" onClick={handleClickOpen}>

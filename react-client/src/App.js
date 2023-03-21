@@ -1,8 +1,8 @@
 import './css/App.css';
 import * as React from 'react';
-import logo from './images/MessiahLogo.JPG';
+import logo from './images/LogoCheckRound.JPG';
 import { Avatar, Button, TextField, FormControlLabel } from '@mui/material';
-import { Checkbox, Grid, Box, Typography, Container, Alert} from '@mui/material';
+import { Checkbox, Grid, Box, Typography, Container} from '@mui/material';
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import { useState } from 'react';
@@ -24,6 +24,7 @@ export default function SignIn() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const loginErrorMsg = document.getElementById("login-error-msg");
 
   const [remember, setRemember] = useState(false);
 
@@ -50,12 +51,8 @@ export default function SignIn() {
       else 
       {
         console.log(response.data)
-        let form = document.getElementById("alert_test");
-        form.style.visibility = 'visible';
-        //document.getElementById('dip').hidden = true
-         
-
-          
+        loginErrorMsg.style.display = 'block';
+  
       }
     });
   }
@@ -121,12 +118,9 @@ export default function SignIn() {
               control={<Checkbox checked={remember} onChange={e => setRemember(e.target.checked)} color="primary" />}
               label="Remember me"
             />
-            <Alert component = 'alert_test' variant = "filled" severity ="error"
-            sx = {{
-              visibility:'hidden'
-            }}>
-              Warning! Email or password is incorrect
-            </Alert>
+            <div id = "login-error-msg">
+                 Warning! Email or password is incorrect
+            </div>
             <Button
               type="submit"
               fullWidth

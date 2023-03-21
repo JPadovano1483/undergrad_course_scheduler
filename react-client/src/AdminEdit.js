@@ -12,8 +12,17 @@ function AdminEdit() {
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
     const [credits, setCredits] = useState(0);
-    const [semester, setSemester] = useState("");
-    const [year, setYear] = useState("");
+    const [semester, setSemester] = React.useState('Fall');
+    const [year, setYear] = React.useState('Even');
+
+    const handleSemesterChange = (event) => {
+   
+        setSemester(event.target.value);
+      };
+    const handleYearChange = (event) => {
+   
+        setYear(event.target.value);   
+      };
 
     const [accountInfo, setAccountInfo] = useState(() => {
         let loggedInUser = localStorage.getItem("user");
@@ -123,29 +132,23 @@ function AdminEdit() {
                                 setCourseDescription(e.target.value)
                             }}
                         />
-                        <TextField 
-                             
-                             fullWidth 
-                             label="Semester" 
-                             id="name" 
-                             sx={{ my: 1, width: '50%' }} 
-                             variant="filled"
-                             onChange={(e) => {
-                                 setSemester(e.target.value)
-                             }}
-                         />
-                          <TextField 
-                             
-                             fullWidth 
-                             label="Year" 
-                             id="name" 
-                             sx={{ my: 1, width: '50%' }} 
-                             variant="filled"
-                             onChange={(e) => {
-                                 setYear(e.target.value)
-                             }}
-                         />
-                         
+                <div classname= "dropdown">
+                <form>
+                <select value={semester} onChange={handleSemesterChange}>
+                  <option value="Fall">Fall</option>
+                  <option value="Spring">Spring</option>
+                  <option value="Both">Both</option>
+                </select>
+                </form>
+                </div>
+                <div classname= "dropdown">
+                <form>
+                <select value={year} onChange={handleYearChange}>
+                  <option value="EVEN">Even</option>
+                  <option value="ODD">Odd</option>
+                </select>
+                </form>
+                </div>
                         <TextField 
                              
                             type={'number'} 
