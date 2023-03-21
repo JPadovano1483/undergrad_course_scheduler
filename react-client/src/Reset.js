@@ -9,21 +9,30 @@ import Axios from 'axios';
 export default function SignUp() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const email = urlParams.get('email');
-  console.log(email);
+  const code = urlParams.get('code');
+  console.log(code);
 
   const [password, setPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
 
   const changePassword = () => {
+    if (code !== "" && password !== "" && password === confPassword) {
       console.log("Changing password.");
       Axios.post(`http://localhost:3001/reset`, {
-          email: email,
-          password: password,
-          confPassword: confPassword,
+        code: code,
+        password: password,
+        confPassword: confPassword,
       }).then((response) => {
-          console.log(response);
+        console.log(response);
+        Axios.post(`http://localhost:3001/deleteCode`, {
+          code: code,
+        }).then((response) => {
+            console.log(response);
+        });
+
+        window.location.href = "http://localhost:3000";
       });
+    }
   };
 
   return (
