@@ -16,6 +16,20 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 
 function Home() {
+    let accountInfo = {};
+    if (localStorage.getItem("user") !== null) {
+        const loggedInUser = JSON.parse(localStorage.getItem("user"));
+        accountInfo = loggedInUser;
+    }
+    else if (sessionStorage.getItem("user") !== null) {
+        const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
+        accountInfo = loggedInUser;
+    }
+    else {
+        window.location.href = "http://localhost:3000";
+    }
+    console.log(accountInfo);
+
     // const user_id = window.sessionStorage.getItem("user_id");
     // SimpleDialog.propTypes = {
     //     onClose: PropTypes.func.isRequired,
@@ -23,17 +37,6 @@ function Home() {
     // };
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-
-    let loggedInUser = localStorage.getItem("user");
-    let accountInfo = {};
-    if (loggedInUser != null) {
-        loggedInUser = JSON.parse(loggedInUser);
-        accountInfo = loggedInUser;
-    }
-    else {
-        window.location.href = "http://localhost:3000";
-    }
-    console.log(accountInfo);
     
     const [semTotal, setSemTotal] = useState(0);
     const getSemTotal = () => {
