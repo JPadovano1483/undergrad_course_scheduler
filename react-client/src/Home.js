@@ -33,11 +33,11 @@ function Home() {
     }
     console.log(accountInfo);
 
-    // const user_id = window.sessionStorage.getItem("user_id");
-    // SimpleDialog.propTypes = {
-    //     onClose: PropTypes.func.isRequired,
-    //     open: PropTypes.bool.isRequired,
-    // };
+    const user_id = window.sessionStorage.getItem("user_id");
+    SimpleDialog.propTypes = {
+        onClose: PropTypes.func.isRequired,
+        open: PropTypes.bool.isRequired,
+    };
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
     
@@ -58,14 +58,14 @@ function Home() {
         getSemTotal();
     }, []);
 
-    const getaccountInfo = () => {
-        Axios.get(`http://localhost:3001/accountInfo`).then((response) => {
-            setAccountInfo(response.data);
-        });
-    }
-    useEffect(() => {
-        getaccountInfo();
-    }, []);
+    // const getaccountInfo = () => {
+    //     Axios.get(`http://localhost:3001/accountInfo`).then((response) => {
+    //         setAccountInfo(response.data);
+    //     });
+    // }
+    // useEffect(() => {
+    //     getaccountInfo();
+    // }, []);
 
     // requirement checking 
     const [requirements, setRequirements] = useState([]);
@@ -449,10 +449,6 @@ function Home() {
         return blocks;
     }
 
-    let semesters = [];
-    for (let i = 1; i < semNum + 1; i++) {
-        semesters.push(eval("sem" + i));
-    }
     // let semesters = [];
     // for (let i = 1; i < semTotal + 1; i++) {
     //     semesters.push(eval("sem" + i));
