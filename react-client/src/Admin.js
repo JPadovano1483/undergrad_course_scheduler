@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Checkbox, FormControlLabel, FormGroup, TextField, Paper, Table, TableCell, TableContainer, TableBody, TableRow, Button} from "@mui/material";
 import InputIcon from '@mui/icons-material/Input';
-import TimeRangePicker from '@wojtekmaj/react-timerange-picker'
 import Axios from 'axios';
 
 
@@ -13,9 +12,17 @@ function Admin() {
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
     const [credits, setCredits] = useState(0);
-    const [semester, setSemester] = useState("");
-    const [year, setYear] = useState("");
+    const [semester, setSemester] = React.useState('Fall');
+    const [year, setYear] = React.useState('Even');
 
+    const handleSemesterChange = (event) => {
+   
+        setSemester(event.target.value);
+      };
+    const handleYearChange = (event) => {
+   
+        setYear(event.target.value);   
+      };
 
     //get all courses
     const [courseList, setCourseList] = useState([]);
@@ -103,8 +110,6 @@ function Admin() {
                     document.querySelector('#courseID').value = "";
                     document.querySelector('#courseName').value = "";
                     document.querySelector('#description').value = "";
-                    document.querySelector('#semester').value = "";
-                    document.querySelector('#year').value = "";
                     document.querySelector('#credits').value = "";
                     document.querySelector('#errorMessage').style.color = 'black';
                     document.querySelector('#errorMessage').innerHTML = "Upload Successful!";
@@ -191,29 +196,20 @@ function Admin() {
                                 setCourseDescription(e.target.value)
                             }}
                         />
-                        <TextField 
-                             
-                             fullWidth 
-                             label="Semester" 
-                             id="semester" 
-                             sx={{ my: 1, width: '50%' }} 
-                             variant="filled"
-                             onChange={(e) => {
-                                 setSemester(e.target.value)
-                             }}
-                         />
-                          <TextField 
-                             
-                             fullWidth 
-                             label="Year" 
-                             id="year" 
-                             sx={{ my: 1, width: '50%' }} 
-                             variant="filled"
-                             onChange={(e) => {
-                                 setYear(e.target.value)
-                             }}
-                         />
-                         
+                        <div classname= "dropdown">
+                            <select value={semester} onChange={handleSemesterChange}>
+                                <option value="Fall">Fall</option>
+                                <option value="Spring">Spring</option>
+                                <option value="Both">Both</option>
+                            </select>
+                        </div>
+                        <div classname= "dropdown">
+                            <select value={year} onChange={handleYearChange}>
+                                <option value="Even">Even</option>
+                                <option value="Odd">Odd</option>
+                                <option value="Both">Both</option>
+                            </select>
+                        </div>
                         <TextField 
                              
                             type={'number'} 
