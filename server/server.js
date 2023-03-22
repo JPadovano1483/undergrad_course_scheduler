@@ -431,7 +431,7 @@ app.post("/minor", (req, res) => {
 
 });
 
-app.post("/concentration:/major", (req, res) => {
+app.post("/concentration/:major", (req, res) => {
 
   const program = req.params.major;
   db.query("SELECT program_name FROM program WHERE program_type = ? AND major_id IN (SELECT program_id FROM program WHERE program_name = ? AND program_type = ?)",
