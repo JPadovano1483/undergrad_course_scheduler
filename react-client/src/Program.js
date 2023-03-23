@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import appendChild from 'react';
 
 export default function Program() {
-    const [major, setMajor] = React.useState('Computer Science');
+    const [major, setMajor] = React.useState('Computer and Information Science');
     const [minor, setMinor] = React.useState('Music');
     const [concentration, setConcentration] = React.useState('None');
     const [maj, setMaj] = useState([]);
@@ -74,7 +74,7 @@ export default function Program() {
          var els = document.createElement("option");
          els.textContent = maj[i].program_name;
          els.value = maj[i].program_name;
-         select1.appendChild(els);
+         select1.append(els);
      }
     
      var select = document.getElementById("selectMinor");
@@ -83,7 +83,7 @@ export default function Program() {
           var el = document.createElement("option");
           el.textContent = min[i].program_name;
           el.value = min[i].program_name;
-          select.appendChild(el);
+          select.append(el);
       }
      
       var select = document.getElementById("selectConcentration");
@@ -92,7 +92,7 @@ export default function Program() {
            var el = document.createElement("option");
            el.textContent = concen[i].program_name;
            el.value = concen[i].program_name;
-           select.appendChild(el);
+           select.append(el);
        }
 
     return (
@@ -126,29 +126,30 @@ export default function Program() {
                     </Typography>
 
                     <Box component="form" noValidate sx={{ mt: 3 }}>
+                        <form>
                         <Grid item xs={12}>
                             <div class ="Select"> Select your Major</div>
-                            <form>
+                            
                                 <select id='selectMajor' value={major} onChange={handleMajorChange} >
                                 </select>
-                            </form>   
+                               
                                                 
                             <div class ="Select"> Select your Minor</div>
-                            <form>    
+                               
                                 <select id='selectMinor' value={minor} onChange={handleMinorChange} >
                                 </select>
-                            </form>  
+                             
                                                    
                                                 
                             <div class ="Select"> Select your Concentration</div>
-                            <form>
+                            
                                 <select id ='selectConcentration' value={concentration} onChange={handleConcentrationChange}>
                                 </select>
 
                                 <h4> Major: {major} </h4>
                                 <h4> Minor: {minor} </h4>
                                 <h4> Concentration: {concentration} </h4>
-                            </form>                   
+                                              
                         </Grid>
                         <Link to="/home">
                             <Button
@@ -170,6 +171,7 @@ export default function Program() {
                                 Back to Login Page
                             </Grid>
                         </Link> */}
+                        </form>
                     </Box>
                 </Box>
             </Container>
