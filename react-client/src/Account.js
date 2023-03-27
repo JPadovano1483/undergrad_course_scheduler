@@ -84,48 +84,54 @@ function Account() {
 
     const handleMajorChange = (event) => {
         const programId = event.target.value;
-        console.log(programId);
         setMajorId(programId);
-        if (programId !== "") {
+        if (programId != 0) {
             getProgramName(programId);
         }
         else {
-            setMajor("");
+            console.log("None");
+            setMajor("None");
         }
     };
 
     const handleMinorChange = (event) => {
         const programId = event.target.value;
-        console.log(programId);
         setMinorId(programId);
-        if (programId !== "") {
+        if (programId != 0) {
             getProgramName(programId);
         }
         else {
-            setMinor("");
+            console.log("None");
+            setMinor("None");
         }
     };
     const handleConcentrationChange = (event) => {
         const programId = event.target.value;
-        console.log(programId);
         setConcentrationId(programId);
-        if (programId !== "") {
+        if (programId != 0) {
             getProgramName(programId);
         }
         else {
-            setConcentration("");
+            console.log("None");
+            setConcentration("None");
         }
     };
 
     const updateAccount = () => {
         console.log("Updating user data.");
+
         const getOldProgramId = (programId, programType) => {
             console.log("program type: " + programType);
             Axios.post(`http://localhost:3001/getOldProgramId`, {
                 userId: accountInfo.user_id,
                 programType: programType
             }).then((response) => {
-                return updateProgram(programId, response.data[0].program_id);
+                if (programId === 0) {
+                    return deleteProgram(response.data[0].program_id);
+                }
+                else {
+                    return updateProgram(programId, response.data[0].program_id);
+                }
             });
         }
 
@@ -133,6 +139,17 @@ function Account() {
             Axios.post(`http://localhost:3001/insertProgram`, {
                 userId: accountInfo.user_id,
                 programId: programId
+            }).then((response) => {
+                console.log(response);
+            });
+        }
+
+        const deleteProgram = (oldProgramId) => {
+            console.log("user id: " + accountInfo.user_id);
+            console.log("old program id: " + oldProgramId);
+            Axios.post(`http://localhost:3001/deleteProgram`, {
+                userId: accountInfo.user_id,
+                oldProgramId: oldProgramId
             }).then((response) => {
                 console.log(response);
             });
@@ -188,7 +205,7 @@ function Account() {
     }
 
     const getProgram = () => {
-        Axios.post("http://localhost:3001/program", {
+        Axios.post("http://localhost:3001/userProgram", {
             userId: accountInfo.user_id
         }).then((response) => {
             setCurrentMajor("None");
@@ -269,7 +286,7 @@ function Account() {
                                 {majorOptions.map((row) => (
                                     <option value={row?.program_id}>{row?.program_name}</option>
                                 ))}
-                                <option value="">--Select Major--</option>
+                                <option value={0}>--Select Major--</option>
                             </select>
                         </form>
 
@@ -279,7 +296,7 @@ function Account() {
                                 {minorOptions.map((row) => (
                                     <option value={row?.program_id}>{row?.program_name}</option>
                                 ))}
-                                <option value="">--No Minor--</option>
+                                <option value={0}>--No Minor--</option>
                             </select>
                         </form>
 
@@ -290,7 +307,7 @@ function Account() {
                                 {concentrationOptions.map((row) => (
                                     <option value={row?.program_id}>{row?.program_name}</option>
                                 ))}
-                                <option value="">--No Concentration--</option>
+                                <option value={0}>--No Concentration--</option>
                             </select>
 
                             <h4> Major: {major} </h4>

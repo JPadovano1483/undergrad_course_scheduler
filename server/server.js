@@ -345,6 +345,21 @@ app.post("/insertProgram", (req, res) => {
     });
 });
 
+app.post("/deleteProgram", (req, res) => {
+  const userId = req.body.userId;
+  const oldProgramId = req.body.oldProgramId;
+
+  db.query("DELETE FROM user_program WHERE user_id = ? AND program_id = ?",
+    [userId, oldProgramId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
 app.post("/updateProgram", (req, res) => {
   const userId = req.body.userId;
   const programId = req.body.programId;
@@ -495,7 +510,7 @@ app.get("/profile", (req, res) => {
 
 });
 
-app.post("/program", (req, res) => {
+app.post("/userProgram", (req, res) => {
   const userId = req.body.userId;
 
   db.query("SELECT * FROM user_program JOIN program using(program_id) WHERE user_id=?",
