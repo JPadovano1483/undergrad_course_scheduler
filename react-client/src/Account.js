@@ -56,76 +56,124 @@ function Account() {
     const [minor, setMinor] = useState("");
     const [concentration, setConcentration] = useState("");
     const [password, setPassword] = useState("");
+    const [currentMajor, setCurrentMajor] = useState("None");
+    const [currentMinor, setCurrentMinor] = useState("None");
+    const [currentConcentration, setCurrentConcentration] = useState("None");
     const [majorId, setMajorId] = useState(0);
     const [minorId, setMinorId] = useState(0);
     const [concentrationId, setConcentrationId] = useState(0);
 
+    const getProgramName = (programId) => {
+        Axios.post(`http://localhost:3001/getProgramName`, {
+            programId: programId
+        }).then((response) => {
+            console.log("set major");
+            console.log(response.data[0].program_name);
+            console.log(response.data[0].program_type);
+            if (response.data[0].program_type === "major") {
+                setMajor(response.data[0].program_name);
+            }
+            else if (response.data[0].program_type === "minor") {
+                setMinor(response.data[0].program_name);
+            }
+            else if (response.data[0].program_type === "concentration") {
+                setConcentration(response.data[0].program_name);
+            }
+        });
+    }
+
     const handleMajorChange = (event) => {
-        const program = event.target.value;
-        setMajorId(program.program_id);
-        setMajor(program.program_name);
+        const programId = event.target.value;
+        console.log(programId);
+        setMajorId(programId);
+        if (programId !== "") {
+            getProgramName(programId);
+        }
+        else {
+            setMajor("");
+        }
     };
 
     const handleMinorChange = (event) => {
-        const program = event.target.value;
-        setMinorId(program.program_id);
-        setMinor(program.program_name);
+        const programId = event.target.value;
+        console.log(programId);
+        setMinorId(programId);
+        if (programId !== "") {
+            getProgramName(programId);
+        }
+        else {
+            setMinor("");
+        }
     };
     const handleConcentrationChange = (event) => {
-        const program = event.target.value;
-        setConcentrationId(program.program_id);
-        setConcentration(program.program_name);
+        const programId = event.target.value;
+        console.log(programId);
+        setConcentrationId(programId);
+        if (programId !== "") {
+            getProgramName(programId);
+        }
+        else {
+            setConcentration("");
+        }
     };
 
     const updateAccount = () => {
         console.log("Updating user data.");
-        if (currentMajor === "None") {
-            Axios.post(`http://localhost:3001/insertMajor`, {
+        const getOldProgramId = (programId, programType) => {
+            console.log("program type: " + programType);
+            Axios.post(`http://localhost:3001/getOldProgramId`, {
                 userId: accountInfo.user_id,
-                majorId: majorId
+                programType: programType
+            }).then((response) => {
+                return updateProgram(programId, response.data[0].program_id);
+            });
+        }
+
+        const insertProgram = (programId) => {
+            Axios.post(`http://localhost:3001/insertProgram`, {
+                userId: accountInfo.user_id,
+                programId: programId
             }).then((response) => {
                 console.log(response);
             });
         }
-        else {
-            Axios.post(`http://localhost:3001/updateMajor`, {
+
+        const updateProgram = (programId, oldProgramId) => {
+            console.log("user id: " + accountInfo.user_id);
+            console.log("program id: " + programId);
+            console.log("old program id: " + oldProgramId);
+            Axios.post(`http://localhost:3001/updateProgram`, {
                 userId: accountInfo.user_id,
-                majorId: majorId
+                programId: programId,
+                oldProgramId: oldProgramId
             }).then((response) => {
                 console.log(response);
             });
+        }
+        
+        if (currentMajor === "None") {
+            insertProgram(majorId);
+            setCurrentMajor(major);
+        }
+        else {
+            getOldProgramId(majorId, "major");
+            setCurrentMajor(major);
         }
         if (currentMinor === "None") {
-            Axios.post(`http://localhost:3001/insertMinor`, {
-                userId: accountInfo.user_id,
-                minorId: minorId
-            }).then((response) => {
-                console.log(response);
-            });
+            insertProgram(minorId);
+            setCurrentMinor(minor);
         }
         else {
-            Axios.post(`http://localhost:3001/updateMinor`, {
-                userId: accountInfo.user_id,
-                minorId: minorId
-            }).then((response) => {
-                console.log(response);
-            });
+            getOldProgramId(minorId, "minor");
+            setCurrentMinor(minor);
         }
         if (currentConcentration === "None") {
-            Axios.post(`http://localhost:3001/insertConcentration`, {
-                userId: accountInfo.user_id,
-                concentrationId: concentrationId
-            }).then((response) => {
-                console.log(response);
-            });
+            insertProgram(concentrationId);
+            setCurrentConcentration(concentration);
         }
         else {
-            Axios.post(`http://localhost:3001/updateConcentration`, {
-                userId: accountInfo.user_id,
-                concentrationId: concentrationId
-            }).then((response) => {
-                console.log(response);
-            });
+            getOldProgramId(concentrationId, "concentration");
+            setCurrentConcentration(concentration);
         }
     }
 
@@ -139,9 +187,6 @@ function Account() {
         });
     }
 
-    const [currentMajor, setCurrentMajor] = useState("None");
-    const [currentMinor, setCurrentMinor] = useState("None");
-    const [currentConcentration, setCurrentConcentration] = useState("None");
     const getProgram = () => {
         Axios.post("http://localhost:3001/program", {
             userId: accountInfo.user_id
@@ -220,18 +265,19 @@ function Account() {
 
                         <div className="Major"> Select your Major</div>
                         <form className="Move">
-                            <select value={major} onChange={handleMajorChange}>
+                            <select onChange={handleMajorChange}>
                                 {majorOptions.map((row) => (
-                                    <option value={row}>{row?.program_name}</option>
+                                    <option value={row?.program_id}>{row?.program_name}</option>
                                 ))}
+                                <option value="">--Select Major--</option>
                             </select>
                         </form>
 
                         <div className="Minor"> Select your Minor</div>
                         <form>
-                            <select value={minor} onChange={handleMinorChange}>
+                            <select onChange={handleMinorChange}>
                                 {minorOptions.map((row) => (
-                                    <option value={row}>{row?.program_name}</option>
+                                    <option value={row?.program_id}>{row?.program_name}</option>
                                 ))}
                                 <option value="">--No Minor--</option>
                             </select>
@@ -240,9 +286,9 @@ function Account() {
 
                         <div className="Concentration"> Select your Concentration</div>
                         <form>
-                            <select value={concentration} onChange={handleConcentrationChange}>
+                            <select onChange={handleConcentrationChange}>
                                 {concentrationOptions.map((row) => (
-                                    <option value={row}>{row?.program_name}</option>
+                                    <option value={row?.program_id}>{row?.program_name}</option>
                                 ))}
                                 <option value="">--No Concentration--</option>
                             </select>
