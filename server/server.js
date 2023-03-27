@@ -127,6 +127,21 @@ app.post("/prereq", (req, res) => {
       }
     });
 });
+app.post("/prereqUpload", (req, res) => {
+  console.log(req.body);
+  const course_id = req.body.course_id;
+  const prerequisite_id = req.body.prerequisite_id;
+  const grade_req = req.body.grade_req;
+  db.query("INSERT INTO prerequisite (course_id, prerequisite_id, grade_req) VALUES (?,?,?)",
+    [course_id, prerequisite_id, grade_req],
+    (err, result) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
 
 app.post("/resetCode", (req, res) => {
   const code = req.body.code;
@@ -253,7 +268,7 @@ app.get("/users", (req, res) => {
 
 // app.post("/userProgram", (req, res) => {
 //   const userId = req.body.userId;
-  
+
 //   db.query("INSERT INTO user_program (major_name) VALUES ()",
 //     [major, userId],
 //     (err, result) => {
@@ -304,7 +319,7 @@ app.post("/getConcentrations", (req, res) => {
 app.post("/insertMajor", (req, res) => {
   const userId = req.body.userId;
   const majorId = req.body.majorId;
-  
+
   db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
     [userId, majorId],
     (err, result) => {
@@ -334,7 +349,7 @@ app.post("/updateMajor", (req, res) => {
 app.post("/insertMinor", (req, res) => {
   const userId = req.body.userId;
   const minorId = req.body.majorId;
-  
+
   db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
     [userId, minorId],
     (err, result) => {
@@ -364,7 +379,7 @@ app.post("/updateMinor", (req, res) => {
 app.post("/insertConcentration", (req, res) => {
   const userId = req.body.userId;
   const concentrationId = req.body.concentrationId;
-  
+
   db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
     [userId, concentrationId],
     (err, result) => {
@@ -435,7 +450,7 @@ app.post("/concentration/:major", (req, res) => {
 
   const program = req.params.major;
   db.query("SELECT program_name FROM program WHERE program_type = ? AND major_id IN (SELECT program_id FROM program WHERE program_name = ? AND program_type = ?)",
-  ['concentration', program, 'major'],
+    ['concentration', program, 'major'],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -476,7 +491,7 @@ app.post("/program", (req, res) => {
       }
     });
 });
-    
+
 
 // app.get("/accountInfo", (req, res) => {
 //   db.query("SELECT * FROM user WHERE username = ?",
@@ -550,14 +565,14 @@ app.post("/allSemesters", (req, res) => {
 
   if (userValidation) {
     db.query("SELECT course_id, course_name, credit_num, semester_id, user.user_id, user_course.grade FROM course JOIN user_course using(course_id) JOIN semester using(semester_id) INNER JOIN user ON user_course.user_id=user.user_id WHERE semester_id < ? AND user.user_id=?",
-    [semNumSelected, reqUser],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    });
+      [semNumSelected, reqUser],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send(result);
+        }
+      });
   }
   else {
     console.log("Not Authorized");

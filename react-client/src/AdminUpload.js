@@ -36,11 +36,29 @@ function AdminUpload() {
                     'concentration_req': null,
                     'major_id': null
                 }]);
-                break
+                break;
+            case 'Prereqs':
+                setDownloaderData([{
+                    'course_id': null,
+                    'prerequisite_id': null,
+                    'grade_req': null
+                }]);
+                break;
             default:
                 setDownloaderData(null);
         }
     };
+    const addPrereqs = (e, c) => {
+        Axios.post(`http://localhost:3001/prereqUpload`, {
+            course_id: e.course_id,
+            prerequisite_id: e.prerequisite_id,
+            grade_req: e.grade_req
+        }).then((response) => {
+            if (response.data.errno === 1452) {
+                setErrorArray(errorArray => [...errorArray, c]);
+            }
+        });
+    }
     const [empty, setEmpty] = useState(false);
 
     const [errorArray, setErrorArray] = useState([]);
@@ -172,9 +190,20 @@ function AdminUpload() {
         if (empty) {
             block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">The file is empty.</Alert></div>);
         } else {
-            for (const [index] of errors.entries()) {
-                block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">Error in row {errors[index]}. Element already exists.</Alert></div>);
-            };
+            switch (alignment) {
+                case 'Courses':
+                    for (const [index] of errors.entries()) {
+                        block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">Error in row {errors[index]}. Element already exists.</Alert></div>);
+                    };
+                    break;
+                case 'Prereqs':
+                    for (const [index] of errors.entries()) {
+                        block.push(<div style={{ marginBottom: '10px' }}><Alert severity="error">Error in row {errors[index]}. Course doesn't exist.</Alert></div>);
+                    };
+                    break;
+                default:
+                    break;
+            }
         }
         return block;
     }
@@ -209,7 +238,7 @@ function AdminUpload() {
                     >
                         <ToggleButton value="Courses">Courses</ToggleButton>
                         <ToggleButton value="Programs">Programs</ToggleButton>
-                        <ToggleButton value="Requirements">Requirements</ToggleButton>
+                        <ToggleButton value="Prereqs">Course Prerequisites</ToggleButton>
                     </ToggleButtonGroup>
                 </div>
                 <h1>
@@ -232,9 +261,10 @@ function AdminUpload() {
                                         } else {
                                             getPrograms(element, count);
                                         }
-                                        //addPrograms(element, count);
                                         break;
-
+                                    case 'Prereqs':
+                                        addPrereqs(element, count);
+                                        break;
                                 }
                                 count++;
                             });
