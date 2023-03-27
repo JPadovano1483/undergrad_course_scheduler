@@ -463,7 +463,7 @@ app.post("/minor", (req, res) => {
 
 });
 
-app.post("/concentration:/major", (req, res) => {
+app.post("/concentration/:major", (req, res) => {
 
   const program = req.params.major;
   db.query("SELECT program_name FROM program WHERE program_type = ? AND major_id IN (SELECT program_id FROM program WHERE program_name = ? AND program_type = ?)",
@@ -702,14 +702,15 @@ app.post("/deleteSemester", (req, res) => {
 });
 app.post("/userRequirements", (req, res) => {
   const user_id = req.body.user_id;
-  db.query(`SELECT req_id, req_type, req_type_num, course_id FROM user
+  db.query(`SELECT req_id, req_type, req_type_num, course_id, course_name, course_description, credit_num FROM user
   JOIN user_program using (user_id)
   JOIN program using (program_id)
   JOIN requirement using (program_id)
   JOIN requirement_course using (req_id)
-  WHERE user_id=?
-  ORDER BY req_id;`,
-    user_id,
+  join course using (course_id)
+  WHERE user.user_id=?
+  ORDER BY req_id ASC`,
+    [user_id],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -723,7 +724,23 @@ app.post("/userRequirements", (req, res) => {
 
 app.post("/allUserCourses", (req, res) => {
   const user_id = req.body.user_id;
-  db.query(`SELECT course_id from user JOIN semester using (user_id) JOIN user_course using (semester_id) JOIN course using (course_id) where user.user_id=4`,
+  db.query(`SELECT course_id, grade, semester_id, semester, course.year FROM user_course JOIN course using (course_id) WHERE user_id=? ORDER BY semester_id;`,
+    [user_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(result);
+      }
+    }
+  );
+});
+
+app.post("/userSemeseterIDs", (req, res) => {
+  const user_id = req.body.user_id;
+  db.query(`SELECT semester_id FROM semester WHERE user_id=? ORDER BY semester_id`,
+    [user_id],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -734,6 +751,22 @@ app.post("/allUserCourses", (req, res) => {
     }
   );
 })
+
+app.post("/searchCourse", (req, res) => {
+  const course_id = req.body.course_id;
+  const course_name = req.body.course_name;
+  db.query(`SELECT * FROM course WHERE course_name=? OR course_id=?`,
+    [course_name, course_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(result);
+      }
+    }
+  );
+});
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname + '/../src/build/index.html'));
