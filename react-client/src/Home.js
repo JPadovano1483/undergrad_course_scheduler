@@ -17,6 +17,7 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
 import { green } from '@mui/material/colors';
+import SearchCourse from "./SearchCourse";
 
 function Home() {
     let accountInfo = {};
@@ -211,36 +212,11 @@ function Home() {
 
     // filter course search
     let [filteredCourses, setFilteredCourses] = useState([]);
-    let filterCourses = (criteria, input, list) => {
-        switch (criteria) {
-            case "id":
-                return list.filter(course =>
-                    course.course_id.includes(input)
-                );
-
-            case "name":
-                return list.filter(course =>
-                    course.course_name.includes(input)
-                );
-
-            default:
-                return list;
-        }
-    }
 
     const handleCourseSearch = () => {
         let idInput = document.getElementById('course_id_input')?.value;
-        let nameInput = document.getElementById('course_name_input')?.value
 
-        if (nameInput) {
-            return filterCourses("name", nameInput, courseList);
-        }
-        else if (idInput) {
-            return filterCourses("id", idInput, courseList);
-        }
-        else {
-            return filterCourses("default", "none", courseList);
-        }
+        return SearchCourse(courseList, idInput);
     }
     const [open, setOpen] = useState(false);
     const handleClickOpen = () => {
