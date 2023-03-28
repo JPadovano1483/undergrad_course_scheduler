@@ -445,51 +445,55 @@ function Home() {
             console.log(selectedSemester);
             console.log(course);
             console.log("courseId: " + course.course_id);
-            Promise.all([
-                Axios.post(`http://localhost:3001/prereq`, {
-                    semesterId: semNumSelected,
-                    courseId: course.course_id,
-                }),
-                Axios.post(`http://localhost:3001/allSemesters`, {
-                    reqUser: accountInfo.user_id,
-                    targetUser: accountInfo.user_id,
-                    role: accountInfo.is_admin,
-                    semNumSelected: semNumSelected
-                })
-            ]).then((response) => {
-                console.log(response);
-                console.log(response[0].data);
-                console.log(response[1].data);
-                let satisfied = true;
-                if (response[0].data.length > 0) {
-                    const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
-                    // checks if the perequisite courses are found in a previous semester and have a passing grade or have no grade yet
-                    for (let i = 0; i < response[0].data.length; i++) {
-                        const classPassed = response[1].data.some((course) => {
-                            return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
-                        });
-                        console.log(!classPassed);
-                        if (!classPassed) {
-                            satisfied = false;
+            if (userCourses.find(element => element.course_id == course.course_id).length == 0) {
+                Promise.all([
+                    Axios.post(`http://localhost:3001/prereq`, {
+                        semesterId: semNumSelected,
+                        courseId: course.course_id,
+                    }),
+                    Axios.post(`http://localhost:3001/allSemesters`, {
+                        reqUser: accountInfo.user_id,
+                        targetUser: accountInfo.user_id,
+                        role: accountInfo.is_admin,
+                        semNumSelected: semNumSelected
+                    })
+                ]).then((response) => {
+                    console.log(response);
+                    console.log(response[0].data);
+                    console.log(response[1].data);
+                    let satisfied = true;
+                    if (response[0].data.length > 0) {
+                        const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
+                        // checks if the perequisite courses are found in a previous semester and have a passing grade or have no grade yet
+                        for (let i = 0; i < response[0].data.length; i++) {
+                            const classPassed = response[1].data.some((course) => {
+                                return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
+                            });
+                            console.log(!classPassed);
+                            if (!classPassed) {
+                                satisfied = false;
+                            }
                         }
                     }
-                }
-                if (satisfied) {
-                    console.log("Prerequisites have been met!");
-                    selectedSemester.push(course);
-                    Axios.post(`http://localhost:3001/addCourse`, {
-                        semester_id: semNumSelected,
-                        course_id: course.course_id,
-                        user_id: accountInfo.user_id
-                    }).then((response) => {
-                        console.log(response);
-                    });
-                }
-                else {
-                    console.log("Prerequisites not met.");
-                }
-            });
-            
+                    if (satisfied) {
+                        console.log("Prerequisites have been met!");
+                        selectedSemester.push(course);
+                        Axios.post(`http://localhost:3001/addCourse`, {
+                            semester_id: semNumSelected,
+                            course_id: course.course_id,
+                            user_id: accountInfo.user_id
+                        }).then((response) => {
+                            console.log(response);
+                        });
+                    }
+                    else {
+                        console.log("Prerequisites not met.");
+                    }
+                });
+            }
+            else {
+                console.log("Course already planned!");
+            }
         }
     }
 
