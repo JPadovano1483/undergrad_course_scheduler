@@ -316,12 +316,41 @@ app.post("/getConcentrations", (req, res) => {
     });
 });
 
-app.post("/insertMajor", (req, res) => {
+app.post("/getOldProgramId", (req, res) => {
   const userId = req.body.userId;
-  const majorId = req.body.majorId;
+  const programType = req.body.programType;
+
+  db.query("SELECT program_id FROM user_program JOIN program USING (program_id) WHERE user_id = ? AND program_type = ?",
+    [userId, programType],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/getProgramName", (req, res) => {
+  const programId = req.body.programId;
+
+  db.query("SELECT program_name, program_type FROM program WHERE program_id = ?",
+    [programId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/insertProgram", (req, res) => {
+  const userId = req.body.userId;
+  const programId = req.body.programId;
 
   db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
-    [userId, majorId],
+    [userId, programId],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -331,12 +360,12 @@ app.post("/insertMajor", (req, res) => {
     });
 });
 
-app.post("/updateMajor", (req, res) => {
+app.post("/deleteProgram", (req, res) => {
   const userId = req.body.userId;
-  const majorId = req.body.majorId;
+  const oldProgramId = req.body.oldProgramId;
 
-  db.query("UPDATE user_program SET program_id = ? WHERE user_id = ? AND program_id = (SELECT program_id FROM user_program JOIN program using(program_id) WHERE user_id = ? AND program_type = ?)",
-    [majorId, userId, userId, "major"],
+  db.query("DELETE FROM user_program WHERE user_id = ? AND program_id = ?",
+    [userId, oldProgramId],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -346,12 +375,13 @@ app.post("/updateMajor", (req, res) => {
     });
 });
 
-app.post("/insertMinor", (req, res) => {
+app.post("/updateProgram", (req, res) => {
   const userId = req.body.userId;
-  const minorId = req.body.majorId;
+  const programId = req.body.programId;
+  const oldProgramId = req.body.oldProgramId;
 
-  db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
-    [userId, minorId],
+  db.query("UPDATE user_program SET program_id = ? WHERE user_id = ? AND program_id = ?",
+    [programId, userId, oldProgramId],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -361,50 +391,67 @@ app.post("/insertMinor", (req, res) => {
     });
 });
 
-app.post("/updateMinor", (req, res) => {
-  const minor = req.body.minor;
-  const userId = req.body.userId;
+// app.post("/insertMinor", (req, res) => {
+//   const userId = req.body.userId;
+//   const minorId = req.body.majorId;
 
-  db.query("UPDATE user_program SET program_id = ? WHERE user_id = ? AND program_id = (SELECT program_id FROM user_program JOIN program using(program_id) WHERE user_id = ? AND program_type = ?)",
-    [minor, userId, userId, "minor"],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    });
-});
+//   db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
+//     [userId, minorId],
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.send(result);
+//       }
+//     });
+// });
 
-app.post("/insertConcentration", (req, res) => {
-  const userId = req.body.userId;
-  const concentrationId = req.body.concentrationId;
+// app.post("/updateMinor", (req, res) => {
+//   const minor = req.body.minor;
+//   const userId = req.body.userId;
+//   const oldProgramId = req.body.oldProgramId;
 
-  db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
-    [userId, concentrationId],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    });
-});
+//   db.query("UPDATE user_program SET program_id = ? WHERE user_id = ? AND program_id = ?",
+//     [minor, userId, oldProgramId],
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.send(result);
+//       }
+//     });
+// });
 
-app.post("/updateConcentration", (req, res) => {
-  const concentration = req.body.concentration;
-  const userId = req.body.userId;
+// app.post("/insertConcentration", (req, res) => {
+//   const userId = req.body.userId;
+//   const concentrationId = req.body.concentrationId;
 
-  db.query("UPDATE user_program SET program_id = ? WHERE user_id = ? AND program_id = (SELECT program_id FROM user_program JOIN program using(program_id) WHERE user_id = ? AND program_type = ?)",
-    [concentration, userId, userId, "concentration"],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    });
-});
+//   db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
+//     [userId, concentrationId],
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.send(result);
+//       }
+//     });
+// });
+
+// app.post("/updateConcentration", (req, res) => {
+//   const concentration = req.body.concentration;
+//   const userId = req.body.userId;
+//   const oldProgramId = req.body.oldProgramId;
+
+//   db.query("UPDATE user_program SET program_id = ? WHERE user_id = ? AND program_id = ?",
+//     [concentration, userId, oldProgramId],
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.send(result);
+//       }
+//     });
+// });
 
 app.post("/updatePassword", (req, res) => {
   const password = req.body.password;
@@ -478,7 +525,7 @@ app.get("/profile", (req, res) => {
 
 });
 
-app.post("/program", (req, res) => {
+app.post("/userProgram", (req, res) => {
   const userId = req.body.userId;
 
   db.query("SELECT * FROM user_program JOIN program using(program_id) WHERE user_id=?",
