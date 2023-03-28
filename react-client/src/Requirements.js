@@ -2,7 +2,7 @@ import Navigation from "./navigation";
 import './css/home.css';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, Box, Collapse, IconButton, Typography} from "@mui/material";
+import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, Box, Collapse, IconButton, Typography, TableHead} from "@mui/material";
 import Axios from 'axios';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -146,9 +146,22 @@ function Requirements() {
         <div className="App">
             <Navigation />
             <div className='contentContainer'>
-              {handleRequirements(requirements).map((row) => (
-                <RequirementRows req={row} />
-              ))}
+              <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
+                <Table aria-label="simple table">
+                  <TableHead>
+                    <TableCell />
+                    <TableCell>Course ID:</TableCell>
+                    <TableCell>Course Name:</TableCell>
+                    <TableCell>Credits:</TableCell>
+                    <TableCell>Grade:</TableCell>
+                  </TableHead>
+                  <TableBody>
+                    {handleRequirements(requirements).map((row) => (
+                      <RequirementRows req={row} />
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </div>
         </div >
     );
