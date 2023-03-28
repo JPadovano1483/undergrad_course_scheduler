@@ -523,6 +523,22 @@ app.post("/dialog", (req, res) => {
     });
 
 });
+
+app.post("/dialog", (req, res) => {
+  const userId = req.body.userId;
+  //const grade_level = req.body.grade_level;
+
+  db.query("SELECT * FROM course join user_course USING(course_id) Where user_id = ?",
+    [userId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+
+});
 app.get("/profile", (req, res) => {
   const first_name = req.body.first_name;
   const last_name = req.body.last_name;
