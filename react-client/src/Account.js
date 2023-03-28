@@ -220,7 +220,7 @@ function Account() {
 
                         <div className="Major"> Select your Major</div>
                         <form className="Move">
-                            <select value={major} onChange={handleMajorChange}>
+                            <select id = "selectMajor" value={major} onChange={handleMajorChange}>
                                 {majorOptions.map((row) => (
                                     <option value={row}>{row?.program_name}</option>
                                 ))}
@@ -229,7 +229,7 @@ function Account() {
 
                         <div className="Minor"> Select your Minor</div>
                         <form>
-                            <select value={minor} onChange={handleMinorChange}>
+                            <select id ="selectMinor" value={minor} onChange={handleMinorChange}>
                                 {minorOptions.map((row) => (
                                     <option value={row}>{row?.program_name}</option>
                                 ))}
@@ -240,7 +240,7 @@ function Account() {
 
                         <div className="Concentration"> Select your Concentration</div>
                         <form>
-                            <select value={concentration} onChange={handleConcentrationChange}>
+                            <select id ="selectConcentration" value={concentration} onChange={handleConcentrationChange}>
                                 {concentrationOptions.map((row) => (
                                     <option value={row}>{row?.program_name}</option>
                                 ))}
@@ -264,9 +264,9 @@ function Account() {
                 <section className="container">
                     <div className="floatleft">
                     </div>
-                    <div className="floatright">
+                    <div>
                         <TextField
-                            sx={{ my: 5, ml: 30 }}
+                            sx={{ my: 5, ml: -10 }}
                             label="New Password"
                             id="password"
                             type="password"

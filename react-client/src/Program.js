@@ -78,21 +78,21 @@ export default function Program() {
      }
     
      var select = document.getElementById("selectMinor");
-     for(var i = 0; i < min.length; i++)
+     for(var j = 0; j < min.length; j++)
      {
           var el = document.createElement("option");
-          el.textContent = min[i].program_name;
-          el.value = min[i].program_name;
+          el.textContent = min[j].program_name;
+          el.value = min[j].program_name;
           select.append(el);
       }
      
-      var select = document.getElementById("selectConcentration");
-      for(var i = 0; i < concen.length; i++)
+      var select2 = document.getElementById("selectConcentration");
+      for(var k = 0; k < concen.length; k++)
       {
-           var el = document.createElement("option");
-           el.textContent = concen[i].program_name;
-           el.value = concen[i].program_name;
-           select.append(el);
+           var el1 = document.createElement("option");
+           el1.textContent = concen[k].program_name;
+           el1.value = concen[k].program_name;
+           select2.append(el1);
        }
 
     return (

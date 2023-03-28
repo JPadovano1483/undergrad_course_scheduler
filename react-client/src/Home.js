@@ -2,7 +2,6 @@ import './css/home.css';
 import { PropTypes } from 'prop-types';
 import * as React from 'react';
 import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Button } from '@mui/material';
-import { Dialog, DialogTitle, DialogActions } from '@mui/material';
 import Navigation from './navigation';
 import Draggable from 'react-draggable';
 import Axios from 'axios';
@@ -413,25 +412,6 @@ function Home() {
                                             }}
                                             /> 
                                        </Button>
-                                        {/* <Button color = "error" onClick={handleClickOpen}>
-                                                <DeleteIcon></DeleteIcon>
-                                            </Button>
-                                            <Dialog
-                                            open={open}
-                                            
-                                            aria-labelledby="alert-dialog-title"
-                                            aria-describedby="alert-dialog-description"
-                                            overlayStyle={{backgroundColor: 'transparent'}}
-                                            >
-                                            <DialogTitle id="alert-dialog-title">
-                                            </DialogTitle>
-                                            <DialogActions>
-                                            <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
-                                            <Button onClick={handleClickClose} autoFocus>
-                                            Cancel
-                                            </Button>
-                                            </DialogActions>
-                                            </Dialog>  */}
                                     </TableCell>
                                     {checkFlag(row.course_id)}
                                     <SimpleDialog
