@@ -74,11 +74,8 @@ function Requirements() {
   function RequirementRows(props) {
     const [open, setOpen] = useState(false);
     let req = props.req;
-    let blocks = [];
     return (
-      <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
-        <Table aria-label="simple table">
-          <TableBody>
+          <>
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
               <TableCell>
                 <IconButton
@@ -89,30 +86,29 @@ function Requirements() {
                   {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                 </IconButton>
               </TableCell>
-              <TableCell component="th" scope="row" align="left" sx={{width: "20%"}}>
+              <TableCell component="th" scope="row" align="left">
                 {getHeader(req)} 
               </TableCell>
-              <TableCell sx={{width: "20%"}}>Course ID:</TableCell>
-              <TableCell sx={{width: "20%"}}>Course Name:</TableCell>
-              <TableCell sx={{width: "20%"}}>Credits:</TableCell>
-              <TableCell sx={{width: "20%"}}>Grade:</TableCell>
+              <TableCell>Course ID:</TableCell>
+              <TableCell>Course Name:</TableCell>
+              <TableCell>Credits:</TableCell>
+              <TableCell>Grade:</TableCell>
             </TableRow>
             {
-              req.map((row) => (
+            req.map((row) => (
                 <Collapse in={open} timeout="auto" unmountOnExit key={row.id}>
                   <TableRow key={row.id}>
-                    <TableCell align="left" sx={{width: "20%"}}>{getIcon(row.course_id)}</TableCell>
-                    <TableCell align="left" sx={{width: "20%"}}>{row.course_id}</TableCell>
-                    <TableCell align="left" sx={{width: "20%"}}>{row.course_name}</TableCell>
-                    <TableCell align="left" sx={{width: "20%"}}>{row.credit_num}</TableCell>
-                    <TableCell align="left" sx={{width: "20%"}}>{getGrade(row.course_id)}</TableCell>
+                    <TableCell />
+                    <TableCell align="left">{getIcon(row.course_id)}</TableCell>
+                    <TableCell align="left">{row.course_id}</TableCell>
+                    <TableCell align="left">{row.course_name}</TableCell>
+                    <TableCell align="left">{row.credit_num}</TableCell>
+                    <TableCell align="left">{getGrade(row.course_id)}</TableCell>
                   </TableRow>
-                </Collapse>
+              </Collapse>
               ))
-            }
-          </TableBody>
-        </Table>
-      </TableContainer>
+          }
+        </>
     )
   }
 
@@ -148,16 +144,17 @@ function Requirements() {
             <div className='contentContainer'>
               <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
                 <Table aria-label="simple table">
-                  <TableHead>
+                  {/* <TableHead>
+                    <TableCell />
                     <TableCell />
                     <TableCell>Course ID:</TableCell>
                     <TableCell>Course Name:</TableCell>
                     <TableCell>Credits:</TableCell>
                     <TableCell>Grade:</TableCell>
-                  </TableHead>
+                  </TableHead> */}
                   <TableBody>
                     {handleRequirements(requirements).map((row) => (
-                      <RequirementRows req={row} />
+                      <RequirementRows key={row.course_name}  req={row} />
                     ))}
                   </TableBody>
                 </Table>
