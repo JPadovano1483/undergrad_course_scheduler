@@ -43,20 +43,3 @@ function Navigation()
     );
 }
 export default Navigation;
-
-
-// const Navigation = () => {
-//     return (
-//         < >
-//             <div className="App">
-//                 <header id="header" className="fixed-top">
-//                     <NavigationContainer>
-//                         
-//                         
-//                     </NavigationContainer>
-//                 </header>
-//             </div>
-//             <Outlet />
-//         </>
-//     );
-// };
