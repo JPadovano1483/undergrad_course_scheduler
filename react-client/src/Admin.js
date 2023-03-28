@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { Checkbox, FormControlLabel, FormGroup, TextField, Paper, Table, TableCell, TableContainer, TableBody, TableRow, Button} from "@mui/material";
 import InputIcon from '@mui/icons-material/Input';
 import Axios from 'axios';
+import SearchCourse from "./SearchCourse";
 
 
 function Admin() {
@@ -35,37 +36,41 @@ function Admin() {
         getCourses();
     }, []);
 
-    let [searchedCourse, setSearchedCourse] = useState(null);
+    let [searchedCourses, setSearchedCourses] = useState(null);
 
-    const searchCourse = () => {
-        let search = document.querySelector('#course_search_input').value;
-        setSearchedCourse(courseList.find(course => course.course_id == search || course.course_name == search));
-        console.log(searchedCourse);
+    function searchCourse() {
+        let searchParam = document.querySelector('#course_search_input')?.value;
+        if (searchParam && courseList.length != 0) {
+            setSearchedCourses(SearchCourse(courseList, searchParam));
+        }
     }
 
     function Search(props) {
-        let course = props.course;
-        if (course) {
+        let courses = props.courses;
+        let block = [];
+        if (courses?.length != 0) {
+            console.log(courses);
             return (
                 // TODO: make this prettier
                 <TableContainer component={Paper}>
-                    <Table aria-label="simple table">
-                        <TableBody>
-                            <TableRow>
-                                <TableCell>{course.course_id}</TableCell>
-                                <TableCell>{course.course_name}</TableCell>
-                                <TableCell>{course.course_description}</TableCell>
-                                <TableCell>{course.credit_num}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>{course.scheduled_semester}</TableCell>
-                                <TableCell>{course.scheduled_year}</TableCell>
-                                <TableCell>{course.time}</TableCell>
-                                <TableCell>{course.day}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                        <Table aria-label="simple table">
+                            <TableBody>
+                                {courses?.map((course) => (
+                                    <><TableRow>
+                                        <TableCell>{course.course_id}</TableCell>
+                                        <TableCell>{course.course_name}</TableCell>
+                                        <TableCell>{course.course_description}</TableCell>
+                                        <TableCell>{course.credit_num}</TableCell>
+                                    </TableRow><TableRow>
+                                            <TableCell>{course.scheduled_semester}</TableCell>
+                                            <TableCell>{course.scheduled_year}</TableCell>
+                                            <TableCell>{course.time}</TableCell>
+                                            <TableCell>{course.day}</TableCell>
+                                        </TableRow></>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
             )
         }
     }
@@ -165,7 +170,7 @@ function Admin() {
                     </Button>
                 </div>
 
-                <Search course={searchedCourse}></Search>
+                <Search courses={searchedCourses}></Search>
               
                 <h1>Please enter course information</h1>
                 <p style={{ color: 'red' }}>Fields marked with * are required</p>
