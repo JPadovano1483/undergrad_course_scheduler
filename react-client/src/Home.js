@@ -372,53 +372,57 @@ function Home() {
                             <TableBody>
                                 {semesters[i].map((row) => (
                                     <TableRow key={row?.id}>
-                                        <TableCell>{row?.course_id}</TableCell>
-                                        <TableCell onClick={handleDialogOpen}>{row?.course_name}</TableCell>
-                                        <TableCell>{row?.credit_num}</TableCell>
-                                        <TableCell>
+                                        <TableCell sx={{width: "10%"}}>{row?.course_id}</TableCell>
+                                        <TableCell sx={{width: "50%"}} onClick={handleDialogOpen}>{row?.course_name}</TableCell>
+                                        <TableCell sx={{width: "10%"}}>{row?.credit_num}</TableCell>
+                                        <TableCell sx={{width: "10%"}}>
                                             <Button color="error" onClick={() => handleDeleteCourse(row, semesters[i])}>
-                                            <DeleteIcon></DeleteIcon>
-                                        </Button>
-                                        <Button onClick={changeStyle}>
-                                        <Checkbox
-                                            sx={{
-                                                color: green[800],
-                                                '&.Mui-checked': {
-                                                color: green[600],
-                                                },
-                                            }}
-                                            /> 
-                                       </Button>
-                                        {/* <Button color = "error" onClick={handleClickOpen}>
                                                 <DeleteIcon></DeleteIcon>
                                             </Button>
-                                            <Dialog
-                                            open={open}
-                                            
-                                            aria-labelledby="alert-dialog-title"
-                                            aria-describedby="alert-dialog-description"
-                                            overlayStyle={{backgroundColor: 'transparent'}}
-                                            >
-                                            <DialogTitle id="alert-dialog-title">
-                                            </DialogTitle>
-                                            <DialogActions>
-                                            <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
-                                            <Button onClick={handleClickClose} autoFocus>
-                                            Cancel
+                                        </TableCell>
+                                        <TableCell sx={{width: "10%"}}>
+                                            <Button onClick={changeStyle}>
+                                                <Checkbox
+                                                    sx={{
+                                                        color: green[800],
+                                                        '&.Mui-checked': {
+                                                        color: green[600],
+                                                        },
+                                                    }}
+                                                    /> 
                                             </Button>
-                                            </DialogActions>
-                                            </Dialog>  */}
-                                    </TableCell>
-                                    {checkFlag(row.course_id)}
-                                    <SimpleDialog
-                                        open={dialogOpen}
-                                        onClose={handleClose}
-                                    />
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                            {/* <Button color = "error" onClick={handleClickOpen}>
+                                                    <DeleteIcon></DeleteIcon>
+                                                </Button>
+                                                <Dialog
+                                                open={open}
+                                                
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                                overlayStyle={{backgroundColor: 'transparent'}}
+                                                >
+                                                <DialogTitle id="alert-dialog-title">
+                                                </DialogTitle>
+                                                <DialogActions>
+                                                <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
+                                                <Button onClick={handleClickClose} autoFocus>
+                                                Cancel
+                                                </Button>
+                                                </DialogActions>
+                                                </Dialog>  */}
+                                        </TableCell>
+                                        <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
+                                            {checkFlag(row.course_id)}
+                                        </TableCell>
+                                        <SimpleDialog
+                                            open={dialogOpen}
+                                            onClose={handleClose}
+                                        />
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 <Button onClick={() => addToSemester(semesters[i], i + 1)}>Add</Button>
             </Grid>);
         }
@@ -445,51 +449,56 @@ function Home() {
             console.log(selectedSemester);
             console.log(course);
             console.log("courseId: " + course.course_id);
-            Promise.all([
-                Axios.post(`http://localhost:3001/prereq`, {
-                    semesterId: semNumSelected,
-                    courseId: course.course_id,
-                }),
-                Axios.post(`http://localhost:3001/allSemesters`, {
-                    reqUser: accountInfo.user_id,
-                    targetUser: accountInfo.user_id,
-                    role: accountInfo.is_admin,
-                    semNumSelected: semNumSelected
-                })
-            ]).then((response) => {
-                console.log(response);
-                console.log(response[0].data);
-                console.log(response[1].data);
-                let satisfied = true;
-                if (response[0].data.length > 0) {
-                    const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
-                    // checks if the perequisite courses are found in a previous semester and have a passing grade or have no grade yet
-                    for (let i = 0; i < response[0].data.length; i++) {
-                        const classPassed = response[1].data.some((course) => {
-                            return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
-                        });
-                        console.log(!classPassed);
-                        if (!classPassed) {
-                            satisfied = false;
+            let courseInPlan = userCourses?.find(element => element.course_id == course.course_id);
+            if (!courseInPlan) {
+                Promise.all([
+                    Axios.post(`http://localhost:3001/prereq`, {
+                        semesterId: semNumSelected,
+                        courseId: course.course_id,
+                    }),
+                    Axios.post(`http://localhost:3001/allSemesters`, {
+                        reqUser: accountInfo.user_id,
+                        targetUser: accountInfo.user_id,
+                        role: accountInfo.is_admin,
+                        semNumSelected: semNumSelected
+                    })
+                ]).then((response) => {
+                    console.log(response);
+                    console.log(response[0].data);
+                    console.log(response[1].data);
+                    let satisfied = true;
+                    if (response[0].data.length > 0) {
+                        const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
+                        // checks if the perequisite courses are found in a previous semester and have a passing grade or have no grade yet
+                        for (let i = 0; i < response[0].data.length; i++) {
+                            const classPassed = response[1].data.some((course) => {
+                                return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
+                            });
+                            console.log(!classPassed);
+                            if (!classPassed) {
+                                satisfied = false;
+                            }
                         }
                     }
-                }
-                if (satisfied) {
-                    console.log("Prerequisites have been met!");
-                    selectedSemester.push(course);
-                    Axios.post(`http://localhost:3001/addCourse`, {
-                        semester_id: semNumSelected,
-                        course_id: course.course_id,
-                        user_id: accountInfo.user_id
-                    }).then((response) => {
-                        console.log(response);
-                    });
-                }
-                else {
-                    console.log("Prerequisites not met.");
-                }
-            });
-            
+                    if (satisfied) {
+                        console.log("Prerequisites have been met!");
+                        selectedSemester.push(course);
+                        Axios.post(`http://localhost:3001/addCourse`, {
+                            semester_id: semNumSelected,
+                            course_id: course.course_id,
+                            user_id: accountInfo.user_id
+                        }).then((response) => {
+                            console.log(response);
+                        });
+                    }
+                    else {
+                        console.log("Prerequisites not met.");
+                    }
+                });
+            }
+            else {
+                console.log("Course already planned!");
+            }
         }
     }
 
@@ -555,17 +564,13 @@ function Home() {
         // 
         if (courseSemFlags.includes(courseId)) {
             flags.push(
-                <TableCell sx={{borderTop: "1px solid rgba(224,224,224,1)"}}>
-                    <ErrorIcon sx={{color: 'red'}}></ErrorIcon>
-                </TableCell>
+                <ErrorIcon sx={{color: 'red'}}></ErrorIcon>
             )
         }
 
         if (courseYearFlags.includes(courseId)) {
             flags.push(
-                <TableCell sx={{borderTop: "1px solid rgba(224,224,224,1)"}}>
-                    <ErrorIcon sx={{color: 'orange'}}></ErrorIcon>
-                </TableCell>
+                <ErrorIcon sx={{color: 'orange'}}></ErrorIcon>
             )
         }
 

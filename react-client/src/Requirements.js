@@ -2,7 +2,7 @@ import Navigation from "./navigation";
 import './css/home.css';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, Box, Collapse, IconButton, Typography} from "@mui/material";
+import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, Box, Collapse, IconButton, Typography, TableHead} from "@mui/material";
 import Axios from 'axios';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -51,13 +51,8 @@ function Requirements() {
               arrayToPush.push(element);
           }
       });
-    // if (newRequirements.length != 0) setRequirements(newRequirements);
     return newRequirements;
   }
-
-  // if (requirements.length != 0) {
-  //     handleRequirements(requirements);
-  // }
 
   const [userCourses, setUserCourses] = useState([]);
   const getUserCourses = (user_id) => {
@@ -78,53 +73,43 @@ function Requirements() {
   // return components for requirement rules
   function RequirementRows(props) {
     const [open, setOpen] = useState(false);
-    let reqs = props.reqs;
-    console.log(reqs);
-    let blocks = [];
-    if (reqs.length != 0) {
-      for (const element of reqs) {
-        blocks.push(
-          <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
-            <Table aria-label="simple table">
-              <TableBody>
-                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                  {/* <TableCell>
-                    <IconButton
-                      aria-label="expand row"
-                      size="small"
-                      onClick={() => setOpen(!open)}
-                    >
-                      {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                    </IconButton>
-                  </TableCell> */}
-                  <TableCell component="th" scope="row" align="left" sx={{width: "20%"}}>
-                    {getHeader(element)} 
-                  </TableCell>
-                  <TableCell sx={{width: "20%"}}>Course ID:</TableCell>
-                  <TableCell sx={{width: "20%"}}>Course Name:</TableCell>
-                  <TableCell sx={{width: "20%"}}>Credits:</TableCell>
-                  <TableCell sx={{width: "20%"}}>Grade:</TableCell>
-                </TableRow>
-                {
-                  element.map((row) => (
-                    // <Collapse in={open} timeout="auto" unmountOnExit key={row.id}>
-                      <TableRow key={row.id}>
-                        <TableCell align="left" sx={{width: "20%"}}>{getIcon(row.course_id)}</TableCell>
-                        <TableCell align="left" sx={{width: "20%"}}>{row.course_id}</TableCell>
-                        <TableCell align="left" sx={{width: "20%"}}>{row.course_name}</TableCell>
-                        <TableCell align="left" sx={{width: "20%"}}>{row.credit_num}</TableCell>
-                        <TableCell align="left" sx={{width: "20%"}}>{getGrade(row.course_id)}</TableCell>
-                      </TableRow>
-                    // </Collapse>
-                  ))
-                }
-              </TableBody>
-            </Table>
-          </TableContainer>
-        );
-      }
-    }
-    return blocks;
+    let req = props.req;
+    return (
+          <>
+            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+              <TableCell>
+                <IconButton
+                  aria-label="expand row"
+                  size="small"
+                  onClick={() => setOpen(!open)}
+                >
+                  {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                </IconButton>
+              </TableCell>
+              <TableCell component="th" scope="row" align="left">
+                {getHeader(req)} 
+              </TableCell>
+              <TableCell>Course ID:</TableCell>
+              <TableCell>Course Name:</TableCell>
+              <TableCell>Credits:</TableCell>
+              <TableCell>Grade:</TableCell>
+            </TableRow>
+            {
+            req.map((row) => (
+                <Collapse in={open} timeout="auto" unmountOnExit key={row.id}>
+                  <TableRow key={row.id}>
+                    <TableCell />
+                    <TableCell align="left">{getIcon(row.course_id)}</TableCell>
+                    <TableCell align="left">{row.course_id}</TableCell>
+                    <TableCell align="left">{row.course_name}</TableCell>
+                    <TableCell align="left">{row.credit_num}</TableCell>
+                    <TableCell align="left">{getGrade(row.course_id)}</TableCell>
+                  </TableRow>
+              </Collapse>
+              ))
+          }
+        </>
+    )
   }
 
   function getHeader(requirement) {
@@ -157,7 +142,23 @@ function Requirements() {
         <div className="App">
             <Navigation />
             <div className='contentContainer'>
-              <RequirementRows reqs={handleRequirements(requirements)} />
+              <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
+                <Table aria-label="simple table">
+                  {/* <TableHead>
+                    <TableCell />
+                    <TableCell />
+                    <TableCell>Course ID:</TableCell>
+                    <TableCell>Course Name:</TableCell>
+                    <TableCell>Credits:</TableCell>
+                    <TableCell>Grade:</TableCell>
+                  </TableHead> */}
+                  <TableBody>
+                    {handleRequirements(requirements).map((row) => (
+                      <RequirementRows key={row.course_name}  req={row} />
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </div>
         </div >
     );
