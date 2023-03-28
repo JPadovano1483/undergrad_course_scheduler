@@ -2,7 +2,6 @@ import './css/home.css';
 import { PropTypes } from 'prop-types';
 import * as React from 'react';
 import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Button } from '@mui/material';
-import { Dialog, DialogTitle, DialogActions } from '@mui/material';
 import Navigation from './navigation';
 import Draggable from 'react-draggable';
 import Axios from 'axios';
@@ -41,7 +40,7 @@ function Home() {
     };
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-    
+
     const [semTotal, setSemTotal] = useState(0);
     const getSemTotal = () => {
         Axios.post(`http://localhost:3001/semCount`, {
@@ -102,7 +101,7 @@ function Home() {
                 arrayToPush.push(element);
             }
         });
-        if(newRequirements.length != 0) setRequirements(newRequirements);
+        if (newRequirements.length != 0) setRequirements(newRequirements);
     }
 
     if (requirements.length != 0) {
@@ -124,7 +123,7 @@ function Home() {
     console.log(userCourses);
 
     const [semNumSelected, setSemNumSelected] = useState(0);
-    
+
     const handleDialogOpen = () => {
         setDialogOpen(true);
     };
@@ -230,14 +229,14 @@ function Home() {
         setOpen(false);
     }
 
-    
+
     const changeStyle = () => {
         const element = document.getElementById("styleTest");
         element.classList.toggle('green');
     }
 
 
-    
+
     const handleDeleteCourse = (course, semester) => {
         Axios.post(`http://localhost:3001/deleteCourse`, {
             semester_id: course.semester_id,
@@ -361,37 +360,37 @@ function Home() {
 
         for (let i = 0; i < semTotal; i++) {
             // if (semesters[i][0] !== undefined) {
-                let creditId = 'credit_count' + i;
-                let creditCount = countCredits(semesters[i], creditId);
-                blocks.push(<Grid item={true} xs={6} className='tableGrid'>
-                    <h2>{numbers[i]} Semester</h2>
-                    {/* <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4> */}
-                    {creditWarningPopup(creditId, creditCount)}
-                    <TableContainer component={Paper}>
-                        <Table aria-label="simple table">
-                            <TableBody>
-                                {semesters[i].map((row) => (
-                                    <TableRow key={row?.id}>
-                                        <TableCell sx={{width: "10%"}}>{row?.course_id}</TableCell>
-                                        <TableCell sx={{width: "50%"}} onClick={handleDialogOpen}>{row?.course_name}</TableCell>
-                                        <TableCell sx={{width: "10%"}}>{row?.credit_num}</TableCell>
-                                        <TableCell sx={{width: "10%"}}>
-                                            <Button color="error" onClick={() => handleDeleteCourse(row, semesters[i])}>
-                                                <DeleteIcon></DeleteIcon>
-                                            </Button>
-                                        </TableCell>
-                                        <TableCell sx={{width: "10%"}}>
-                                            <Button onClick={changeStyle}>
-                                                <Checkbox
-                                                    sx={{
-                                                        color: green[800],
-                                                        '&.Mui-checked': {
+            let creditId = 'credit_count' + i;
+            let creditCount = countCredits(semesters[i], creditId);
+            blocks.push(<Grid item={true} xs={6} className='tableGrid'>
+                <h2>{numbers[i]} Semester</h2>
+                {/* <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4> */}
+                {creditWarningPopup(creditId, creditCount)}
+                <TableContainer component={Paper}>
+                    <Table aria-label="simple table">
+                        <TableBody>
+                            {semesters[i].map((row) => (
+                                <TableRow key={row?.id}>
+                                    <TableCell sx={{ width: "10%" }}>{row?.course_id}</TableCell>
+                                    <TableCell sx={{ width: "50%" }} onClick={handleDialogOpen}>{row?.course_name}</TableCell>
+                                    <TableCell sx={{ width: "10%" }}>{row?.credit_num}</TableCell>
+                                    <TableCell sx={{ width: "10%" }}>
+                                        <Button color="error" onClick={() => handleDeleteCourse(row, semesters[i])}>
+                                            <DeleteIcon></DeleteIcon>
+                                        </Button>
+                                    </TableCell>
+                                    <TableCell sx={{ width: "10%" }}>
+                                        <Button onClick={changeStyle}>
+                                            <Checkbox
+                                                sx={{
+                                                    color: green[800],
+                                                    '&.Mui-checked': {
                                                         color: green[600],
-                                                        },
-                                                    }}
-                                                    /> 
-                                            </Button>
-                                            {/* <Button color = "error" onClick={handleClickOpen}>
+                                                    },
+                                                }}
+                                            />
+                                        </Button>
+                                        {/* <Button color = "error" onClick={handleClickOpen}>
                                                     <DeleteIcon></DeleteIcon>
                                                 </Button>
                                                 <Dialog
@@ -410,19 +409,19 @@ function Home() {
                                                 </Button>
                                                 </DialogActions>
                                                 </Dialog>  */}
-                                        </TableCell>
-                                        <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
-                                            {checkFlag(row.course_id)}
-                                        </TableCell>
-                                        <SimpleDialog
-                                            open={dialogOpen}
-                                            onClose={handleClose}
-                                        />
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                    </TableCell>
+                                    <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
+                                        {checkFlag(row.course_id)}
+                                    </TableCell>
+                                    <SimpleDialog
+                                        open={dialogOpen}
+                                        onClose={handleClose}
+                                    />
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
                 <Button onClick={() => addToSemester(semesters[i], i + 1)}>Add</Button>
             </Grid>);
         }
@@ -502,7 +501,7 @@ function Home() {
         }
     }
 
-    const [userSemIDs, setUserSemIDs] = useState([1,2,3,4,5,6,7,8]);
+    const [userSemIDs, setUserSemIDs] = useState([1, 2, 3, 4, 5, 6, 7, 8]);
 
     // const getUserSemIDs = () => {
     //     Axios.post(`http://localhost:3001/userSemeseterIDs`, {
@@ -542,7 +541,7 @@ function Home() {
                 else isSemEven = isStartSemEven;
                 console.log(userSemIDs.indexOf(course.semester_id));
                 console.log((course.year?.toLowerCase() == "even") && !isSemEven);
-            
+
                 // check year placement
                 if ((course.year?.toLowerCase() == "even" && !isSemEven) || (course.year?.toLowerCase() == "odd" && isSemEven)) {
                     console.log(course.course_id + ": wrong year!");
@@ -564,13 +563,13 @@ function Home() {
         // 
         if (courseSemFlags.includes(courseId)) {
             flags.push(
-                <ErrorIcon sx={{color: 'red'}}></ErrorIcon>
+                <ErrorIcon sx={{ color: 'red' }}></ErrorIcon>
             )
         }
 
         if (courseYearFlags.includes(courseId)) {
             flags.push(
-                <ErrorIcon sx={{color: 'orange'}}></ErrorIcon>
+                <ErrorIcon sx={{ color: 'orange' }}></ErrorIcon>
             )
         }
 

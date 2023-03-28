@@ -4,6 +4,7 @@ import {Avatar, Button, TextField} from '@mui/material';
 import {Grid, Box,  Typography, Container} from '@mui/material';
 import {Link} from 'react-router-dom';
 import Axios from 'axios';
+import "./css/account.css"
 
 
 export default function SignUp() {
@@ -86,14 +87,12 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <form>
-                <select value={grade_level} onChange={handleGradeChange}>
+                <select id ="dropdownGrade" value={grade_level} onChange={handleGradeChange}>
                   <option value="Firstyear">Firstyear</option>
                   <option value="Sophomore">Sophomore</option>
                   <option value="Junior">Junior</option>
                   <option value="Senior">Senior</option>
                 </select>
-                </form>
               </Grid>
               <Grid item xs={12}>
                 <TextField

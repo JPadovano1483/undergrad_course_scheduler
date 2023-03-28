@@ -12,12 +12,12 @@ app.use(cors());
 app.use(express.json());
 
 //cleardb in heroku
-const db = mysql.createConnection({
-  host: "us-cdbr-east-06.cleardb.net",
-  user: "ba47d98a7b19bc",
-  password: "f4d6ec6d",
-  database: "heroku_a19411dd68d921e"
-});
+ const db = mysql.createConnection({
+   host: "us-cdbr-east-06.cleardb.net",
+   user: "ba47d98a7b19bc",
+   password: "f4d6ec6d",
+   database: "heroku_a19411dd68d921e"
+ });
 
 const userCtrlCheck = (reqUser, targetUser, role) => {
   let checker = false;
@@ -498,6 +498,22 @@ app.post("/concentration/:major", (req, res) => {
   const program = req.params.major;
   db.query("SELECT program_name FROM program WHERE program_type = ? AND major_id IN (SELECT program_id FROM program WHERE program_name = ? AND program_type = ?)",
     ['concentration', program, 'major'],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+
+});
+
+app.post("/dialog", (req, res) => {
+  const userId = req.body.userId;
+  //const grade_level = req.body.grade_level;
+
+  db.query("SELECT * FROM course join user_course USING(course_id) Where user_id = ?",
+    [userId],
     (err, result) => {
       if (err) {
         console.log(err);

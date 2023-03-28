@@ -282,7 +282,8 @@ function Account() {
 
                         <div className="Major"> Select your Major</div>
                         <form className="Move">
-                            <select onChange={handleMajorChange}>
+
+                            <select id = "selectMajor" onChange={handleMajorChange}>
                                 {majorOptions.map((row) => (
                                     <option value={row?.program_id}>{row?.program_name}</option>
                                 ))}
@@ -292,7 +293,9 @@ function Account() {
 
                         <div className="Minor"> Select your Minor</div>
                         <form>
-                            <select onChange={handleMinorChange}>
+
+                            <select id ="selectMinor" onChange={handleMinorChange}>
+
                                 {minorOptions.map((row) => (
                                     <option value={row?.program_id}>{row?.program_name}</option>
                                 ))}
@@ -303,7 +306,8 @@ function Account() {
 
                         <div className="Concentration"> Select your Concentration</div>
                         <form>
-                            <select onChange={handleConcentrationChange}>
+
+                            <select id ="selectConcentration" onChange={handleConcentrationChange}>
                                 {concentrationOptions.map((row) => (
                                     <option value={row?.program_id}>{row?.program_name}</option>
                                 ))}
@@ -327,9 +331,9 @@ function Account() {
                 <section className="container">
                     <div className="floatleft">
                     </div>
-                    <div className="floatright">
+                    <div>
                         <TextField
-                            sx={{ my: 5, ml: 30 }}
+                            sx={{ my: 5, ml: -10 }}
                             label="New Password"
                             id="password"
                             type="password"

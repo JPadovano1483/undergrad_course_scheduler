@@ -132,23 +132,20 @@ function AdminEdit() {
                                 setCourseDescription(e.target.value)
                             }}
                         />
-                <div classname= "dropdown">
-                <form>
-                <select value={semester} onChange={handleSemesterChange}>
-                  <option value="Fall">Fall</option>
-                  <option value="Spring">Spring</option>
-                  <option value="Both">Both</option>
-                </select>
-                </form>
-                </div>
-                <div classname= "dropdown">
-                <form>
-                <select value={year} onChange={handleYearChange}>
-                  <option value="EVEN">Even</option>
-                  <option value="ODD">Odd</option>
-                </select>
-                </form>
-                </div>
+                <div class= "dropdownSemester">
+                            <select class ="dropdownSem" value={semester} onChange={handleSemesterChange}>
+                                <option value="Fall">Fall</option>
+                                <option value="Spring">Spring</option>
+                                <option value="Both">Both</option>
+                            </select>
+                        </div>
+                        <div class= "dropdownYear">
+                            <select class = "dropdownYr" value={year} onChange={handleYearChange}>
+                                <option value="Even">Even</option>
+                                <option value="Odd">Odd</option>
+                                <option value="Both">Both</option>
+                            </select>
+                        </div>
                         <TextField 
                              
                             type={'number'} 
