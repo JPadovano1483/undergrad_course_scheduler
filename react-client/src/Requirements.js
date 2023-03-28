@@ -12,8 +12,20 @@ import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import { Icon } from '@mui/material';
 
 function Requirements() {
-  // const user_id = JSON.parse(localStorage.getItem("user")).user_id;
-  const user_id = 4;
+  let accountInfo = {};
+  if (localStorage.getItem("user") !== null) {
+      const loggedInUser = JSON.parse(localStorage.getItem("user"));
+      accountInfo = loggedInUser;
+  }
+  else if (sessionStorage.getItem("user") !== null) {
+      const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
+      accountInfo = loggedInUser;
+  }
+  else {
+      window.location.href = "http://localhost:3000";
+  }
+
+  const user_id = accountInfo.user_id;
 
   const [requirements, setRequirements] = useState([]);
   const getUserRequirements = () => {
