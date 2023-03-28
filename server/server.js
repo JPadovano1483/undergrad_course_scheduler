@@ -12,20 +12,12 @@ app.use(cors());
 app.use(express.json());
 
 //cleardb in heroku
-// const db = mysql.createConnection({
-//   host: "us-cdbr-east-06.cleardb.net",
-//   user: "ba47d98a7b19bc",
-//   password: "f4d6ec6d",
-//   database: "heroku_a19411dd68d921e"
-// });
-
- //localhost database - copy of cleardb
  const db = mysql.createConnection({
-  user: "root",
-  host: "localhost",
-  password: "buckwheat2010",
-  database: "undergrad",
-});
+   host: "us-cdbr-east-06.cleardb.net",
+   user: "ba47d98a7b19bc",
+   password: "f4d6ec6d",
+   database: "heroku_a19411dd68d921e"
+ });
 
 const userCtrlCheck = (reqUser, targetUser, role) => {
   let checker = false;
