@@ -23,7 +23,6 @@ function SimpleDialog(props) {
     else {
         window.location.href = "http://localhost:3000";
     }
-    console.log(accountInfo);
 
     const { onClose, selectedValue, open } = props;
 
@@ -43,14 +42,10 @@ function SimpleDialog(props) {
         setDialog1();
     }, []);
 
-    console.log(dialog1);
     let course_id = dialog1[0]?.course_id;
     let course_name = dialog1?.course_name;
     let course_description = dialog1?.course_description;
 
-    console.log(course_id);
-    console.log(course_name);
-    console.log(course_description);
     return (
         <Dialog onClose={handleClose} open={open}>
             <DialogTitle sx={{ backgroundColor: '#002856', color: 'white' }}>{dialog1?.course_id} - {dialog1?.course_name}</DialogTitle>

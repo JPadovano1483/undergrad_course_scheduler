@@ -12,12 +12,20 @@ app.use(cors());
 app.use(express.json());
 
 //cleardb in heroku
+// const db = mysql.createConnection({
+//   host: "us-cdbr-east-06.cleardb.net",
+//   user: "ba47d98a7b19bc",
+//   password: "f4d6ec6d",
+//   database: "heroku_a19411dd68d921e"
+// });
+
+ //localhost database - copy of cleardb
  const db = mysql.createConnection({
-   host: "us-cdbr-east-06.cleardb.net",
-   user: "ba47d98a7b19bc",
-   password: "f4d6ec6d",
-   database: "heroku_a19411dd68d921e"
- });
+  user: "root",
+  host: "localhost",
+  password: "buckwheat2010",
+  database: "undergrad",
+});
 
 const userCtrlCheck = (reqUser, targetUser, role) => {
   let checker = false;
@@ -732,6 +740,23 @@ app.post("/deleteCourse", (req, res) => {
   )
 });
 
+app.post("/insertGrade", (req, res) => {
+  const grade = req.body.grade;
+  const user_id = req.body.user_id;
+  const semester_id = req.body.semester_id;
+  const course_id = req.body.course_id;
+  db.query(`UPDATE user_course SET grade = ? WHERE user_id = ? AND semester_id = ? AND course_id = ?;`,
+    [grade, user_id, semester_id, course_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result);
+        res.send(result);
+      }
+    }
+  )
+});
 app.post("/addSemester", (req, res) => {
   const user_id = req.body.user_id;
   const semester_num = req.body.semester_num;
