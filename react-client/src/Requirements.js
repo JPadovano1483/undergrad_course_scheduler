@@ -2,7 +2,7 @@ import Navigation from "./navigation";
 import './css/home.css';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, Box, Collapse, IconButton, Typography, TableHead} from "@mui/material";
+import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, Box, Collapse, IconButton, Typography, TableHead } from "@mui/material";
 import Axios from 'axios';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -14,30 +14,30 @@ import { Icon } from '@mui/material';
 function Requirements() {
   let accountInfo = {};
   if (localStorage.getItem("user") !== null) {
-      const loggedInUser = JSON.parse(localStorage.getItem("user"));
-      accountInfo = loggedInUser;
+    const loggedInUser = JSON.parse(localStorage.getItem("user"));
+    accountInfo = loggedInUser;
   }
   else if (sessionStorage.getItem("user") !== null) {
-      const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
-      accountInfo = loggedInUser;
+    const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
+    accountInfo = loggedInUser;
   }
   else {
-      window.location.href = "http://localhost:3000";
+    window.location.href = "http://localhost:3000";
   }
 
   const user_id = accountInfo.user_id;
 
   const [requirements, setRequirements] = useState([]);
   const getUserRequirements = () => {
-      Axios.post(`http://localhost:3001/userRequirements`, {
-          user_id: user_id
-      }).then((response) => {
-          setRequirements(response.data);
-      });
+    Axios.post(`http://localhost:3001/userRequirements`, {
+      user_id: user_id
+    }).then((response) => {
+      setRequirements(response.data);
+    });
   }
-  
+
   useEffect(() => {
-      getUserRequirements();
+    getUserRequirements();
   }, []);
 
   const handleRequirements = (requirements) => {
@@ -47,80 +47,92 @@ function Requirements() {
     let arrayToPush = [];
     if (requirements.length != 0)
       requirements.forEach((element, index) => {
-          if (index != 0) {
-              if (element.req_id == currId) {
-                  arrayToPush.push(element);
-              }
-              else {
-                  newRequirements.push(arrayToPush);
-                  arrayToPush = [];
-                  arrayToPush.push(element);
-                  currId = element.req_id;
-              }
+        if (index != 0) {
+          if (element.req_id == currId) {
+            arrayToPush.push(element);
           }
           else {
-              currId = element.req_id;
-              arrayToPush.push(element);
+            newRequirements.push(arrayToPush);
+            arrayToPush = [];
+            arrayToPush.push(element);
+            currId = element.req_id;
           }
+        }
+        else {
+          currId = element.req_id;
+          arrayToPush.push(element);
+        }
       });
     return newRequirements;
   }
 
   const [userCourses, setUserCourses] = useState([]);
   const getUserCourses = (user_id) => {
-      Axios.post(`http://localhost:3001/allUserCourses`, {
-          user_id: user_id
-      }).then((response) => {
-          setUserCourses(response.data);
-      });
+    Axios.post(`http://localhost:3001/allUserCourses`, {
+      user_id: user_id
+    }).then((response) => {
+      setUserCourses(response.data);
+    });
   }
   useEffect(() => {
-      getUserCourses(user_id);
+    getUserCourses(user_id);
   }, []);
 
   console.log(userCourses);
 
-  
-  
+
+
   // return components for requirement rules
   function RequirementRows(props) {
     const [open, setOpen] = useState(false);
     let req = props.req;
     return (
-          <>
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-              <TableCell>
-                <IconButton
-                  aria-label="expand row"
-                  size="small"
-                  onClick={() => setOpen(!open)}
-                >
-                  {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                </IconButton>
-              </TableCell>
-              <TableCell component="th" scope="row" align="left">
-                {getHeader(req)} 
-              </TableCell>
-              <TableCell>Course ID:</TableCell>
-              <TableCell>Course Name:</TableCell>
-              <TableCell>Credits:</TableCell>
-              <TableCell>Grade:</TableCell>
-            </TableRow>
-            {
-            req.map((row) => (
-                <Collapse in={open} timeout="auto" unmountOnExit key={row.id}>
-                  <TableRow key={row.id}>
-                    <TableCell />
-                    <TableCell align="left">{getIcon(row.course_id)}</TableCell>
-                    <TableCell align="left">{row.course_id}</TableCell>
-                    <TableCell align="left">{row.course_name}</TableCell>
-                    <TableCell align="left">{row.credit_num}</TableCell>
-                    <TableCell align="left">{getGrade(row.course_id)}</TableCell>
-                  </TableRow>
-              </Collapse>
-              ))
-          }
-        </>
+      <>
+        <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell component="th" scope="row" align="left">
+            {getHeader(req)}
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Course ID</TableCell>
+                      <TableCell>Course Name</TableCell>
+                      <TableCell>Credits</TableCell>
+                      <TableCell>Grade</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  {
+                    req.map((row) => (
+                      <TableBody>
+                        <TableCell align="left">{getIcon(row.course_id)}</TableCell>
+                        <TableCell align="left">{row.course_id}</TableCell>
+                        <TableCell align="left">{row.course_name}</TableCell>
+                        <TableCell align="left">{row.credit_num}</TableCell>
+                        <TableCell align="left">{getGrade(row.course_id)}</TableCell>
+                      </TableBody>
+                    ))
+                  }
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </>
     )
   }
 
@@ -138,7 +150,7 @@ function Requirements() {
     if (course) {
       console.log(course);
       if (course.grade != null) return (<CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>);
-      else return (<TrackChangesIcon sx={{color: 'blue'}}></TrackChangesIcon>)
+      else return (<TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>)
     }
     else {
       return (<PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>);
@@ -149,14 +161,14 @@ function Requirements() {
     let course = userCourses.find(item => item.course_id == courseId);
     return course?.grade;
   }
-  
+
   return (
-        <div className="App">
-            <Navigation />
-            <div className='contentContainer'>
-              <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
-                <Table aria-label="simple table">
-                  {/* <TableHead>
+    <div className="App">
+      <Navigation />
+      <div className='contentContainer'>
+        <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
+          <Table aria-label="simple table">
+            {/* <TableHead>
                     <TableCell />
                     <TableCell />
                     <TableCell>Course ID:</TableCell>
@@ -164,16 +176,16 @@ function Requirements() {
                     <TableCell>Credits:</TableCell>
                     <TableCell>Grade:</TableCell>
                   </TableHead> */}
-                  <TableBody>
-                    {handleRequirements(requirements).map((row) => (
-                      <RequirementRows key={row.course_name}  req={row} />
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </div>
-        </div >
-    );
+            <TableBody>
+              {handleRequirements(requirements).map((row) => (
+                <RequirementRows key={row.course_name} req={row} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    </div >
+  );
 }
 
 export default Requirements;
