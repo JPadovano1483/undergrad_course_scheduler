@@ -234,6 +234,8 @@ function Home() {
             course_id: course.course_id
         }).then((response) => {
             console.log(response);
+            getSemester(eval('setSem' + course.semester_id), course.semester_id);
+            getUserCourses(accountInfo.user_id);
         });
     }
 
@@ -473,6 +475,8 @@ function Home() {
                             user_id: accountInfo.user_id
                         }).then((response) => {
                             console.log(response);
+                            getSemester(eval('setSem' + semNumSelected), semNumSelected);
+                            getUserCourses(accountInfo.user_id);
                         });
                     }
                     else {

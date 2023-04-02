@@ -209,15 +209,15 @@ function Admin() {
                                 setCourseDescription(e.target.value)
                             }}
                         />
-                        <div class= "dropdownSemester">
-                            <select class ="dropdownSem" value={semester} onChange={handleSemesterChange}>
+                        <div className="dropdownSemester">
+                            <select className="dropdownSem" value={semester} onChange={handleSemesterChange}>
                                 <option value="Fall">Fall</option>
                                 <option value="Spring">Spring</option>
                                 <option value="Both">Both</option>
                             </select>
                         </div>
-                        <div class= "dropdownYear">
-                            <select class = "dropdownYr" value={year} onChange={handleYearChange}>
+                        <div className="dropdownYear">
+                            <select className="dropdownYr" value={year} onChange={handleYearChange}>
                                 <option value="Even">Even</option>
                                 <option value="Odd">Odd</option>
                                 <option value="Both">Both</option>
