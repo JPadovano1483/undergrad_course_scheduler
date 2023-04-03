@@ -1,11 +1,12 @@
 import Navigation from "./navigation";
 import './css/home.css';
 import * as React from 'react';
-import { useState } from 'react';
-import {TextField} from "@mui/material";
-import Button from '@mui/material/Button';
+import { useState, useEffect } from 'react';
+import { Checkbox, FormControlLabel, FormGroup, TextField, Paper, Table, TableCell, TableContainer, TableBody, TableRow, Button} from "@mui/material";
 import InputIcon from '@mui/icons-material/Input';
 import Axios from 'axios';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SearchCourse from "./SearchCourse";
 
 function AdminEdit() {
     const [courseId, setCourseId] = useState("");
@@ -23,6 +24,73 @@ function AdminEdit() {
    
         setYear(event.target.value);   
       };
+
+    //get all courses
+    const [courseList, setCourseList] = useState([]);
+    const getCourses = async (set) => {
+        console.log("get courses");
+        Axios.post(`http://localhost:3001/adminCourses`).then((response) => {
+            setCourseList(response.data);
+        });
+    }
+    useEffect(() => {
+        getCourses();
+    }, []);
+
+    let [searchedCourses, setSearchedCourses] = useState(null);
+
+    function searchCourse() {
+        let searchParam = document.querySelector('#course_search_input')?.value;
+        if (searchParam && courseList.length != 0) {
+            setSearchedCourses(SearchCourse(courseList, searchParam));
+        }
+    }
+
+    function Search(props) {
+        const deleteCourse = (courseId) => {
+            console.log("delete course");
+            Axios.post(`http://localhost:3001/permDeleteCourse`, {
+                course_id: courseId
+            }).then((response) => {
+                console.log(response);
+                getCourses();
+                searchCourse();
+            });
+        }
+
+        let courses = props.courses;
+        let block = [];
+        if (courses?.length != 0) {
+            console.log(courses);
+            return (
+                // TODO: make this prettier
+                <TableContainer component={Paper}>
+                        <Table aria-label="simple table">
+                            <TableBody>
+                                {courses?.map((course) => (
+                                    <><TableRow>
+                                        <TableCell>{course.course_id}</TableCell>
+                                        <TableCell>{course.course_name}</TableCell>
+                                        <TableCell>{course.course_description}</TableCell>
+                                        <TableCell>{course.credit_num}</TableCell>
+                                        <TableCell>
+                                            <Button color="error" onClick={() => deleteCourse(course.course_id)}>
+                                                <DeleteIcon></DeleteIcon>
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow><TableRow>
+                                            <TableCell>{course.scheduled_semester}</TableCell>
+                                            <TableCell>{course.scheduled_year}</TableCell>
+                                            <TableCell>{course.time}</TableCell>
+                                            <TableCell>{course.day}</TableCell>
+                                        </TableRow></>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+            )
+        }
+    }
 
     const [accountInfo, setAccountInfo] = useState(() => {
         let loggedInUser = localStorage.getItem("user");
@@ -78,20 +146,22 @@ function AdminEdit() {
                 </h1>
                 <div>
                     <TextField
-                        id="course_name_input"
-                        label="Course Name"
-                        sx={{}}
-                        />
+                        id="course_search_input"
+                        label="Course ID or Name"
+                    />
                 </div>
                 <div>
                     <Button
                         type="submit" 
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
+                        onClick={searchCourse}
                         >
                             Search
                     </Button>
                 </div>
+
+                <Search courses={searchedCourses}></Search>
               
                 <h1>Please enter course information to be edited</h1>
                 <p style={{ color: 'red' }}>Fields marked with * are required</p>
