@@ -514,27 +514,17 @@ const prereqCheck = (course) => {
         let errorMessage = '';
 
         if (courseSemFlags.includes(courseId)) {
-            // flags.push(
-            //     <ErrorIcon sx={{ color: 'red' }}></ErrorIcon>
-            // )
             errorMessage += 'Wrong Semester!';
         }
 
         if (courseYearFlags.includes(courseId)) {
-            // flags.push(
-            //     <ErrorIcon sx={{ color: 'orange' }}></ErrorIcon>
-            // )
             errorMessage += '\n Wrong Year!';
         }
 
         if (coursePrereqFlags.includes(courseId)) {
-            // flags.push(
-            //     <ErrorIcon sx={{ color: 'yellow' }}></ErrorIcon>
-            // )
             errorMessage += '\n Prerequisites not met!';
         }
 
-        // return flags;
         if (errorMessage !== '') {
             return (
                 <Tooltip title={errorMessage} placement="top" arrow>
