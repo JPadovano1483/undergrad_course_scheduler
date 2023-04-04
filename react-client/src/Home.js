@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
 import { green } from '@mui/material/colors';
 import SearchCourse from "./SearchCourse";
+import Tooltip from '@mui/material/Tooltip';
 
 function Home() {
     let accountInfo = {};
@@ -31,9 +32,6 @@ function Home() {
     else {
         window.location.href = "http://localhost:3000";
     }
-    console.log(accountInfo);
-
-    const user_id = window.sessionStorage.getItem("user_id");
     SimpleDialog.propTypes = {
         onClose: PropTypes.func.isRequired,
         open: PropTypes.bool.isRequired,
@@ -110,8 +108,6 @@ function Home() {
     useEffect(() => {
         getUserCourses(accountInfo.user_id);
     }, []);
-
-    console.log(userCourses);
 
     const [semNumSelected, setSemNumSelected] = useState(0);
 
@@ -216,7 +212,6 @@ function Home() {
         setOpen(false);
     };
     const handleClickConfirm = (index) => {
-        console.log(index);
         setOpen(false);
     }
 
@@ -323,12 +318,10 @@ function Home() {
 
     const semesterBlocks = (semTotal, sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12) => {
         const semesters = [sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12];
-        console.log(semesters);
         let blocks = [];
         let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
 
         const countCredits = (semester, id) => {
-            console.log(semester);
             let count = 0;
             for (const course of semester) {
                 count += course.credit_num;
@@ -352,7 +345,6 @@ function Home() {
         }
 
         for (let i = 0; i < semTotal; i++) {
-            // if (semesters[i][0] !== undefined) {
             let creditId = 'credit_count' + i;
             let creditCount = countCredits(semesters[i], creditId);
             blocks.push(<Grid item={true} xs={6} className='tableGrid'>
@@ -383,25 +375,6 @@ function Home() {
                                                 }}
                                             />
                                         </Button>
-                                        {/* <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                overlayStyle={{backgroundColor: 'transparent'}}
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
-                                                <Button onClick={handleClickClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>  */}
                                     </TableCell>
                                     <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
                                         {checkFlag(row.course_id)}
@@ -430,71 +403,69 @@ function Home() {
     }
 
     const addCourse = (course) => {
-        console.log(selectedSemester);
         if (selectedSemester !== "") {
-            console.log(selectedSemester);
-            console.log(course);
-            console.log("courseId: " + course.course_id);
             let courseInPlan = userCourses?.find(element => element.course_id == course.course_id);
             if (!courseInPlan) {
-                Promise.all([
-                    Axios.post(`http://localhost:3001/prereq`, {
-                        semesterId: semNumSelected,
-                        courseId: course.course_id,
-                    }),
-                    Axios.post(`http://localhost:3001/allSemesters`, {
-                        reqUser: accountInfo.user_id,
-                        targetUser: accountInfo.user_id,
-                        role: accountInfo.is_admin,
-                        semNumSelected: semNumSelected
-                    })
-                ]).then((response) => {
+                // check prereqs for course being added and flag if necessary
+                prereqCheck(course);
+
+                // push the course to the semester
+                selectedSemester.push(course);
+                Axios.post(`http://localhost:3001/addCourse`, {
+                    semester_id: semNumSelected,
+                    course_id: course.course_id,
+                    user_id: accountInfo.user_id
+                }).then((response) => {
                     console.log(response);
-                    console.log(response[0].data);
-                    console.log(response[1].data);
-                    let satisfied = true;
-                    if (response[0].data.length > 0) {
-                        const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
-                        // checks if the perequisite courses are found in a previous semester and have a passing grade or have no grade yet
-                        for (let i = 0; i < response[0].data.length; i++) {
-                            const classPassed = response[1].data.some((course) => {
-                                return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
-                            });
-                            console.log(!classPassed);
-                            if (!classPassed) {
-                                satisfied = false;
-                            }
-                        }
-                    }
-                    if (satisfied) {
-                        console.log("Prerequisites have been met!");
-                        selectedSemester.push(course);
-                        Axios.post(`http://localhost:3001/addCourse`, {
-                            semester_id: semNumSelected,
-                            course_id: course.course_id,
-                            user_id: accountInfo.user_id
-                        }).then((response) => {
-                            console.log(response);
-                            getSemester(eval('setSem' + semNumSelected), semNumSelected);
-                            getUserCourses(accountInfo.user_id);
-                        });
-                    }
-                    else {
-                        console.log("Prerequisites not met.");
-                    }
+                    getSemester(eval('setSem' + semNumSelected), semNumSelected);
+                    getUserCourses(accountInfo.user_id);
                 });
+            
             }
             else {
                 console.log("Course already planned!");
             }
         }
-    }
+}
+    
+const prereqCheck = (course) => {
+    Promise.all([
+        Axios.post(`http://localhost:3001/prereq`, {
+            semesterId: semNumSelected,
+            courseId: course.course_id,
+        }),
+        Axios.post(`http://localhost:3001/allSemesters`, {
+            reqUser: accountInfo.user_id,
+            targetUser: accountInfo.user_id,
+            role: accountInfo.is_admin,
+            semNumSelected: semNumSelected
+        })
+    ]).then((response) => {
+        if (response[0].data.length > 0) {
+            let satisfied = true;
+            const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
+            // checks if the perequisite courses are found in a previous semester and have a passing grade or have no grade yet
+            for (let i = 0; i < response[0].data.length; i++) {
+                const classPassed = response[1].data.some((course) => {
+                    return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
+                });
+
+                if (!classPassed) {
+                    satisfied = false;
+                }
+                if (!satisfied) {
+                    if (!coursePrereqFlags.includes(course.course_id)) coursePrereqFlags.push(course.course_id);
+                }
+            }
+        }
+    });
+}
 
     const [userSemIDs, setUserSemIDs] = useState([]);
 
     const getUserSemIDs = () => {
         Axios.post(`http://localhost:3001/userSemeseterIDs`, {
-            user_id: user_id
+            user_id: accountInfo.user_id
         }).then((response) => {
             for (const elem of response.data) {
                 userSemIDs.push(elem.semester_id);
@@ -508,35 +479,31 @@ function Home() {
 
     const [courseSemFlags, setCourseSemFlags] = useState([]);
     const [courseYearFlags, setCourseYearFlags] = useState([]);
+    const [coursePrereqFlags, setCoursePrereqFlags] = useState([]);
 
     const courseFlagging = (userCourses) => {
         // this is undefined rn
         // let isStartSemEven = accountInfo[0]?.start_year % 2 == 0;
         let isStartSemEven = true;
-        console.log(isStartSemEven);
-        console.log(userSemIDs);
-        console.log(userCourses);
         let isSemEven = false;
         if (userSemIDs.length != 0 && userCourses.length != 0) {
             for (const course of userCourses) {
                 // check semeseter placement
                 if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(course.semester_id) % 2 == 1) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(course.semester_id) % 2 == 0)) {
-                    console.log(course.course_id + ": wrong semester!");
                     if (!courseSemFlags.includes(course.course_id)) courseSemFlags.push(course.course_id);
                 }
 
                 // flip bit for every spring semester
                 if (userSemIDs.indexOf(course.semester_id) % 3 != 0) isSemEven = !isStartSemEven;
                 else isSemEven = isStartSemEven;
-                console.log(userSemIDs.indexOf(course.semester_id));
-                console.log((course.year?.toLowerCase() == "even") && !isSemEven);
 
                 // check year placement
                 if ((course.year?.toLowerCase() == "even" && !isSemEven) || (course.year?.toLowerCase() == "odd" && isSemEven)) {
-                    console.log(course.course_id + ": wrong year!");
-                    console.log(isSemEven);
                     if (!courseYearFlags.includes(course.course_id)) courseYearFlags.push(course.course_id);
                 }
+
+                // flags any prereq issues with the course
+                // prereqCheck(course);
             }
         }
     }
@@ -544,25 +511,37 @@ function Home() {
     courseFlagging(userCourses);
 
     const checkFlag = (courseId) => {
-        console.log(courseId);
-        console.log(courseSemFlags);
-        console.log(courseYearFlags);
-        let flags = [];
+        let errorMessage = '';
 
-        // 
         if (courseSemFlags.includes(courseId)) {
-            flags.push(
-                <ErrorIcon sx={{ color: 'red' }}></ErrorIcon>
-            )
+            // flags.push(
+            //     <ErrorIcon sx={{ color: 'red' }}></ErrorIcon>
+            // )
+            errorMessage += 'Wrong Semester!';
         }
 
         if (courseYearFlags.includes(courseId)) {
-            flags.push(
-                <ErrorIcon sx={{ color: 'orange' }}></ErrorIcon>
-            )
+            // flags.push(
+            //     <ErrorIcon sx={{ color: 'orange' }}></ErrorIcon>
+            // )
+            errorMessage += '\n Wrong Year!';
         }
 
-        return flags;
+        if (coursePrereqFlags.includes(courseId)) {
+            // flags.push(
+            //     <ErrorIcon sx={{ color: 'yellow' }}></ErrorIcon>
+            // )
+            errorMessage += '\n Prerequisites not met!';
+        }
+
+        // return flags;
+        if (errorMessage !== '') {
+            return (
+                <Tooltip title={errorMessage} placement="top" arrow>
+                    <ErrorIcon sx={{ color: 'red' }} />
+                </Tooltip>
+            );
+        }
     }
 
     return (
