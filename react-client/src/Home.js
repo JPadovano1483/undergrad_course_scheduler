@@ -204,16 +204,6 @@ function Home() {
 
         return SearchCourse(courseList, idInput);
     }
-    const [open, setOpen] = useState(false);
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-    const handleClickClose = () => {
-        setOpen(false);
-    };
-    const handleClickConfirm = (index) => {
-        setOpen(false);
-    }
 
 
     const changeStyle = () => {
@@ -254,53 +244,18 @@ function Home() {
         setSemTotal(semTotal - 1);
     }
 
-    // credit popup
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const handlePopoverOpen = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handlePopoverClose = () => {
-        setAnchorEl(null);
-    };
-
-    const openPopup = Boolean(anchorEl);
-
     const creditWarningPopup = (creditId, creditNum) => {
         if (creditNum < 12 || creditNum > 18) {
             return (
-                <div>
+                <Tooltip title="You must have 12-18 credits per semester. Please contact your advisor if you plan to underload/overload a semester." placement="top" arrow>
                     <Typography
                         id={creditId}
-                        aria-owns={openPopup ? 'mouse-over-popover' : undefined}
-                        aria-haspopup="true"
-                        onMouseEnter={handlePopoverOpen}
-                        onMouseLeave={handlePopoverClose}
+                        sx={{color: 'red'}}
                     >
                         Credits: {creditNum}
                     </Typography>
-                    <Popover
-                        id="mouse-over-popover"
-                        sx={{
-                            pointerEvents: 'none',
-                        }}
-                        open={openPopup}
-                        anchorEl={anchorEl}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'center',
-                        }}
-                        transformOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                        }}
-                        onClose={handlePopoverClose}
-                        disableRestoreFocus
-                    >
-                        <Typography sx={{ p: 1 }}>You must have 12-18 credits per semester. Please contact your advisor if you plan to underload/overload a semester.</Typography>
-                    </Popover>
-                </div>
+                </Tooltip>
+                
             );
         }
         else {
@@ -508,8 +463,6 @@ const prereqCheck = (course) => {
         }
     }
 
-    courseFlagging(userCourses);
-
     const checkFlag = (courseId) => {
         let errorMessage = '';
 
@@ -566,13 +519,7 @@ const prereqCheck = (course) => {
                         <div>
                             <TextField
                                 id="course_id_input"
-                                label="Course ID"
-                            />
-                        </div>
-                        <div>
-                            <TextField
-                                id="course_name_input"
-                                label="Course Name"
+                                label="Course ID or Name"
                             />
                         </div>
                         <div>
@@ -598,6 +545,7 @@ const prereqCheck = (course) => {
                     </TableContainer>
                 </Drawer>
                 <h1>{semTotal} Semester Plan</h1>
+                <Button onClick={() => courseFlagging(userCourses)}>Check</Button>
                 <Grid container spacing={0}>
                     {semesterBlocks(semTotal, sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12)}
                 </Grid>
