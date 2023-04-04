@@ -58,15 +58,6 @@ function Home() {
         getSemTotal();
     }, []);
 
-    // const getaccountInfo = () => {
-    //     Axios.get(`http://localhost:3001/accountInfo`).then((response) => {
-    //         setAccountInfo(response.data);
-    //     });
-    // }
-    // useEffect(() => {
-    //     getaccountInfo();
-    // }, []);
-
     // requirement checking 
     const [requirements, setRequirements] = useState([]);
     const getUserRequirements = () => {
@@ -249,6 +240,8 @@ function Home() {
             course_id: course.course_id
         }).then((response) => {
             console.log(response);
+            getSemester(eval('setSem' + course.semester_id), course.semester_id);
+            getUserCourses(accountInfo.user_id);
         });
     }
 
@@ -439,12 +432,6 @@ function Home() {
         return blocks;
     }
 
-    // let semesters = [];
-    // for (let i = 1; i < semTotal + 1; i++) {
-    //     semesters.push(eval("sem" + i));
-    // }
-    // console.log(semesters);
-
     const [selectedSemester, setSelectedSemester] = useState("");
 
     const addToSemester = (semester, semesterNum) => {
@@ -499,6 +486,8 @@ function Home() {
                             user_id: accountInfo.user_id
                         }).then((response) => {
                             console.log(response);
+                            getSemester(eval('setSem' + semNumSelected), semNumSelected);
+                            getUserCourses(accountInfo.user_id);
                         });
                     }
                     else {
@@ -512,21 +501,21 @@ function Home() {
         }
     }
 
-    const [userSemIDs, setUserSemIDs] = useState([1, 2, 3, 4, 5, 6, 7, 8]);
+    const [userSemIDs, setUserSemIDs] = useState([]);
 
-    // const getUserSemIDs = () => {
-    //     Axios.post(`http://localhost:3001/userSemeseterIDs`, {
-    //         user_id: user_id
-    //     }).then((response) => {
-    //         for (const elem of response.data) {
-    //             userSemIDs.push(elem.semester_id);
-    //         }
-    //     });
-    // }
+    const getUserSemIDs = () => {
+        Axios.post(`http://localhost:3001/userSemeseterIDs`, {
+            user_id: user_id
+        }).then((response) => {
+            for (const elem of response.data) {
+                userSemIDs.push(elem.semester_id);
+            }
+        });
+    }
 
-    // useEffect(() => {
-    //     getUserSemIDs();
-    // }, []);
+    useEffect(() => {
+        getUserSemIDs();
+    }, []);
 
     const [courseSemFlags, setCourseSemFlags] = useState([]);
     const [courseYearFlags, setCourseYearFlags] = useState([]);
