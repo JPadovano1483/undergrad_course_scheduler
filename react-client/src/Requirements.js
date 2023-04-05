@@ -98,6 +98,9 @@ function Requirements() {
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
           </TableCell>
+          <TableCell>
+            {getHeaderIcon(req)}
+          </TableCell>
           <TableCell component="th" scope="row" align="left">
             {getHeader(req)}
           </TableCell>
@@ -145,12 +148,35 @@ function Requirements() {
     else return '';
   }
 
+  function getHeaderIcon(requirement) {
+    let notPlanned = false;
+    let inProgress = false;
+    requirement.forEach((item) => {
+      let course = userCourses.find(smallerItem => smallerItem.course_id == item.course_id);
+      if (course) {
+        console.log(course);
+        if (course.grade == null) {
+          inProgress = true;
+        }
+      }
+      else {
+        notPlanned = true;
+      }
+    });
+    if (notPlanned) return (<PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>);
+    else if (inProgress) return (<TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>);
+    else return (<CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>);
+  }
+
   function getIcon(courseId) {
     let course = userCourses.find(item => item.course_id == courseId);
     if (course) {
       console.log(course);
       if (course.grade != null) return (<CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>);
-      else return (<TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>)
+      else {
+        
+        return (<TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>);
+      }
     }
     else {
       return (<PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>);
