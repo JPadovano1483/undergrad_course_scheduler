@@ -1,6 +1,8 @@
 import './css/home.css';
+import { PropTypes } from 'prop-types';
 import * as React from 'react';
 import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Button } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import Navigation from './navigation';
 import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -9,16 +11,14 @@ import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import SimpleDialog from './Dialog';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
 import { green } from '@mui/material/colors';
 import SearchCourse from "./SearchCourse";
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
 
 function Home() {
-
     let accountInfo = {};
     if (localStorage.getItem("user") !== null) {
         const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -34,6 +34,10 @@ function Home() {
     console.log(accountInfo);
 
     const user_id = window.sessionStorage.getItem("user_id");
+    SimpleDialog.propTypes = {
+        onClose: PropTypes.func.isRequired,
+        open: PropTypes.bool.isRequired,
+    };
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -216,10 +220,16 @@ function Home() {
         setOpen(false);
     }
 
-
-    const changeStyle = () => {
-        const element = document.getElementById("styleTest");
-        element.classList.toggle('green');
+    const [grade, setGrade] = useState();
+    const insertGrade = (course, semester) => {
+        Axios.post(`http://localhost:3001/insertGrade`, {
+            grade: grade,
+            user_id: accountInfo.user_id,
+            semester_id: course.semester_id,
+            course_id: course.course_id
+        }).then((response) => {
+            console.log(response);
+        });
     }
 
 
@@ -362,26 +372,6 @@ function Home() {
                                 <TableRow key={row?.id}>
                                     <TableCell sx={{ width: "10%" }}>{row?.course_id}</TableCell>
                                     <TableCell sx={{ width: "50%" }} onClick={handleDialogOpen}>{row?.course_name}</TableCell>
-                                    <Dialog onClose={handleClose} open={dialogOpen}>
-                                        <DialogTitle sx={{ backgroundColor: '#002856', color: 'white' }}>{row?.course_id} - {row?.course_name}</DialogTitle>
-                                        <TableContainer>
-                                            <Table>
-                                                <TableBody>
-                                                    <TableRow><h4 id='description'>Course Desription: </h4></TableRow>
-                                                    <TableRow>
-                                                        <TableCell> This course provides a unified introduction to the field of Computer and Information Science (CIS).
-                                                            Students will learn fundamental concepts, develop technical and quantitative skills, and explore the application and
-                                                            ethical impact of computing technologies in various contexts,
-                                                            including research, business, service organizations, education and society at large. </TableCell>
-                                                    </TableRow>
-                                                    <TableRow><h4 id='description'>Prerequisites </h4></TableRow>
-                                                    <TableRow>
-                                                        <TableCell>CIS 101 </TableCell>
-                                                    </TableRow>
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    </Dialog>
                                     <TableCell sx={{ width: "10%" }}>{row?.credit_num}</TableCell>
                                     <TableCell sx={{ width: "10%" }}>
                                         <Button color="error" onClick={() => handleDeleteCourse(row, semesters[i])}>
@@ -389,8 +379,8 @@ function Home() {
                                         </Button>
                                     </TableCell>
                                     <TableCell sx={{ width: "10%" }}>
-                                        <Button onClick={changeStyle}>
-                                            <Checkbox
+                                        <Button onClick={handleClickOpen}>
+                                            <Checkbox id='check'
                                                 sx={{
                                                     color: green[800],
                                                     '&.Mui-checked': {
@@ -399,29 +389,38 @@ function Home() {
                                                 }}
                                             />
                                         </Button>
-                                        {/* <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                overlayStyle={{backgroundColor: 'transparent'}}
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
-                                                <Button onClick={handleClickClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>  */}
+                                        <Dialog open={open} onClose={handleClose}>
+                                            <DialogTitle>Completed Course Grade</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    Please enter the grade for the completed Course
+                                                </DialogContentText>
+                                                <TextField
+                                                    autoFocus
+                                                    margin="dense"
+                                                    id="name"
+                                                    label="Grade"
+                                                    type="grade"
+                                                    fullWidth
+                                                    variant="standard"
+                                                    onChange={(e) => {
+                                                        setGrade(e.target.value)
+                                                    }}
+                                                />
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleClickClose}>Cancel</Button>
+                                                <Button onClick={() => { insertGrade(row, semesters[i]); handleClickClose() }}>Submit</Button>
+                                            </DialogActions>
+                                        </Dialog>
                                     </TableCell>
                                     <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
                                         {checkFlag(row.course_id)}
                                     </TableCell>
+                                    <SimpleDialog
+                                        open={dialogOpen}
+                                        onClose={handleClose}
+                                    />
                                 </TableRow>
                             ))}
                         </TableBody>
