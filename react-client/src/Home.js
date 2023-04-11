@@ -2,8 +2,8 @@ import './css/home.css';
 import { PropTypes } from 'prop-types';
 import * as React from 'react';
 import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Button } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import Navigation from './navigation';
-import Draggable from 'react-draggable';
 import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useEffect } from 'react';
@@ -31,7 +31,7 @@ function Home() {
     else {
         window.location.href = "http://localhost:3000";
     }
-    console.log(accountInfo);
+
 
     const user_id = window.sessionStorage.getItem("user_id");
     SimpleDialog.propTypes = {
@@ -111,11 +111,12 @@ function Home() {
         getUserCourses(accountInfo.user_id);
     }, []);
 
-    console.log(userCourses);
 
     const [semNumSelected, setSemNumSelected] = useState(0);
+    const [dialogRow, setDialogRow] = useState({});
 
-    const handleDialogOpen = () => {
+    const handleDialogOpen = (row) => {
+        setDialogRow(courseList.find(elem => elem.course_id === row.course_id));
         setDialogOpen(true);
     };
 
@@ -216,14 +217,19 @@ function Home() {
         setOpen(false);
     };
     const handleClickConfirm = (index) => {
-        console.log(index);
         setOpen(false);
     }
 
-
-    const changeStyle = () => {
-        const element = document.getElementById("styleTest");
-        element.classList.toggle('green');
+    const [grade, setGrade] = useState();
+    const insertGrade = (course, semester) => {
+        Axios.post(`http://localhost:3001/insertGrade`, {
+            grade: grade,
+            user_id: accountInfo.user_id,
+            semester_id: course.semester_id,
+            course_id: course.course_id
+        }).then((response) => {
+            console.log(response);
+        });
     }
 
 
@@ -323,12 +329,10 @@ function Home() {
 
     const semesterBlocks = (semTotal, sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12) => {
         const semesters = [sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12];
-        console.log(semesters);
         let blocks = [];
         let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
 
         const countCredits = (semester, id) => {
-            console.log(semester);
             let count = 0;
             for (const course of semester) {
                 count += course.credit_num;
@@ -365,7 +369,7 @@ function Home() {
                             {semesters[i].map((row) => (
                                 <TableRow key={row?.id}>
                                     <TableCell sx={{ width: "10%" }}>{row?.course_id}</TableCell>
-                                    <TableCell sx={{ width: "50%" }} onClick={handleDialogOpen}>{row?.course_name}</TableCell>
+                                    <TableCell sx={{ width: "50%" }} onClick={() => { handleDialogOpen(row) }}>{row?.course_name}</TableCell>
                                     <TableCell sx={{ width: "10%" }}>{row?.credit_num}</TableCell>
                                     <TableCell sx={{ width: "10%" }}>
                                         <Button color="error" onClick={() => handleDeleteCourse(row, semesters[i])}>
@@ -373,8 +377,8 @@ function Home() {
                                         </Button>
                                     </TableCell>
                                     <TableCell sx={{ width: "10%" }}>
-                                        <Button onClick={changeStyle}>
-                                            <Checkbox
+                                        <Button onClick={handleClickOpen}>
+                                            <Checkbox id='check'
                                                 sx={{
                                                     color: green[800],
                                                     '&.Mui-checked': {
@@ -383,25 +387,30 @@ function Home() {
                                                 }}
                                             />
                                         </Button>
-                                        {/* <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                overlayStyle={{backgroundColor: 'transparent'}}
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
-                                                <Button onClick={handleClickClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>  */}
+                                        <Dialog open={open} onClose={handleClose}>
+                                            <DialogTitle>Completed Course Grade</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    Please enter the grade for the completed Course
+                                                </DialogContentText>
+                                                <TextField
+                                                    autoFocus
+                                                    margin="dense"
+                                                    id="name"
+                                                    label="Grade"
+                                                    type="grade"
+                                                    fullWidth
+                                                    variant="standard"
+                                                    onChange={(e) => {
+                                                        setGrade(e.target.value)
+                                                    }}
+                                                />
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleClickClose}>Cancel</Button>
+                                                <Button onClick={() => { insertGrade(row, semesters[i]); handleClickClose() }}>Submit</Button>
+                                            </DialogActions>
+                                        </Dialog>
                                     </TableCell>
                                     <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
                                         {checkFlag(row.course_id)}
@@ -409,6 +418,7 @@ function Home() {
                                     <SimpleDialog
                                         open={dialogOpen}
                                         onClose={handleClose}
+                                        row={dialogRow}
                                     />
                                 </TableRow>
                             ))}
@@ -513,28 +523,20 @@ function Home() {
         // this is undefined rn
         // let isStartSemEven = accountInfo[0]?.start_year % 2 == 0;
         let isStartSemEven = true;
-        console.log(isStartSemEven);
-        console.log(userSemIDs);
-        console.log(userCourses);
         let isSemEven = false;
         if (userSemIDs.length != 0 && userCourses.length != 0) {
             for (const course of userCourses) {
                 // check semeseter placement
                 if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(course.semester_id) % 2 == 1) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(course.semester_id) % 2 == 0)) {
-                    console.log(course.course_id + ": wrong semester!");
                     if (!courseSemFlags.includes(course.course_id)) courseSemFlags.push(course.course_id);
                 }
 
                 // flip bit for every spring semester
                 if (userSemIDs.indexOf(course.semester_id) % 3 != 0) isSemEven = !isStartSemEven;
                 else isSemEven = isStartSemEven;
-                console.log(userSemIDs.indexOf(course.semester_id));
-                console.log((course.year?.toLowerCase() == "even") && !isSemEven);
 
                 // check year placement
                 if ((course.year?.toLowerCase() == "even" && !isSemEven) || (course.year?.toLowerCase() == "odd" && isSemEven)) {
-                    console.log(course.course_id + ": wrong year!");
-                    console.log(isSemEven);
                     if (!courseYearFlags.includes(course.course_id)) courseYearFlags.push(course.course_id);
                 }
             }
@@ -544,9 +546,6 @@ function Home() {
     courseFlagging(userCourses);
 
     const checkFlag = (courseId) => {
-        console.log(courseId);
-        console.log(courseSemFlags);
-        console.log(courseYearFlags);
         let flags = [];
 
         // 
