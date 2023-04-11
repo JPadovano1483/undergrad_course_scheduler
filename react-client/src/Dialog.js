@@ -14,7 +14,6 @@ function SimpleDialog(props) {
 
     const { onClose, selectedValue, open } = props;
     const row = props.row;
-    console.log(props.row);
     const handleClose = () => {
         onClose(selectedValue);
     };

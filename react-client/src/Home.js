@@ -116,8 +116,7 @@ function Home() {
     const [dialogRow, setDialogRow] = useState({});
 
     const handleDialogOpen = (row) => {
-        console.log('hello there');
-        setDialogRow(row);
+        setDialogRow(courseList.find(elem => elem.course_id === row.course_id));
         setDialogOpen(true);
     };
 
