@@ -220,9 +220,10 @@ function Home() {
         setOpen(false);
     }
 
-    const [grade, setGrade] = useState();
+    const [grade, setGrade] = useState("A");
     const insertGrade = (course) => {
         console.log("COURSE" +JSON.stringify(course));
+        console.log("grade: " + grade);
         Axios.post(`http://localhost:3001/insertGrade`, {
             grade: grade,
             user_id: accountInfo.user_id,
