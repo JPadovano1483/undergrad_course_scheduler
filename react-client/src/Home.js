@@ -383,25 +383,6 @@ function Home() {
                                                 }}
                                             />
                                         </Button>
-                                        {/* <Button color = "error" onClick={handleClickOpen}>
-                                                    <DeleteIcon></DeleteIcon>
-                                                </Button>
-                                                <Dialog
-                                                open={open}
-                                                
-                                                aria-labelledby="alert-dialog-title"
-                                                aria-describedby="alert-dialog-description"
-                                                overlayStyle={{backgroundColor: 'transparent'}}
-                                                >
-                                                <DialogTitle id="alert-dialog-title">
-                                                </DialogTitle>
-                                                <DialogActions>
-                                                <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
-                                                <Button onClick={handleClickClose} autoFocus>
-                                                Cancel
-                                                </Button>
-                                                </DialogActions>
-                                                </Dialog>  */}
                                     </TableCell>
                                     <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
                                         {checkFlag(row.course_id)}

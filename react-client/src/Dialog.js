@@ -21,7 +21,7 @@ function SimpleDialog(props) {
             <TableContainer>
                 <Table>
                     <TableBody>
-                        <TableRow><h4 id='description'>Course Desription: </h4></TableRow>
+                        <TableRow><h4 id='description'>Course Description: </h4></TableRow>
                         <TableRow>
                             <TableCell>This course provides a unified introduction to the field of Computer and Information Science (CIS).
                                 Students will learn fundamental concepts, develop technical and quantitative skills, and explore the application and
