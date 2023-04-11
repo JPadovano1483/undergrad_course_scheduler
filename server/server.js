@@ -579,7 +579,7 @@ app.get("/plan/:id", (req, res) => {
 
   if (userValidation) {
     db.query(`SELECT semester_id, course_id, course_name, credit_num FROM user JOIN semester using(user_id) JOIN user_course using(semester_id) JOIN course using(course_id) WHERE user.user_id=?`,
-      [userId],
+      [user_id],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -602,7 +602,7 @@ app.post("/semester/:id", (req, res) => {
   let userValidation = userCtrlCheck(reqUser, targetUser, role);
 
   if (userValidation) {
-    db.query("SELECT course_id, course_name, credit_num, semester_id, user.user_id FROM course JOIN user_course using(course_id) JOIN semester using(semester_id) INNER JOIN user ON user_course.user_id=user.user_id WHERE semester_id=? AND user.user_id=?",
+    db.query("SELECT course_id, course_name, credit_num, error_code, semester_id, user.user_id FROM course JOIN user_course using(course_id) JOIN semester using(semester_id) INNER JOIN user ON user_course.user_id=user.user_id WHERE semester_id=? AND user.user_id=?",
       [semesterId, reqUser],
       (err, result) => {
         if (err) {
@@ -689,8 +689,9 @@ app.post("/addCourse", (req, res) => {
   const semester_id = req.body.semester_id;
   const course_id = req.body.course_id;
   const user_id = req.body.user_id;
-  db.query(`INSERT INTO user_course (semester_id, course_id, user_id) VALUES (?,?,?)`,
-    [semester_id, course_id, user_id],
+  const error_code = req.body.error_code;
+  db.query(`INSERT INTO user_course (semester_id, course_id, user_id, error_code) VALUES (?,?,?,?)`,
+    [semester_id, course_id, user_id, error_code],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -783,7 +784,7 @@ app.post("/allUserCourses", (req, res) => {
   );
 });
 
-app.post("/userSemeseterIDs", (req, res) => {
+app.post("/userSemesterIDs", (req, res) => {
   const user_id = req.body.user_id;
   db.query(`SELECT semester_id FROM semester WHERE user_id=? ORDER BY semester_id`,
     [user_id],

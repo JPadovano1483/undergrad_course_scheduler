@@ -332,7 +332,7 @@ function Home() {
                                         </Button>
                                     </TableCell>
                                     <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
-                                        {checkFlag(row.course_id)}
+                                        {checkFlag(row.error_code)}
                                     </TableCell>
                                     <SimpleDialog
                                         open={dialogOpen}
@@ -361,69 +361,112 @@ function Home() {
         if (selectedSemester !== "") {
             let courseInPlan = userCourses?.find(element => element.course_id == course.course_id);
             if (!courseInPlan) {
-                // check prereqs for course being added and flag if necessary
-                prereqCheck(course);
+                Promise.all([
+                    Axios.post(`http://localhost:3001/prereq`, {
+                        semesterId: semNumSelected,
+                        courseId: course.course_id,
+                    }),
+                    Axios.post(`http://localhost:3001/allSemesters`, {
+                        reqUser: accountInfo.user_id,
+                        targetUser: accountInfo.user_id,
+                        role: accountInfo.is_admin,
+                        semNumSelected: semNumSelected
+                    })
+                ]).then((response) => {
+                    let satisfied = true;
+                    if (response[0].data.length > 0) {
+                        const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
+                        // checks if the perequisite courses are found in a previous semester and have a passing grade or have no grade yet
+                        for (let i = 0; i < response[0].data.length; i++) {
+                            const classPassed = response[1].data.some((course) => {
+                                return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
+                            });
 
-                // push the course to the semester
-                selectedSemester.push(course);
-                Axios.post(`http://localhost:3001/addCourse`, {
-                    semester_id: semNumSelected,
-                    course_id: course.course_id,
-                    user_id: accountInfo.user_id
-                }).then((response) => {
-                    console.log(response);
-                    getSemester(eval('setSem' + semNumSelected), semNumSelected);
-                    getUserCourses(accountInfo.user_id);
+                            if (!classPassed) {
+                                satisfied = false;
+                            }
+                        }
+                    }
+
+                    let errorCode = getErrorCode(course, semNumSelected, satisfied);
+
+                    // push the course to the semester
+                    selectedSemester.push(course);
+                    Axios.post(`http://localhost:3001/addCourse`, {
+                        semester_id: semNumSelected,
+                        course_id: course.course_id,
+                        user_id: accountInfo.user_id,
+                        error_code: errorCode
+                    }).then((response) => {
+                        console.log(response);
+                        getSemester(eval('setSem' + semNumSelected), semNumSelected);
+                        getUserCourses(accountInfo.user_id);
+                    });
                 });
+
             
             }
             else {
                 console.log("Course already planned!");
             }
         }
-}
+    }
     
-const prereqCheck = (course) => {
-    Promise.all([
-        Axios.post(`http://localhost:3001/prereq`, {
-            semesterId: semNumSelected,
-            courseId: course.course_id,
-        }),
-        Axios.post(`http://localhost:3001/allSemesters`, {
-            reqUser: accountInfo.user_id,
-            targetUser: accountInfo.user_id,
-            role: accountInfo.is_admin,
-            semNumSelected: semNumSelected
-        })
-    ]).then((response) => {
-        if (response[0].data.length > 0) {
-            let satisfied = true;
-            const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
-            // checks if the perequisite courses are found in a previous semester and have a passing grade or have no grade yet
-            for (let i = 0; i < response[0].data.length; i++) {
-                const classPassed = response[1].data.some((course) => {
-                    return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
-                });
+    const getErrorCode = (course, semId, satisfied) => {
+        let isStartSemEven = accountInfo?.start_year % 2 == 0;
+        let isSemEven = false;
+        let semFlag = false;
+        let yearFlag = false;
+        let prereqFlag = !satisfied;
+        let errorCode = 0;
 
-                if (!classPassed) {
-                    satisfied = false;
-                }
-                if (!satisfied) {
-                    if (!coursePrereqFlags.includes(course.course_id)) coursePrereqFlags.push(course.course_id);
-                }
+        // mark all flags as true or false
+        if (userSemIDs.length != 0 && course) {
+            // check semester placement
+            if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(semId) % 2 == 1) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(semId) % 2 == 0)) {
+                semFlag = true;
+            }
+
+            // flip bit for every spring semester
+            let sameAsFirstSem = [0, 3, 4, 7, 8, 11, 12];
+            if (sameAsFirstSem.includes(userSemIDs.indexOf(semId))) isSemEven = isStartSemEven;
+            else isSemEven = !isStartSemEven;
+
+            // check year placement
+            if ((course.year?.toLowerCase() == "even" && !isSemEven) || (course.year?.toLowerCase() == "odd" && isSemEven)) {
+                yearFlag = true;
             }
         }
-    });
-}
+
+        // set error code and return
+        if (semFlag) {
+            if (yearFlag && prereqFlag) errorCode = 7;
+            else if (yearFlag) errorCode = 4;
+            else if (prereqFlag) errorCode = 5;
+            else errorCode = 1;
+        }
+        else if (yearFlag) {
+            if (prereqFlag) errorCode = 6;
+            else errorCode = 2;
+        }
+        else if (prereqFlag) {
+            errorCode = 3;
+        }
+        else {
+            errorCode = 0;
+        }
+
+        return errorCode;
+    }
 
     const [userSemIDs, setUserSemIDs] = useState([]);
 
     const getUserSemIDs = () => {
-        Axios.post(`http://localhost:3001/userSemeseterIDs`, {
+        Axios.post(`http://localhost:3001/userSemesterIDs`, {
             user_id: accountInfo.user_id
         }).then((response) => {
             for (const elem of response.data) {
-                userSemIDs.push(elem.semester_id);
+                if (!userSemIDs.includes(elem.semester_id)) userSemIDs.push(elem.semester_id);
             }
         });
     }
@@ -432,51 +475,39 @@ const prereqCheck = (course) => {
         getUserSemIDs();
     }, []);
 
-    const [courseSemFlags, setCourseSemFlags] = useState([]);
-    const [courseYearFlags, setCourseYearFlags] = useState([]);
-    const [coursePrereqFlags, setCoursePrereqFlags] = useState([]);
-
-    const courseFlagging = (userCourses) => {
-        // this is undefined rn
-        // let isStartSemEven = accountInfo[0]?.start_year % 2 == 0;
-        let isStartSemEven = true;
-        let isSemEven = false;
-        if (userSemIDs.length != 0 && userCourses.length != 0) {
-            for (const course of userCourses) {
-                // check semeseter placement
-                if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(course.semester_id) % 2 == 1) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(course.semester_id) % 2 == 0)) {
-                    if (!courseSemFlags.includes(course.course_id)) courseSemFlags.push(course.course_id);
-                }
-
-                // flip bit for every spring semester
-                if (userSemIDs.indexOf(course.semester_id) % 3 != 0) isSemEven = !isStartSemEven;
-                else isSemEven = isStartSemEven;
-
-                // check year placement
-                if ((course.year?.toLowerCase() == "even" && !isSemEven) || (course.year?.toLowerCase() == "odd" && isSemEven)) {
-                    if (!courseYearFlags.includes(course.course_id)) courseYearFlags.push(course.course_id);
-                }
-
-                // flags any prereq issues with the course
-                // prereqCheck(course);
-            }
-        }
-    }
-
-    const checkFlag = (courseId) => {
+    const checkFlag = (errorCode) => {
         let errorMessage = '';
 
-        if (courseSemFlags.includes(courseId)) {
-            errorMessage += 'Wrong Semester!';
+        switch (errorCode) {
+            case 0:
+                errorMessage = '';
+                break;
+            case 1:
+                errorMessage = 'Wrong Semester!';
+                break;
+            case 2:
+                errorMessage = 'Wrong Year!';
+                break;
+            case 3:
+                errorMessage = 'Prerequisites Not Met!';
+                break;
+            case 4:
+                errorMessage = 'Wrong Semester! Wrong Year!';
+                break;
+            case 5:
+                errorMessage = 'Wrong Semester! Prerequisites not Met!';
+                break;
+            case 6:
+                errorMessage = 'Wrong Year! Prerequisites Not Met!';
+                break;
+            case 7:
+                errorMessage = 'Wrong year! Wrong Semester! Prereq issue!';
+                break;
+            default:
+                errorMessage = '';
+                break;
         }
-
-        if (courseYearFlags.includes(courseId)) {
-            errorMessage += '\n Wrong Year!';
-        }
-
-        if (coursePrereqFlags.includes(courseId)) {
-            errorMessage += '\n Prerequisites not met!';
-        }
+            
 
         if (errorMessage !== '') {
             return (
@@ -545,7 +576,6 @@ const prereqCheck = (course) => {
                     </TableContainer>
                 </Drawer>
                 <h1>{semTotal} Semester Plan</h1>
-                <Button onClick={() => courseFlagging(userCourses)}>Check</Button>
                 <Grid container spacing={0}>
                     {semesterBlocks(semTotal, sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12)}
                 </Grid>
