@@ -71,28 +71,50 @@ export default function Program() {
     var select1 = document.getElementById("selectMajor");
     for(var i = 0; i < maj.length; i++)
     {
-         var els = document.createElement("option");
-         els.textContent = maj[i].program_name;
-         els.value = maj[i].program_name;
-         select1.append(els);
+        if(select1.length !== maj.length)
+        {
+            var els = document.createElement("option");
+            els.textContent = maj[i].program_name;
+            els.value = maj[i].program_name;
+            select1.append(els);
+        }
+        else
+        {
+
+        }
+
      }
     
      var select = document.getElementById("selectMinor");
      for(var j = 0; j < min.length; j++)
      {
-          var el = document.createElement("option");
-          el.textContent = min[j].program_name;
-          el.value = min[j].program_name;
-          select.append(el);
+        if(select.length !== min.length)
+        {
+            var el = document.createElement("option");
+            el.textContent = min[j].program_name;
+            el.value = min[j].program_name;
+            select.append(el);
+        }
+        else
+        {
+
+        }
       }
-     
+
       var select2 = document.getElementById("selectConcentration");
       for(var k = 0; k < concen.length; k++)
       {
-           var el1 = document.createElement("option");
-           el1.textContent = concen[k].program_name;
-           el1.value = concen[k].program_name;
-           select2.append(el1);
+        if(select2.length !== concen.length)
+        {
+            var el1 = document.createElement("option");
+            el1.textContent = concen[k].program_name;
+            el1.value = concen[k].program_name;
+            select2.append(el1);
+        }
+        else
+        {
+            
+        }
        }
 
     return (
