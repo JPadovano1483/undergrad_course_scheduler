@@ -19,6 +19,7 @@ import { green } from '@mui/material/colors';
 import SearchCourse from "./SearchCourse";
 import Tooltip from '@mui/material/Tooltip';
 
+
 function Home() {
     let accountInfo = {};
     if (localStorage.getItem("user") !== null) {
@@ -207,7 +208,9 @@ function Home() {
         return SearchCourse(courseList, idInput);
     }
     const [open, setOpen] = useState(false);
-    const handleClickOpen = () => {
+    const [gradeRow, setGradeRow] = useState({});
+    const handleClickOpen = (row) => {
+        setGradeRow(row);
         setOpen(true);
     };
     const handleClickClose = () => {
@@ -218,7 +221,8 @@ function Home() {
     }
 
     const [grade, setGrade] = useState();
-    const insertGrade = (course, semester) => {
+    const insertGrade = (course) => {
+        console.log("COURSE" +JSON.stringify(course));
         Axios.post(`http://localhost:3001/insertGrade`, {
             grade: grade,
             user_id: accountInfo.user_id,
@@ -338,8 +342,8 @@ function Home() {
                                         </Button>
                                     </TableCell>
                                     <TableCell sx={{ width: "10%" }}>
-                                        <Button onClick={handleClickOpen}>
-                                            <Checkbox id='check'
+                                        <Button onClick={() => handleClickOpen(row)}>
+                                        <Checkbox id ='check'
                                                 sx={{
                                                     color: green[800],
                                                     '&.Mui-checked': {
@@ -349,28 +353,31 @@ function Home() {
                                             />
                                         </Button>
                                         <Dialog open={open} onClose={handleClose}>
-                                            <DialogTitle>Completed Course Grade</DialogTitle>
-                                            <DialogContent>
-                                                <DialogContentText>
-                                                    Please enter the grade for the completed Course
-                                                </DialogContentText>
-                                                <TextField
-                                                    autoFocus
-                                                    margin="dense"
-                                                    id="name"
-                                                    label="Grade"
-                                                    type="grade"
-                                                    fullWidth
-                                                    variant="standard"
-                                                    onChange={(e) => {
-                                                        setGrade(e.target.value)
-                                                    }}
-                                                />
-                                            </DialogContent>
-                                            <DialogActions>
-                                                <Button onClick={handleClickClose}>Cancel</Button>
-                                                <Button onClick={() => { insertGrade(row, semesters[i]); handleClickClose() }}>Submit</Button>
-                                            </DialogActions>
+                                        <DialogTitle>Completed Course Grade</DialogTitle>
+                                        <DialogContent>
+                                            <DialogContentText>
+                                            Please enter the grade for the completed Course
+                                            </DialogContentText>
+                                            <select className="dropdownSem" onChange={(e) => {
+                                                setGrade(e.target.value)
+                                            }}>
+                                                <option value="A">A</option>
+                                                <option value="A-">A-</option>
+                                                <option value="B+">B+</option>
+                                                <option value="B">B</option>
+                                                <option value="B-">B-</option>
+                                                <option value="C+">C+</option>
+                                                <option value="C">C</option>
+                                                <option value="C-">C-</option>
+                                                <option value="D+">D+</option>    
+                                                <option value="D">D</option>                                        
+                                                <option value="F">F</option>
+                                            </select>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleClickClose}>Cancel</Button>
+                                            <Button onClick={() => {insertGrade(gradeRow); handleClickClose()}}>Submit</Button>
+                                        </DialogActions>
                                         </Dialog>
                                     </TableCell>
                                     <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
