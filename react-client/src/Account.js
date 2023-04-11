@@ -8,62 +8,233 @@ import { useEffect } from 'react';
 import { AccountTree } from '@mui/icons-material';
 
 function Account() {
+    let accountInfo = {};
+    if (localStorage.getItem("user") !== null) {
+        const loggedInUser = JSON.parse(localStorage.getItem("user"));
+        accountInfo = loggedInUser;
+    }
+    else if (sessionStorage.getItem("user") !== null) {
+        const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
+        accountInfo = loggedInUser;
+    }
+    else {
+        window.location.href = "http://localhost:3000";
+    }
+    console.log(accountInfo);
+
+    const [majorOptions, setMajorOptions] = useState([]);
+    const getMajors = () => {
+        Axios.post(`http://localhost:3001/getMajors`).then((response) => {
+            setMajorOptions(response.data);
+        });
+    }
+    useEffect(() => {
+        getMajors();
+    }, []);
+
+    const [minorOptions, setMinorOptions] = useState([]);
+    const getMinors = () => {
+        Axios.post(`http://localhost:3001/getMinors`).then((response) => {
+            setMinorOptions(response.data);
+        });
+    }
+    useEffect(() => {
+        getMinors();
+    }, []);
+
+    const [concentrationOptions, setConcentrationOptions] = useState([]);
+    const getConcentrations = () => {
+        Axios.post(`http://localhost:3001/getConcentrations`).then((response) => {
+            setConcentrationOptions(response.data);
+        });
+    }
+    useEffect(() => {
+        getConcentrations();
+    }, []);
+
     const [major, setMajor] = useState("");
-    const [concentration, setConcentration] = useState("");
     const [minor, setMinor] = useState("");
+    const [concentration, setConcentration] = useState("");
     const [password, setPassword] = useState("");
+    const [currentMajor, setCurrentMajor] = useState("None");
+    const [currentMinor, setCurrentMinor] = useState("None");
+    const [currentConcentration, setCurrentConcentration] = useState("None");
+    const [majorId, setMajorId] = useState(0);
+    const [minorId, setMinorId] = useState(0);
+    const [concentrationId, setConcentrationId] = useState(0);
+
+    const getProgramName = (programId) => {
+        Axios.post(`http://localhost:3001/getProgramName`, {
+            programId: programId
+        }).then((response) => {
+            console.log("set major");
+            console.log(response.data[0].program_name);
+            console.log(response.data[0].program_type);
+            if (response.data[0].program_type === "major") {
+                setMajor(response.data[0].program_name);
+            }
+            else if (response.data[0].program_type === "minor") {
+                setMinor(response.data[0].program_name);
+            }
+            else if (response.data[0].program_type === "concentration") {
+                setConcentration(response.data[0].program_name);
+            }
+        });
+    }
 
     const handleMajorChange = (event) => {
-
-        setMajor(event.target.value);
+        const programId = event.target.value;
+        setMajorId(programId);
+        if (programId != 0) {
+            getProgramName(programId);
+        }
+        else {
+            console.log("None");
+            setMajor("None");
+        }
     };
 
     const handleMinorChange = (event) => {
-
-        setMinor(event.target.value);
+        const programId = event.target.value;
+        setMinorId(programId);
+        if (programId != 0) {
+            getProgramName(programId);
+        }
+        else {
+            console.log("None");
+            setMinor("None");
+        }
     };
     const handleConcentrationChange = (event) => {
-
-        setConcentration(event.target.value);
+        const programId = event.target.value;
+        setConcentrationId(programId);
+        if (programId != 0) {
+            getProgramName(programId);
+        }
+        else {
+            console.log("None");
+            setConcentration("None");
+        }
     };
 
     const updateAccount = () => {
-        console.log("Updating user.");
-        Axios.post(`http://localhost:3001/account`, {
-            major: major,
-            concentration: concentration,
-            minor: minor,
+        console.log("Updating user data.");
+
+        const getOldProgramId = (programId, programType) => {
+            console.log("program type: " + programType);
+            Axios.post(`http://localhost:3001/getOldProgramId`, {
+                userId: accountInfo.user_id,
+                programType: programType
+            }).then((response) => {
+                if (programId === 0) {
+                    return deleteProgram(response.data[0].program_id);
+                }
+                else {
+                    return updateProgram(programId, response.data[0].program_id);
+                }
+            });
+        }
+
+        const insertProgram = (programId) => {
+            Axios.post(`http://localhost:3001/insertProgram`, {
+                userId: accountInfo.user_id,
+                programId: programId
+            }).then((response) => {
+                console.log(response);
+            });
+        }
+
+        const deleteProgram = (oldProgramId) => {
+            console.log("user id: " + accountInfo.user_id);
+            console.log("old program id: " + oldProgramId);
+            Axios.post(`http://localhost:3001/deleteProgram`, {
+                userId: accountInfo.user_id,
+                oldProgramId: oldProgramId
+            }).then((response) => {
+                console.log(response);
+            });
+        }
+
+        const updateProgram = (programId, oldProgramId) => {
+            console.log("user id: " + accountInfo.user_id);
+            console.log("program id: " + programId);
+            console.log("old program id: " + oldProgramId);
+            Axios.post(`http://localhost:3001/updateProgram`, {
+                userId: accountInfo.user_id,
+                programId: programId,
+                oldProgramId: oldProgramId
+            }).then((response) => {
+                console.log(response);
+            });
+        }
+        
+        if (currentMajor === "None") {
+            insertProgram(majorId);
+            setCurrentMajor(major);
+        }
+        else {
+            getOldProgramId(majorId, "major");
+            setCurrentMajor(major);
+        }
+        if (currentMinor === "None") {
+            insertProgram(minorId);
+            setCurrentMinor(minor);
+        }
+        else {
+            getOldProgramId(minorId, "minor");
+            setCurrentMinor(minor);
+        }
+        if (currentConcentration === "None") {
+            insertProgram(concentrationId);
+            setCurrentConcentration(concentration);
+        }
+        else {
+            getOldProgramId(concentrationId, "concentration");
+            setCurrentConcentration(concentration);
+        }
+    }
+
+    const updatePassword = () => {
+        console.log("Updating user password.");
+        Axios.post(`http://localhost:3001/updatePassword`, {
             password: password,
+            userId: accountInfo.user_id
         }).then((response) => {
             console.log(response);
         });
     }
 
-    const [accountInfo, setAccountInfo] = useState(() => {
-        let loggedInUser = localStorage.getItem("user");
-        if (loggedInUser != null) {
-            loggedInUser = JSON.parse(loggedInUser);
-            return loggedInUser;
-        }
-        else {
-            window.location.href = "http://localhost:3000";
-        }
-    });
-
-    const getaccountInfo = () => {
-        Axios.get(`http://localhost:3001/profile`).then((response) => {
-            setAccountInfo(response.data);
-
+    const getProgram = () => {
+        Axios.post("http://localhost:3001/userProgram", {
+            userId: accountInfo.user_id
+        }).then((response) => {
+            setCurrentMajor("None");
+            setCurrentMinor("None");
+            setCurrentConcentration("None");
+            response.data.forEach(element => {
+                if (element.program_type === "major") {
+                    setCurrentMajor(element.program_name);
+                }
+                else if (element.program_type === "minor") {
+                    setCurrentMinor(element.program_name);
+                }
+                else if (element.program_type === "concentration") {
+                    setCurrentConcentration(element.program_name);
+                }
+            });
+            // if (response.data[0] !== undefined) {
+                console.log(response.data);
+            // }
         });
     }
     useEffect(() => {
-        getaccountInfo();
+        getProgram();
     }, []);
     console.log(accountInfo);
-    //console.log(accountInfo[0].first_name);
-    //          console.log(accountInfo[0].last_name);
-    //          console.log(accountInfo[0].username);
-    //          console.log(accountInfo[0].grade_level);
+    console.log(accountInfo?.first_name);
+    console.log(accountInfo?.last_name);
+    console.log(accountInfo?.username);
+    console.log(accountInfo?.grade_level);
 
     let first_name = accountInfo?.first_name;
     let last_name = accountInfo?.last_name;
@@ -73,7 +244,7 @@ function Account() {
     const profileName = first_name?.concat(" ", last_name);
     const firstChar = first_name?.substr(0, 1);
     const secondChar = last_name?.substr(0, 1);
-    const profileInitials = firstChar?.concat(secondChar);
+    const profileInitials = (firstChar?.concat(secondChar)).toUpperCase();
 
 
 
@@ -81,14 +252,14 @@ function Account() {
         <>
             <Navigation />
             <div className="profileContainer">
-                <form class="mike">
+                <form className="mike">
                     <Avatar
                         sx={{ bgcolor: '#D6742A', width: 200, height: 200, fontSize: 100 }}
                     >{profileInitials} </Avatar>
 
                 </form>
-                <section class="container">
-                    <div class="floatleft">
+                <section className="container">
+                    <div className="floatleft">
                         <form>
                             <h2 className='username'> Profile </h2>
                             <h2 className='infoName'> {profileName} </h2>
@@ -97,53 +268,72 @@ function Account() {
                             <h2 className='userinfo'> Grade Level </h2>
                             <h2> {grade_level} </h2>
                             <h2 className='userinfo'> Major </h2>
-                            <h2 className='infoName'> {majorH} </h2>
+                            <h2> {currentMajor} </h2>
                             <h2 className='userinfo'> Minor </h2>
+                            <h2> {currentMinor} </h2>
                             <h2 className='userinfo'> Concentration </h2>
+                            <h2> {currentConcentration} </h2>
 
 
                         </form>
                     </div>
-                    <div class="floatright">
+                    <div className="floatright">
                         <h2 className='account'>Update User Information</h2>
 
-                        <div class="Major"> Select your Major</div>
-                        <form class="Move">
-                            <select value={major} onChange={handleMajorChange}>
-                                <option value="Computer Science">Computer Science</option>
-                                <option value="CyberSecurity">CyberSecurity</option>
-                                <option value="Criminal Justice">Criminal Justice</option>
-                                <option value="Undeclared">Undeclared</option>
+                        <div className="Major"> Select your Major</div>
+                        <form className="Move">
+
+                            <select id = "selectMajor" onChange={handleMajorChange}>
+                                {majorOptions.map((row) => (
+                                    <option value={row?.program_id}>{row?.program_name}</option>
+                                ))}
+                                <option value={0}>--Select Major--</option>
                             </select>
                         </form>
 
-                        <div class="Minor"> Select your Minor</div>
+                        <div className="Minor"> Select your Minor</div>
                         <form>
-                            <select value={minor} onChange={handleMinorChange}>
-                                <option value="Spanish">Spanish</option>
-                                <option value="Business">Business</option>
-                                <option value="Music">Music</option>
-                                <option value="None">--No Minor--</option>
+
+                            <select id ="selectMinor" onChange={handleMinorChange}>
+
+                                {minorOptions.map((row) => (
+                                    <option value={row?.program_id}>{row?.program_name}</option>
+                                ))}
+                                <option value={0}>--No Minor--</option>
                             </select>
                         </form>
 
 
-                        <div class="Concentration"> Select your Concentration</div>
+                        <div className="Concentration"> Select your Concentration</div>
                         <form>
-                            <select value={concentration} onChange={handleConcentrationChange}>
-                                <option value="Computer Science">Computer Science</option>
-                                <option value="Web Development">Web Development</option>
-                                <option value="Criminal Justice">Criminal Justice</option>
-                                <option value="Undeclared">Undeclared</option>
-                                <option value="None">--No Concentration--</option>
+
+                            <select id ="selectConcentration" onChange={handleConcentrationChange}>
+                                {concentrationOptions.map((row) => (
+                                    <option value={row?.program_id}>{row?.program_name}</option>
+                                ))}
+                                <option value={0}>--No Concentration--</option>
                             </select>
 
                             <h4> Major: {major} </h4>
                             <h4> Minor: {minor} </h4>
                             <h4> Concentration: {concentration} </h4>
                         </form>
+                    </div>
+                </section>
+                <Button
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2, marginLeft: 80 }}
+                    onClick={updateAccount}
+                >
+                    Update Account
+                </Button>
+
+                <section className="container">
+                    <div className="floatleft">
+                    </div>
+                    <div>
                         <TextField
-                            sx={{ my: 5, ml: 30 }}
+                            sx={{ my: 5, ml: -10 }}
                             label="New Password"
                             id="password"
                             type="password"
@@ -159,9 +349,9 @@ function Account() {
                 <Button
                     variant="contained"
                     sx={{ mt: 3, mb: 2, marginLeft: 80 }}
-                    onClick={updateAccount}
+                    onClick={updatePassword}
                 >
-                    Update
+                    Update Password
                 </Button>
             </div>
         </>

@@ -19,6 +19,7 @@ const db = mysql.createConnection({
   database: "heroku_a19411dd68d921e"
 });
 
+
 const userCtrlCheck = (reqUser, targetUser, role) => {
   let checker = false;
   if (role == 1 || reqUser == targetUser) checker = true;
@@ -113,37 +114,53 @@ app.post("/adminCourses", (req, res) => {
 
 app.post("/prereq", (req, res) => {
   const semsterId = req.body.semesterId;
-  const semesters = req.body.semesters;
   const courseId = req.body.courseId;
   console.log("semsterId " + semsterId);
-  console.log("semesters " + semesters);
   console.log("courseId " + courseId);
-  // const sem = [req.body.sem1, req.body.sem2, req.body.sem3, req.body.sem4, req.body.sem5, req.body.sem6, req.body.sem7];
-  db.query("SELECT prerequisite_id FROM prerequisite WHERE course_id = ?",
+  db.query("SELECT prerequisite_id, grade_req FROM prerequisite WHERE course_id = ?",
     [courseId],
     (err, result) => {
       if (err) {
         console.log(err);
       }
-      else if (result.length > 0) {
-        console.log("result.length " + result.length);
-        let satisfied = true;
-        for (let i = 0; i < semsterId - 2; i++) {
-          console.log("i " + i);
-          if (!result.some(prereqId => semesters[i].includes(prereqId))) {
-            satisfied = false;
-          }
-        }
-        res.send(satisfied);
+      else {
+        res.send(result);
+      }
+    });
+});
+app.post("/prereqUpload", (req, res) => {
+  console.log(req.body);
+  const course_id = req.body.course_id;
+  const prerequisite_id = req.body.prerequisite_id;
+  const grade_req = req.body.grade_req;
+  db.query("INSERT INTO prerequisite (course_id, prerequisite_id, grade_req) VALUES (?,?,?)",
+    [course_id, prerequisite_id, grade_req],
+    (err, result) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/resetCode", (req, res) => {
+  const code = req.body.code;
+  const email = req.body.email;
+  db.query("UPDATE user SET reset_code = ? WHERE username = ?",
+    [code, email],
+    (err, result) => {
+      if (err) {
+        console.log(err);
       }
       else {
-        console.log("No prerequisites.");
-        res.send(true);
+        res.send(result);
       }
     });
 });
 
 app.post("/email", (req, res) => {
+  const code = req.body.code;
   const email = req.body.email;
 
   const client = Mailjet
@@ -163,7 +180,7 @@ app.post("/email", (req, res) => {
             }
           ],
           "Subject": "Password Reset",
-          "HTMLPart": `<h4>To reset your password, click <a href='http://localhost:3000/reset?email=${email}'>here</a>.</h4>`,
+          "HTMLPart": `<h4>To reset your password, click <a href='http://localhost:3000/reset?code=${code}'>here</a>.</h4>`,
         }
       ]
     })
@@ -250,14 +267,199 @@ app.get("/users", (req, res) => {
     });
 });
 
-app.post("/account", (req, res) => {
-  const major = req.body.major;
-  const concentration = req.body.concentration;
-  const minor = req.body.minor;
-  const password = req.body.password;
+// app.post("/userProgram", (req, res) => {
+//   const userId = req.body.userId;
 
-  db.query("UPDATE user SET major_name = ?, concentration_name = ?, minor_name = ?, password = ? WHERE username = ?",
-    [major, concentration, minor, password, 'jamie_padovano'],
+//   db.query("INSERT INTO user_program (major_name) VALUES ()",
+//     [major, userId],
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.send(result);
+//       }
+//     });
+// });
+
+app.post("/getMajors", (req, res) => {
+  db.query("SELECT * FROM program WHERE program_type = ?",
+    ["major"],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/getMinors", (req, res) => {
+  db.query("SELECT * FROM program WHERE program_type = ?",
+    ["minor"],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/getConcentrations", (req, res) => {
+  db.query("SELECT * FROM program WHERE program_type = ?",
+    ["concentration"],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/getOldProgramId", (req, res) => {
+  const userId = req.body.userId;
+  const programType = req.body.programType;
+
+  db.query("SELECT program_id FROM user_program JOIN program USING (program_id) WHERE user_id = ? AND program_type = ?",
+    [userId, programType],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/getProgramName", (req, res) => {
+  const programId = req.body.programId;
+
+  db.query("SELECT program_name, program_type FROM program WHERE program_id = ?",
+    [programId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/insertProgram", (req, res) => {
+  const userId = req.body.userId;
+  const programId = req.body.programId;
+
+  db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
+    [userId, programId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/deleteProgram", (req, res) => {
+  const userId = req.body.userId;
+  const oldProgramId = req.body.oldProgramId;
+
+  db.query("DELETE FROM user_program WHERE user_id = ? AND program_id = ?",
+    [userId, oldProgramId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/updateProgram", (req, res) => {
+  const userId = req.body.userId;
+  const programId = req.body.programId;
+  const oldProgramId = req.body.oldProgramId;
+
+  db.query("UPDATE user_program SET program_id = ? WHERE user_id = ? AND program_id = ?",
+    [programId, userId, oldProgramId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+// app.post("/insertMinor", (req, res) => {
+//   const userId = req.body.userId;
+//   const minorId = req.body.majorId;
+
+//   db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
+//     [userId, minorId],
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.send(result);
+//       }
+//     });
+// });
+
+// app.post("/updateMinor", (req, res) => {
+//   const minor = req.body.minor;
+//   const userId = req.body.userId;
+//   const oldProgramId = req.body.oldProgramId;
+
+//   db.query("UPDATE user_program SET program_id = ? WHERE user_id = ? AND program_id = ?",
+//     [minor, userId, oldProgramId],
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.send(result);
+//       }
+//     });
+// });
+
+// app.post("/insertConcentration", (req, res) => {
+//   const userId = req.body.userId;
+//   const concentrationId = req.body.concentrationId;
+
+//   db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
+//     [userId, concentrationId],
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.send(result);
+//       }
+//     });
+// });
+
+// app.post("/updateConcentration", (req, res) => {
+//   const concentration = req.body.concentration;
+//   const userId = req.body.userId;
+//   const oldProgramId = req.body.oldProgramId;
+
+//   db.query("UPDATE user_program SET program_id = ? WHERE user_id = ? AND program_id = ?",
+//     [concentration, userId, oldProgramId],
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.send(result);
+//       }
+//     });
+// });
+
+app.post("/updatePassword", (req, res) => {
+  const password = req.body.password;
+  const userId = req.body.userId;
+
+  db.query("UPDATE user SET password = ? WHERE user_id = ?",
+    [password, userId],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -292,11 +494,43 @@ app.post("/minor", (req, res) => {
 
 });
 
-app.post("/concentration:/major", (req, res) => {
+app.post("/concentration/:major", (req, res) => {
 
   const program = req.params.major;
   db.query("SELECT program_name FROM program WHERE program_type = ? AND major_id IN (SELECT program_id FROM program WHERE program_name = ? AND program_type = ?)",
-  ['concentration', program, 'major'],
+    ['concentration', program, 'major'],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+
+});
+
+app.post("/dialog", (req, res) => {
+  const userId = req.body.userId;
+  //const grade_level = req.body.grade_level;
+
+  db.query("SELECT * FROM course join user_course USING(course_id) Where user_id = ?",
+    [userId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+
+});
+
+app.post("/dialog", (req, res) => {
+  const userId = req.body.userId;
+  //const grade_level = req.body.grade_level;
+
+  db.query("SELECT * FROM course join user_course USING(course_id) Where user_id = ?",
+    [userId],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -324,9 +558,11 @@ app.get("/profile", (req, res) => {
 
 });
 
-app.get("/accountInfo", (req, res) => {
-  db.query("SELECT * FROM user WHERE username = ?",
-    'jamie_padovano',
+app.post("/userProgram", (req, res) => {
+  const userId = req.body.userId;
+
+  db.query("SELECT * FROM user_program JOIN program using(program_id) WHERE user_id=?",
+    userId,
     (err, result) => {
       if (err) {
         console.log(err);
@@ -334,8 +570,21 @@ app.get("/accountInfo", (req, res) => {
         res.send(result);
       }
     });
-
 });
+
+
+// app.get("/accountInfo", (req, res) => {
+//   db.query("SELECT * FROM user WHERE username = ?",
+//     'jamie_padovano',
+//     (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         res.send(result);
+//       }
+//     });
+
+// });
 
 app.get("/plan/:id", (req, res) => {
   const user_id = req.params.id;
@@ -347,7 +596,7 @@ app.get("/plan/:id", (req, res) => {
 
   if (userValidation) {
     db.query(`SELECT semester_id, course_id, course_name, credit_num FROM user JOIN semester using(user_id) JOIN user_course using(semester_id) JOIN course using(course_id) WHERE user.user_id=?`,
-      [userId],
+      [user_id],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -370,8 +619,33 @@ app.post("/semester/:id", (req, res) => {
   let userValidation = userCtrlCheck(reqUser, targetUser, role);
 
   if (userValidation) {
-    db.query("SELECT course_id, course_name, credit_num, semester_id, user.user_id FROM course JOIN user_course using(course_id) JOIN semester using(semester_id) INNER JOIN user ON user_course.user_id=user.user_id WHERE semester_id=? AND user.user_id=?",
+    db.query("SELECT course_id, course_name, credit_num, error_code, semester_id, user.user_id FROM course JOIN user_course using(course_id) JOIN semester using(semester_id) INNER JOIN user ON user_course.user_id=user.user_id WHERE semester_id=? AND user.user_id=?",
       [semesterId, reqUser],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send(result);
+        }
+      });
+  }
+  else {
+    console.log("Not Authorized");
+  }
+});
+
+app.post("/allSemesters", (req, res) => {
+  const reqUser = req.body.reqUser;
+  const targetUser = req.body.targetUser;
+  const role = req.body.role;
+  const semNumSelected = req.body.semNumSelected
+  console.log(semNumSelected);
+
+  let userValidation = userCtrlCheck(reqUser, targetUser, role);
+
+  if (userValidation) {
+    db.query("SELECT course_id, course_name, credit_num, semester_id, user.user_id, user_course.grade FROM course JOIN user_course using(course_id) JOIN semester using(semester_id) INNER JOIN user ON user_course.user_id=user.user_id WHERE semester_id < ? AND user.user_id=?",
+      [semNumSelected, reqUser],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -401,31 +675,40 @@ app.post("/semCount", (req, res) => {
 app.post("/reset", (req, res) => {
   const password = req.body.password;
   const confPassword = req.body.confPassword;
-  const email = req.body.email;
-  if (password == confPassword) {
-    db.query(`UPDATE user SET password = ? WHERE username = ?`,
-      [password, email],
-      (err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("Password changed.");
-          res.send(result);
-        }
-      });
-  }
-  else {
-    console.log("Passwords do not match.");
-    res.send("Passwords do not match.");
-  }
+  const code = req.body.code;
+  db.query(`UPDATE user SET password = ? WHERE reset_code = ?`,
+    [password, code],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Password changed.");
+        res.send(result);
+      }
+    });
+});
+
+app.post("/deleteCode", (req, res) => {
+  const code = req.body.code;
+  db.query("UPDATE user SET reset_code = ? WHERE reset_code = ?",
+    [null, code],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(result);
+      }
+    });
 });
 
 app.post("/addCourse", (req, res) => {
   const semester_id = req.body.semester_id;
   const course_id = req.body.course_id;
   const user_id = req.body.user_id;
-  db.query(`INSERT INTO user_course (semester_id, course_id, user_id) VALUES (?,?,?)`,
-    [semester_id, course_id, user_id],
+  const error_code = req.body.error_code;
+  db.query(`INSERT INTO user_course (semester_id, course_id, user_id, error_code) VALUES (?,?,?,?)`,
+    [semester_id, course_id, user_id, error_code],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -451,6 +734,24 @@ app.post("/deleteCourse", (req, res) => {
   )
 });
 
+app.post("/insertGrade", (req, res) => {
+  const grade = req.body.grade;
+  const user_id = req.body.user_id;
+  const semester_id = req.body.semester_id;
+  const course_id = req.body.course_id;
+  console.log("insert :" + course_id);
+  db.query(`UPDATE user_course SET grade = ? WHERE user_id = ? AND course_id = ?;`,
+    [grade, user_id, course_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result);
+        res.send(result);
+      }
+    }
+  )
+});
 app.post("/addSemester", (req, res) => {
   const user_id = req.body.user_id;
   const semester_num = req.body.semester_num;
@@ -518,7 +819,7 @@ app.post("/allUserCourses", (req, res) => {
   );
 });
 
-app.post("/userSemeseterIDs", (req, res) => {
+app.post("/userSemesterIDs", (req, res) => {
   const user_id = req.body.user_id;
   db.query(`SELECT semester_id FROM semester WHERE user_id=? ORDER BY semester_id`,
     [user_id],
@@ -538,6 +839,24 @@ app.post("/searchCourse", (req, res) => {
   const course_name = req.body.course_name;
   db.query(`SELECT * FROM course WHERE course_name=? OR course_id=?`,
     [course_name, course_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(result);
+      }
+    }
+  );
+});
+
+app.post("/permDeleteCourse", (req, res) => {
+  const course_id = req.body.course_id;
+  db.query("DELETE FROM prerequisite WHERE course_id = ?",
+  [course_id],)
+
+  db.query("DELETE FROM course WHERE course_id = ?",
+    [course_id],
     (err, result) => {
       if (err) {
         console.log(err);

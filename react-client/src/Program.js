@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import appendChild from 'react';
 
 export default function Program() {
-    const [major, setMajor] = React.useState('Computer Science');
+    const [major, setMajor] = React.useState('Computer and Information Science');
     const [minor, setMinor] = React.useState('Music');
     const [concentration, setConcentration] = React.useState('None');
     const [maj, setMaj] = useState([]);
@@ -71,28 +71,50 @@ export default function Program() {
     var select1 = document.getElementById("selectMajor");
     for(var i = 0; i < maj.length; i++)
     {
-         var els = document.createElement("option");
-         els.textContent = maj[i].program_name;
-         els.value = maj[i].program_name;
-         select1.appendChild(els);
+        if(select1.length !== maj.length)
+        {
+            var els = document.createElement("option");
+            els.textContent = maj[i].program_name;
+            els.value = maj[i].program_name;
+            select1.append(els);
+        }
+        else
+        {
+
+        }
+
      }
     
      var select = document.getElementById("selectMinor");
-     for(var i = 0; i < min.length; i++)
+     for(var j = 0; j < min.length; j++)
      {
-          var el = document.createElement("option");
-          el.textContent = min[i].program_name;
-          el.value = min[i].program_name;
-          select.appendChild(el);
+        if(select.length !== min.length)
+        {
+            var el = document.createElement("option");
+            el.textContent = min[j].program_name;
+            el.value = min[j].program_name;
+            select.append(el);
+        }
+        else
+        {
+
+        }
       }
-     
-      var select = document.getElementById("selectConcentration");
-      for(var i = 0; i < concen.length; i++)
+
+      var select2 = document.getElementById("selectConcentration");
+      for(var k = 0; k < concen.length; k++)
       {
-           var el = document.createElement("option");
-           el.textContent = concen[i].program_name;
-           el.value = concen[i].program_name;
-           select.appendChild(el);
+        if(select2.length !== concen.length)
+        {
+            var el1 = document.createElement("option");
+            el1.textContent = concen[k].program_name;
+            el1.value = concen[k].program_name;
+            select2.append(el1);
+        }
+        else
+        {
+            
+        }
        }
 
     return (
@@ -126,29 +148,30 @@ export default function Program() {
                     </Typography>
 
                     <Box component="form" noValidate sx={{ mt: 3 }}>
+                        <form>
                         <Grid item xs={12}>
                             <div class ="Select"> Select your Major</div>
-                            <form>
+                            
                                 <select id='selectMajor' value={major} onChange={handleMajorChange} >
                                 </select>
-                            </form>   
+                               
                                                 
                             <div class ="Select"> Select your Minor</div>
-                            <form>    
+                               
                                 <select id='selectMinor' value={minor} onChange={handleMinorChange} >
                                 </select>
-                            </form>  
+                             
                                                    
                                                 
                             <div class ="Select"> Select your Concentration</div>
-                            <form>
+                            
                                 <select id ='selectConcentration' value={concentration} onChange={handleConcentrationChange}>
                                 </select>
 
                                 <h4> Major: {major} </h4>
                                 <h4> Minor: {minor} </h4>
                                 <h4> Concentration: {concentration} </h4>
-                            </form>                   
+                                              
                         </Grid>
                         <Link to="/home">
                             <Button
@@ -170,6 +193,7 @@ export default function Program() {
                                 Back to Login Page
                             </Grid>
                         </Link> */}
+                        </form>
                     </Box>
                 </Box>
             </Container>

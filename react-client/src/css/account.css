@@ -201,3 +201,76 @@ select
     margin-top: 10px;
     vertical-align: top;
 }
+
+#selectConcentration
+{
+    background-color: rgba(0, 0, 0, 0.06);
+    width: 50%;
+    color: rgba(71 69 69 / 87%);
+    font-family: "Roboto","Helvetica","Arial",sans-serif;;
+    font-weight: 400;
+    font-size: 1rem;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding-top: 8px;
+    padding-right: 12px;
+    padding-bottom: 8px;
+    padding-left: 12px;
+    position: relative;
+    border-top: 2px;
+    border-left: 2px;
+    border-right: 2px;
+}
+#selectMinor
+{
+    background-color: rgba(0, 0, 0, 0.06);
+    width: 50%;
+    color: rgba(71 69 69 / 87%);
+    font-family: "Roboto","Helvetica","Arial",sans-serif;;
+    font-weight: 400;
+    font-size: 1rem;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding-top: 8px;
+    padding-right: 12px;
+    padding-bottom: 8px;
+    padding-left: 12px;
+    position: relative;
+    border-top: 2px;
+    border-left: 2px;
+    border-right: 2px;
+}
+#selectMajor
+{
+    background-color: rgba(0, 0, 0, 0.06);
+    width: 50%;
+    color: rgba(71 69 69 / 87%);
+    font-family: "Roboto","Helvetica","Arial",sans-serif;;
+    font-weight: 400;
+    font-size: 1rem;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding-top: 8px;
+    padding-right: 12px;
+    padding-bottom: 8px;
+    padding-left: 12px;
+    position: relative;
+    border-top: 2px;
+    border-left: 2px;
+    border-right: 2px;
+}
+#dropdownGrade
+{
+    background-color: rgba(0, 0, 0, 0.0);
+    width: 100%;
+    color: rgba(0, 0, 0, 0.6);
+    font-family: "Roboto","Helvetica","Arial",sans-serif;;
+    font-weight: 400;
+    font-size: 1rem;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 16.5px 14px;
+    position: relative;
+    margin-left: 0;
+
+}

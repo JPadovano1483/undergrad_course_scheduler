@@ -3,8 +3,10 @@ import './css/home.css';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Checkbox, FormControlLabel, FormGroup, TextField, Paper, Table, TableCell, TableContainer, TableBody, TableRow, Button} from "@mui/material";
+import SimpleDialog from './Dialog';
 import InputIcon from '@mui/icons-material/Input';
 import Axios from 'axios';
+import SearchCourse from "./SearchCourse";
 
 
 function Admin() {
@@ -14,15 +16,20 @@ function Admin() {
     const [credits, setCredits] = useState(0);
     const [semester, setSemester] = React.useState('Fall');
     const [year, setYear] = React.useState('Even');
+    const [dialogOpen, setDialogOpen] = useState(false);
 
+    const handleDialogOpen = () => {
+        setDialogOpen(true);
+    };
+    const handleClose = (value) => {
+        setDialogOpen(false);
+    };
     const handleSemesterChange = (event) => {
-   
         setSemester(event.target.value);
-      };
+    };
     const handleYearChange = (event) => {
-   
         setYear(event.target.value);   
-      };
+    };
 
     //get all courses
     const [courseList, setCourseList] = useState([]);
@@ -35,45 +42,58 @@ function Admin() {
         getCourses();
     }, []);
 
-    let [searchedCourse, setSearchedCourse] = useState(null);
+    let [searchedCourses, setSearchedCourses] = useState(null);
 
-    const searchCourse = () => {
-        let search = document.querySelector('#course_search_input').value;
-        setSearchedCourse(courseList.find(course => course.course_id == search || course.course_name == search));
-        console.log(searchedCourse);
+    function searchCourse() {
+        let searchParam = document.querySelector('#course_search_input')?.value;
+        if (searchParam && courseList.length != 0) {
+            setSearchedCourses(SearchCourse(courseList, searchParam));
+        }
     }
 
     function Search(props) {
-        let course = props.course;
-        if (course) {
+        let courses = props.courses;
+        let block = [];
+        if (courses?.length != 0) {
+            console.log(courses);
             return (
-                // TODO: make this prettier
                 <TableContainer component={Paper}>
-                    <Table aria-label="simple table">
-                        <TableBody>
-                            <TableRow>
-                                <TableCell>{course.course_id}</TableCell>
-                                <TableCell>{course.course_name}</TableCell>
-                                <TableCell>{course.course_description}</TableCell>
-                                <TableCell>{course.credit_num}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>{course.scheduled_semester}</TableCell>
-                                <TableCell>{course.scheduled_year}</TableCell>
-                                <TableCell>{course.time}</TableCell>
-                                <TableCell>{course.day}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                        <Table aria-label="simple table">
+                            <TableBody>
+                                {courses?.map((row) => (
+                                    <TableRow key={row?.id}>
+                                        <TableCell>{row?.course_id}</TableCell>
+                                        <TableCell onClick={handleDialogOpen}>{row?.course_name}</TableCell>
+                                        <TableCell>{row?.credit_num}</TableCell>
+                                        <TableCell>{row?.scheduled_semester}</TableCell>
+                                        <TableCell>{row?.scheduled_year}</TableCell>
+                                        <TableCell>{row?.time}</TableCell>
+                                        <TableCell>{row?.day}</TableCell>
+                                        <SimpleDialog
+                                            open={dialogOpen}
+                                            onClose={handleClose}
+                                        />
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
             )
         }
     }
 
     const [accountInfo, setAccountInfo] = useState(() => {
-        let loggedInUser = localStorage.getItem("user");
-        if (loggedInUser != null) {
-            loggedInUser = JSON.parse(loggedInUser);
+        if (localStorage.getItem("user") !== null) {
+            const loggedInUser = JSON.parse(localStorage.getItem("user"));
+            if (loggedInUser.is_admin) {
+                return loggedInUser;
+            }
+            else {
+                window.location.href = "http://localhost:3000/home";
+            }
+        }
+        else if (sessionStorage.getItem("user") !== null) {
+            const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
             if (loggedInUser.is_admin) {
                 return loggedInUser;
             }
@@ -157,7 +177,7 @@ function Admin() {
                     </Button>
                 </div>
 
-                <Search course={searchedCourse}></Search>
+                <Search courses={searchedCourses}></Search>
               
                 <h1>Please enter course information</h1>
                 <p style={{ color: 'red' }}>Fields marked with * are required</p>
@@ -196,15 +216,15 @@ function Admin() {
                                 setCourseDescription(e.target.value)
                             }}
                         />
-                        <div classname= "dropdown">
-                            <select value={semester} onChange={handleSemesterChange}>
+                        <div className="dropdownSemester">
+                            <select className="dropdownSem" value={semester} onChange={handleSemesterChange}>
                                 <option value="Fall">Fall</option>
                                 <option value="Spring">Spring</option>
                                 <option value="Both">Both</option>
                             </select>
                         </div>
-                        <div classname= "dropdown">
-                            <select value={year} onChange={handleYearChange}>
+                        <div className="dropdownYear">
+                            <select className="dropdownYr" value={year} onChange={handleYearChange}>
                                 <option value="Even">Even</option>
                                 <option value="Odd">Odd</option>
                                 <option value="Both">Both</option>

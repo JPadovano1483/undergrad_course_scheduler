@@ -2,9 +2,8 @@ import './css/home.css';
 import { PropTypes } from 'prop-types';
 import * as React from 'react';
 import { Grid, Paper, Table, TableCell, TableContainer, TableBody, TableRow, IconButton, Drawer, Button } from '@mui/material';
-import { Dialog, DialogTitle, DialogActions } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import Navigation from './navigation';
-import Draggable from 'react-draggable';
 import Axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useEffect } from 'react';
@@ -17,9 +16,23 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
 import { green } from '@mui/material/colors';
+import SearchCourse from "./SearchCourse";
+import Tooltip from '@mui/material/Tooltip';
+
 
 function Home() {
-    const user_id = window.sessionStorage.getItem("user_id");
+    let accountInfo = {};
+    if (localStorage.getItem("user") !== null) {
+        const loggedInUser = JSON.parse(localStorage.getItem("user"));
+        accountInfo = loggedInUser;
+    }
+    else if (sessionStorage.getItem("user") !== null) {
+        const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
+        accountInfo = loggedInUser;
+    }
+    else {
+        window.location.href = "http://localhost:3000";
+    }
     SimpleDialog.propTypes = {
         onClose: PropTypes.func.isRequired,
         open: PropTypes.bool.isRequired,
@@ -27,41 +40,21 @@ function Home() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const [accountInfo, setAccountInfo] = useState(() => {
-        let loggedInUser = localStorage.getItem("user");
-        if (loggedInUser != null) {
-            loggedInUser = JSON.parse(loggedInUser);
-            return loggedInUser;
-        }
-        else {
-            window.location.href = "http://localhost:3000";
-        }
-    });
-
-    const [semNum, setSemNum] = useState(0);
-    const getSemNum = () => {
+    const [semTotal, setSemTotal] = useState(0);
+    const getSemTotal = () => {
         Axios.post(`http://localhost:3001/semCount`, {
             userId: accountInfo.user_id
         }).then((response) => {
             if (response.data[0] !== undefined) {
-                setSemNum(response.data[0].semester_num);
+                setSemTotal(response.data[0].semester_num);
             }
             else {
-                setSemNum(0);
+                setSemTotal(0);
             }
         });
     }
     useEffect(() => {
-        getSemNum();
-    }, []);
-
-    const getaccountInfo = () => {
-        Axios.get(`http://localhost:3001/accountInfo`).then((response) => {
-            setAccountInfo(response.data);
-        });
-    }
-    useEffect(() => {
-        getaccountInfo();
+        getSemTotal();
     }, []);
 
     // requirement checking 
@@ -98,7 +91,7 @@ function Home() {
                 arrayToPush.push(element);
             }
         });
-        if(newRequirements.length != 0) setRequirements(newRequirements);
+        if (newRequirements.length != 0) setRequirements(newRequirements);
     }
 
     if (requirements.length != 0) {
@@ -117,9 +110,11 @@ function Home() {
         getUserCourses(accountInfo.user_id);
     }, []);
 
-    console.log(userCourses);
+    const [semNumSelected, setSemNumSelected] = useState(0);
+    const [dialogRow, setDialogRow] = useState({});
 
-    const handleDialogOpen = () => {
+    const handleDialogOpen = (row) => {
+        setDialogRow(courseList.find(elem => elem.course_id === row.course_id));
         setDialogOpen(true);
     };
 
@@ -206,59 +201,32 @@ function Home() {
 
     // filter course search
     let [filteredCourses, setFilteredCourses] = useState([]);
-    let filterCourses = (criteria, input, list) => {
-        switch (criteria) {
-            case "id":
-                return list.filter(course =>
-                    course.course_id.includes(input)
-                );
-
-            case "name":
-                return list.filter(course =>
-                    course.course_name.includes(input)
-                );
-
-            default:
-                return list;
-        }
-    }
 
     const handleCourseSearch = () => {
         let idInput = document.getElementById('course_id_input')?.value;
-        let nameInput = document.getElementById('course_name_input')?.value
 
-        if (nameInput) {
-            return filterCourses("name", nameInput, courseList);
-        }
-        else if (idInput) {
-            return filterCourses("id", idInput, courseList);
-        }
-        else {
-            return filterCourses("default", "none", courseList);
-        }
+        return SearchCourse(courseList, idInput);
     }
     const [open, setOpen] = useState(false);
-    const handleClickOpen = () => {
+    const [gradeRow, setGradeRow] = useState({});
+    const handleClickOpen = (row) => {
+        setGradeRow(row);
         setOpen(true);
     };
     const handleClickClose = () => {
         setOpen(false);
     };
     const handleClickConfirm = (index) => {
-        console.log(index);
         setOpen(false);
     }
 
-    
-    const changeStyle = () => {
-        const element = document.getElementById("styleTest");
-        element.classList.toggle('green');
-    }
-
-
-    
-    const handleDeleteCourse = (course, semester) => {
-        Axios.post(`http://localhost:3001/deleteCourse`, {
+    const [grade, setGrade] = useState("A");
+    const insertGrade = (course) => {
+        console.log("COURSE" +JSON.stringify(course));
+        console.log("grade: " + grade);
+        Axios.post(`http://localhost:3001/insertGrade`, {
+            grade: grade,
+            user_id: accountInfo.user_id,
             semester_id: course.semester_id,
             course_id: course.course_id
         }).then((response) => {
@@ -266,73 +234,51 @@ function Home() {
         });
     }
 
-    const handleAddSemester = () => {
-        Axios.post(`http://localhost:3001/addSemester`, {
-            user_id: accountInfo[0].user_id,
-            semester_num: semNum + 1
+
+
+    const handleDeleteCourse = (course, semester) => {
+        Axios.post(`http://localhost:3001/deleteCourse`, {
+            semester_id: course.semester_id,
+            course_id: course.course_id
         }).then((response) => {
             console.log(response);
-            setSemNum(semNum + 1);
+            getSemester(eval('setSem' + course.semester_id), course.semester_id);
+            getUserCourses(accountInfo.user_id);
         });
+    }
+
+    const handleAddSemester = () => {
+        Axios.post(`http://localhost:3001/addSemester`, {
+            user_id: accountInfo.user_id,
+            semester_num: semTotal + 1
+        }).then((response) => {
+            console.log(response);
+        });
+        setSemTotal(semTotal + 1);
     }
 
     const handleDeleteSemester = () => {
         Axios.post(`http://localhost:3001/deleteSemester`, {
-            user_id: accountInfo[0].user_id,
-            semester_num: semNum
+            user_id: accountInfo.user_id,
+            semester_num: semTotal
         }).then((response) => {
             console.log(response);
         });
-        setSemNum(semNum - 1);
+        setSemTotal(semTotal - 1);
     }
-
-    // credit popup
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const handlePopoverOpen = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handlePopoverClose = () => {
-        setAnchorEl(null);
-    };
-
-    const openPopup = Boolean(anchorEl);
 
     const creditWarningPopup = (creditId, creditNum) => {
         if (creditNum < 12 || creditNum > 18) {
             return (
-                <div>
+                <Tooltip title="You must have 12-18 credits per semester. Please contact your advisor if you plan to underload/overload a semester." placement="top" arrow>
                     <Typography
                         id={creditId}
-                        aria-owns={openPopup ? 'mouse-over-popover' : undefined}
-                        aria-haspopup="true"
-                        onMouseEnter={handlePopoverOpen}
-                        onMouseLeave={handlePopoverClose}
+                        sx={{color: 'red'}}
                     >
                         Credits: {creditNum}
                     </Typography>
-                    <Popover
-                        id="mouse-over-popover"
-                        sx={{
-                            pointerEvents: 'none',
-                        }}
-                        open={openPopup}
-                        anchorEl={anchorEl}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'center',
-                        }}
-                        transformOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                        }}
-                        onClose={handlePopoverClose}
-                        disableRestoreFocus
-                    >
-                        <Typography sx={{ p: 1 }}>You must have 12-18 credits per semester. Please contact your advisor if you plan to underload/overload a semester.</Typography>
-                    </Popover>
-                </div>
+                </Tooltip>
+                
             );
         }
         else {
@@ -348,7 +294,8 @@ function Home() {
         }
     }
 
-    const semesterBlocks = (semester) => {
+    const semesterBlocks = (semTotal, sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12) => {
+        const semesters = [sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12];
         let blocks = [];
         let numbers = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'];
 
@@ -375,123 +322,202 @@ function Home() {
             }
         }
 
-
-        for (const [index, element] of semester.entries()) {
-            let creditId = 'credit_count' + index;
-            let creditCount = countCredits(element, creditId);
+        for (let i = 0; i < semTotal; i++) {
+            let creditId = 'credit_count' + i;
+            let creditCount = countCredits(semesters[i], creditId);
             blocks.push(<Grid item={true} xs={6} className='tableGrid'>
-                <h2>{numbers[index]} Semester</h2>
+                <h2>{numbers[i]} Semester</h2>
                 {/* <h4 id={creditId}>Credits: {countCredits(element, creditId)}</h4> */}
                 {creditWarningPopup(creditId, creditCount)}
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                         <TableBody>
-                            {element.map((row) => (
-                                <TableRow id="styleTest" key={row.id}>
-                                    <TableCell>{row.course_id}</TableCell>
-                                    <TableCell onClick={handleDialogOpen}>{row.course_name}</TableCell>
-                                    <TableCell>{row.credit_num}</TableCell>
-                                    <TableCell>
-                                        <Button color="error" onClick={() => handleDeleteCourse(row, element)}>
+                            {semesters[i].map((row) => (
+                                <TableRow key={row?.id}>
+                                    <TableCell sx={{ width: "10%" }}>{row?.course_id}</TableCell>
+                                    <TableCell sx={{ width: "50%" }} onClick={() => { handleDialogOpen(row) }}>{row?.course_name}</TableCell>
+                                    <TableCell sx={{ width: "10%" }}>{row?.credit_num}</TableCell>
+                                    <TableCell sx={{ width: "10%" }}>
+                                        <Button color="error" onClick={() => handleDeleteCourse(row, semesters[i])}>
                                             <DeleteIcon></DeleteIcon>
                                         </Button>
-                                        <Button onClick={changeStyle}>
-                                        <Checkbox
-                                            sx={{
-                                                color: green[800],
-                                                '&.Mui-checked': {
-                                                color: green[600],
-                                                },
-                                            }}
-                                            /> 
-                                       </Button>
-                                        {/* <Button color = "error" onClick={handleClickOpen}>
-                                                <DeleteIcon></DeleteIcon>
-                                            </Button>
-                                            <Dialog
-                                            open={open}
-                                            
-                                            aria-labelledby="alert-dialog-title"
-                                            aria-describedby="alert-dialog-description"
-                                            overlayStyle={{backgroundColor: 'transparent'}}
-                                            >
-                                            <DialogTitle id="alert-dialog-title">
-                                            </DialogTitle>
-                                            <DialogActions>
-                                            <Button onClick={() => handleClickConfirm(element)}>Confirm</Button>
-                                            <Button onClick={handleClickClose} autoFocus>
-                                            Cancel
-                                            </Button>
-                                            </DialogActions>
-                                            </Dialog>  */}
                                     </TableCell>
-                                    {checkFlag(row.course_id)}
+                                    <TableCell sx={{ width: "10%" }}>
+                                        <Button onClick={() => handleClickOpen(row)}>
+                                        <Checkbox id ='check'
+                                                sx={{
+                                                    color: green[800],
+                                                    '&.Mui-checked': {
+                                                        color: green[600],
+                                                    },
+                                                }}
+                                            />
+                                        </Button>
+                                        <Dialog open={open} onClose={handleClose}>
+                                        <DialogTitle>Completed Course Grade</DialogTitle>
+                                        <DialogContent>
+                                            <DialogContentText>
+                                            Please enter the grade for the completed Course
+                                            </DialogContentText>
+                                            <select className="dropdownSem" onChange={(e) => {
+                                                setGrade(e.target.value)
+                                            }}>
+                                                <option value="A">A</option>
+                                                <option value="A-">A-</option>
+                                                <option value="B+">B+</option>
+                                                <option value="B">B</option>
+                                                <option value="B-">B-</option>
+                                                <option value="C+">C+</option>
+                                                <option value="C">C</option>
+                                                <option value="C-">C-</option>
+                                                <option value="D+">D+</option>    
+                                                <option value="D">D</option>                                        
+                                                <option value="F">F</option>
+                                            </select>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleClickClose}>Cancel</Button>
+                                            <Button onClick={() => {insertGrade(gradeRow); handleClickClose()}}>Submit</Button>
+                                        </DialogActions>
+                                        </Dialog>
+                                    </TableCell>
+                                    <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
+                                        {checkFlag(row.error_code)}
+                                    </TableCell>
                                     <SimpleDialog
                                         open={dialogOpen}
                                         onClose={handleClose}
+                                        row={dialogRow}
                                     />
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Button onClick={() => addToSemester(element)}>Add</Button>
+                <Button onClick={() => addToSemester(semesters[i], i + 1)}>Add</Button>
             </Grid>);
         }
         return blocks;
     }
 
-    let semesters = [];
-    for (let i = 1; i < semNum + 1; i++) {
-        semesters.push(eval("sem" + i));
-    }
-
     const [selectedSemester, setSelectedSemester] = useState("");
 
-    const addToSemester = (semester) => {
+    const addToSemester = (semester, semesterNum) => {
         setSelectedSemester(semester);
+        setSemNumSelected(semesterNum);
         setDrawerOpen(true);
     }
 
     const addCourse = (course) => {
-        console.log(selectedSemester)
-        if (selectedSemester != "") {
-            console.log("semsterId " + selectedSemester);
-            console.log("semesters " + semesters[0]);
-            console.log("courseId " + course.courseId);
-            Axios.post(`http://localhost:3001/prereq`, {
-                semesterId: selectedSemester[0].semesterId,
-                semesters: semesters,
-                courseId: course.courseId,
-            }).then((response) => {
-                console.log(response.data);
-                console.log(accountInfo[0].user_id);
-                if (response.data) {
-                    console.log("Prerequisites have been met!");
+        if (selectedSemester !== "") {
+            let courseInPlan = userCourses?.find(element => element.course_id == course.course_id);
+            if (!courseInPlan) {
+                Promise.all([
+                    Axios.post(`http://localhost:3001/prereq`, {
+                        semesterId: semNumSelected,
+                        courseId: course.course_id,
+                    }),
+                    Axios.post(`http://localhost:3001/allSemesters`, {
+                        reqUser: accountInfo.user_id,
+                        targetUser: accountInfo.user_id,
+                        role: accountInfo.is_admin,
+                        semNumSelected: semNumSelected
+                    })
+                ]).then((response) => {
+                    let satisfied = true;
+                    if (response[0].data.length > 0) {
+                        const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
+                        // checks if the perequisite courses are found in a previous semester and have a passing grade or have no grade yet
+                        for (let i = 0; i < response[0].data.length; i++) {
+                            const classPassed = response[1].data.some((course) => {
+                                return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
+                            });
+
+                            if (!classPassed) {
+                                satisfied = false;
+                            }
+                        }
+                    }
+
+                    let errorCode = getErrorCode(course, semNumSelected, satisfied);
+
+                    // push the course to the semester
                     selectedSemester.push(course);
                     Axios.post(`http://localhost:3001/addCourse`, {
-                        user_id: accountInfo[0].user_id,
-                        semester_id: selectedSemester[0].semester_id,
-                        course_id: course.course_id
+                        semester_id: semNumSelected,
+                        course_id: course.course_id,
+                        user_id: accountInfo.user_id,
+                        error_code: errorCode
                     }).then((response) => {
                         console.log(response);
+                        getSemester(eval('setSem' + semNumSelected), semNumSelected);
+                        getUserCourses(accountInfo.user_id);
                     });
-                }
-                else {
-                    console.log("Prerequisites not met.");
-                }
-            });
+                });
+
+            
+            }
+            else {
+                console.log("Course already planned!");
+            }
         }
+    }
+    
+    const getErrorCode = (course, semId, satisfied) => {
+        let isStartSemEven = accountInfo?.start_year % 2 == 0;
+        let isSemEven = false;
+        let semFlag = false;
+        let yearFlag = false;
+        let prereqFlag = !satisfied;
+        let errorCode = 0;
+
+        // mark all flags as true or false
+        if (userSemIDs.length != 0 && course) {
+            // check semester placement
+            if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(semId) % 2 == 1) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(semId) % 2 == 0)) {
+                semFlag = true;
+            }
+
+            // flip bit for every spring semester
+            let sameAsFirstSem = [0, 3, 4, 7, 8, 11, 12];
+            if (sameAsFirstSem.includes(userSemIDs.indexOf(semId))) isSemEven = isStartSemEven;
+            else isSemEven = !isStartSemEven;
+
+            // check year placement
+            if ((course.year?.toLowerCase() == "even" && !isSemEven) || (course.year?.toLowerCase() == "odd" && isSemEven)) {
+                yearFlag = true;
+            }
+        }
+
+        // set error code and return
+        if (semFlag) {
+            if (yearFlag && prereqFlag) errorCode = 7;
+            else if (yearFlag) errorCode = 4;
+            else if (prereqFlag) errorCode = 5;
+            else errorCode = 1;
+        }
+        else if (yearFlag) {
+            if (prereqFlag) errorCode = 6;
+            else errorCode = 2;
+        }
+        else if (prereqFlag) {
+            errorCode = 3;
+        }
+        else {
+            errorCode = 0;
+        }
+
+        return errorCode;
     }
 
     const [userSemIDs, setUserSemIDs] = useState([]);
 
     const getUserSemIDs = () => {
-        Axios.post(`http://localhost:3001/userSemeseterIDs`, {
-            user_id: user_id
+        Axios.post(`http://localhost:3001/userSemesterIDs`, {
+            user_id: accountInfo.user_id
         }).then((response) => {
             for (const elem of response.data) {
-                userSemIDs.push(elem.semester_id);
+                if (!userSemIDs.includes(elem.semester_id)) userSemIDs.push(elem.semester_id);
             }
         });
     }
@@ -500,64 +526,47 @@ function Home() {
         getUserSemIDs();
     }, []);
 
-    const [courseSemFlags, setCourseSemFlags] = useState([]);
-    const [courseYearFlags, setCourseYearFlags] = useState([]);
+    const checkFlag = (errorCode) => {
+        let errorMessage = '';
 
-    const courseFlagging = (userCourses) => {
-        // this is undefined rn
-        let isStartSemEven = accountInfo[0]?.start_year % 2 == 0;
-        console.log(isStartSemEven);
-        let isSemEven = false;
-        if (userSemIDs.length != 0 && userCourses.length != 0) {
-            for (const course of userCourses) {
-                // check semeseter placement
-                if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(course.semester_id) % 2 == 1) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(course.semester_id) % 2 == 0)) {
-                    console.log(course.course_id + ": wrong semester!");
-                    if (!courseSemFlags.includes(course.course_id)) courseSemFlags.push(course.course_id);
-                }
-
-                // flip bit for every spring semester
-                if (userSemIDs.indexOf(course.semester_id) % 3 != 0) isSemEven = !isStartSemEven;
-                else isSemEven = isStartSemEven;
-                console.log(userSemIDs.indexOf(course.semester_id));
-                console.log((course.year?.toLowerCase() == "even") && !isSemEven);
+        switch (errorCode) {
+            case 0:
+                errorMessage = '';
+                break;
+            case 1:
+                errorMessage = 'Wrong Semester!';
+                break;
+            case 2:
+                errorMessage = 'Wrong Year!';
+                break;
+            case 3:
+                errorMessage = 'Prerequisites Not Met!';
+                break;
+            case 4:
+                errorMessage = 'Wrong Semester! Wrong Year!';
+                break;
+            case 5:
+                errorMessage = 'Wrong Semester! Prerequisites not Met!';
+                break;
+            case 6:
+                errorMessage = 'Wrong Year! Prerequisites Not Met!';
+                break;
+            case 7:
+                errorMessage = 'Wrong year! Wrong Semester! Prereq issue!';
+                break;
+            default:
+                errorMessage = '';
+                break;
+        }
             
-                // check year placement
-                if ((course.year?.toLowerCase() == "even" && !isSemEven) || (course.year?.toLowerCase() == "odd" && isSemEven)) {
-                    console.log(course.course_id + ": wrong year!");
-                    console.log(isSemEven);
-                    if (!courseYearFlags.includes(course.course_id)) courseYearFlags.push(course.course_id);
-                }
-            }
+
+        if (errorMessage !== '') {
+            return (
+                <Tooltip title={errorMessage} placement="top" arrow>
+                    <ErrorIcon sx={{ color: 'red' }} />
+                </Tooltip>
+            );
         }
-    }
-
-    courseFlagging(userCourses);
-
-    const checkFlag = (courseId) => {
-        console.log(courseId);
-        console.log(courseSemFlags);
-        console.log(courseYearFlags);
-        let flags = [];
-
-        // 
-        if (courseSemFlags.includes(courseId)) {
-            flags.push(
-                <TableCell sx={{borderTop: "1px solid rgba(224,224,224,1)"}}>
-                    <ErrorIcon sx={{color: 'red'}}></ErrorIcon>
-                </TableCell>
-            )
-        }
-
-        if (courseYearFlags.includes(courseId)) {
-            flags.push(
-                <TableCell sx={{borderTop: "1px solid rgba(224,224,224,1)"}}>
-                    <ErrorIcon sx={{color: 'yellow'}}></ErrorIcon>
-                </TableCell>
-            )
-        }
-
-        return flags;
     }
 
     return (
@@ -592,13 +601,7 @@ function Home() {
                         <div>
                             <TextField
                                 id="course_id_input"
-                                label="Course ID"
-                            />
-                        </div>
-                        <div>
-                            <TextField
-                                id="course_name_input"
-                                label="Course Name"
+                                label="Course ID or Name"
                             />
                         </div>
                         <div>
@@ -623,15 +626,15 @@ function Home() {
                         </Table>
                     </TableContainer>
                 </Drawer>
-                <h1>{semNum} Semester Plan</h1>
+                <h1>{semTotal} Semester Plan</h1>
                 <Grid container spacing={0}>
-                    {semesterBlocks(semesters)}
+                    {semesterBlocks(semTotal, sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8, sem9, sem10, sem11, sem12)}
                 </Grid>
                 <div>
-                    <Button onClick={() => handleAddSemester(accountInfo.user_id, semNum)}>Add One Semester</Button>
+                    <Button onClick={() => handleAddSemester()}>Add One Semester</Button>
                 </div>
                 <div>
-                    <Button onClick={() => handleDeleteSemester(accountInfo.user_id, semNum)}>Remove One Semester</Button>
+                    <Button onClick={() => handleDeleteSemester()}>Remove One Semester</Button>
                 </div>
             </div>
         </div >
