@@ -105,6 +105,31 @@ function AdminUpload() {
             }
         });
     }
+
+    const [accountInfo, setAccountInfo] = useState(() => {
+        if (localStorage.getItem("user") !== null) {
+            const loggedInUser = JSON.parse(localStorage.getItem("user"));
+            if (loggedInUser.is_admin) {
+                return loggedInUser;
+            }
+            else {
+                window.location.href = "http://localhost:3000/home";
+            }
+        }
+        else if (sessionStorage.getItem("user") !== null) {
+            const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
+            if (loggedInUser.is_admin) {
+                return loggedInUser;
+            }
+            else {
+                window.location.href = "http://localhost:3000/home";
+            }
+        }
+        else {
+            window.location.href = "http://localhost:3000";
+        }
+    });
+
     const { CSVDownloader } = useCSVDownloader();
     const GREY = '#CCC';
     const GREY_LIGHT = 'rgba(255, 255, 255, 0.4)';

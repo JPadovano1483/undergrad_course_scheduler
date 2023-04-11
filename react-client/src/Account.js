@@ -244,7 +244,7 @@ function Account() {
     const profileName = first_name?.concat(" ", last_name);
     const firstChar = first_name?.substr(0, 1);
     const secondChar = last_name?.substr(0, 1);
-    const profileInitials = firstChar?.concat(secondChar);
+    const profileInitials = (firstChar?.concat(secondChar)).toUpperCase();
 
 
 

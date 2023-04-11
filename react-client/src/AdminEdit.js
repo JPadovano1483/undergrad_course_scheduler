@@ -100,9 +100,17 @@ function AdminEdit() {
     }
 
     const [accountInfo, setAccountInfo] = useState(() => {
-        let loggedInUser = localStorage.getItem("user");
-        if (loggedInUser != null) {
-            loggedInUser = JSON.parse(loggedInUser);
+        if (localStorage.getItem("user") !== null) {
+            const loggedInUser = JSON.parse(localStorage.getItem("user"));
+            if (loggedInUser.is_admin) {
+                return loggedInUser;
+            }
+            else {
+                window.location.href = "http://localhost:3000/home";
+            }
+        }
+        else if (sessionStorage.getItem("user") !== null) {
+            const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
             if (loggedInUser.is_admin) {
                 return loggedInUser;
             }
