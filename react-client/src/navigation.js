@@ -24,7 +24,7 @@ function Navigation()
     
     const firstChar = accountInfo.first_name?.substr(0, 1);
     const secondChar = accountInfo.last_name?.substr(0, 1);
-    const profileInitials = firstChar?.concat(secondChar);
+    const profileInitials = firstChar?.concat(secondChar).toUpperCase();
 
 
     return (
