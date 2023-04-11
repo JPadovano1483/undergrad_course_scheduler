@@ -209,9 +209,21 @@ function Requirements() {
         }
       }
     }
-    if (notPlanned) return (<PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>);
-    else if (inProgress) return (<TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>);
-    else return (<CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>);
+    if (notPlanned) return (
+      <Tooltip title="Incomplete/Unplanned" placement="top" arrow>
+        <PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>
+      </Tooltip>
+    );
+    else if (inProgress) return (
+      <Tooltip title="Planned/In Progress" placement="top" arrow>
+        <TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>
+      </Tooltip>
+    );
+    else return (
+      <Tooltip title="Completed" placement="top" arrow>
+        <CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>
+      </Tooltip>
+    );
   }
 
   function getIcon(courseId) {
