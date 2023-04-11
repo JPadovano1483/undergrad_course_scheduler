@@ -814,6 +814,24 @@ app.post("/searchCourse", (req, res) => {
   );
 });
 
+app.post("/permDeleteCourse", (req, res) => {
+  const course_id = req.body.course_id;
+  db.query("DELETE FROM prerequisite WHERE course_id = ?",
+  [course_id],)
+
+  db.query("DELETE FROM course WHERE course_id = ?",
+    [course_id],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(result);
+      }
+    }
+  );
+});
+
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname + '/../src/build/index.html'));
 });
