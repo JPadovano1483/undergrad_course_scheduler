@@ -155,16 +155,23 @@ function Requirements() {
     let inProgressCount = 0;
     let requirementType = requirement[0].req_type;
     let requirementNum = requirement[0].req_type_num;
-
+    
+    let creditCount = 0;
+    let creditReqCompleted = 0;
     requirement.forEach((item) => {
       let course = userCourses.find(smallerItem => smallerItem.course_id == item.course_id);
       if (course) {
         console.log(course);
         if (course.grade) {
           plannedCount++;
+          if (requirementType == "credits") creditReqCompleted += item.credit_num;
         }
         else {
           inProgressCount++;
+        }
+        if (requirementType == "credits") {
+          console.log(item);
+          creditCount += item.credit_num;
         }
       }
     });
@@ -180,6 +187,15 @@ function Requirements() {
         else {
           notPlanned = true;
           console.log(notPlanned);
+        }
+      }
+      else if (requirementType == "credits") {
+        console.log("Credits: credCount: " + creditCount + " reqNum: " + requirementNum + " complete: " + creditReqCompleted);
+        if (creditCount >= requirementNum && creditReqCompleted < requirementNum) {
+            inProgress = true;
+        }
+        else if (creditCount < requirementNum) {
+          notPlanned = true;
         }
       }
       else {
