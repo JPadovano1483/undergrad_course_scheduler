@@ -98,6 +98,9 @@ function Requirements() {
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
           </TableCell>
+          <TableCell>
+            {getHeaderIcon(req)}
+          </TableCell>
           <TableCell component="th" scope="row" align="left">
             {getHeader(req)}
           </TableCell>
@@ -143,6 +146,72 @@ function Requirements() {
     if (requirementType == 'all') return 'All of the following:';
     else if (requirementType == 'credits' || requirementType == 'courses') return `Choose ${requirementNum} ${requirementType} of the following:`;
     else return '';
+  }
+
+  function getHeaderIcon(requirement) {
+    console.log(requirement);
+    console.log(requirement[0].req_type);
+    let plannedCount = 0;
+    let inProgressCount = 0;
+    let requirementType = requirement[0].req_type;
+    let requirementNum = requirement[0].req_type_num;
+    
+    let creditCount = 0;
+    let creditReqCompleted = 0;
+    requirement.forEach((item) => {
+      let course = userCourses.find(smallerItem => smallerItem.course_id == item.course_id);
+      if (course) {
+        console.log(course);
+        if (course.grade) {
+          plannedCount++;
+          if (requirementType == "credits") creditReqCompleted += item.credit_num;
+        }
+        else {
+          inProgressCount++;
+        }
+        if (requirementType == "credits") {
+          console.log(item);
+          creditCount += item.credit_num;
+        }
+      }
+    });
+    let notPlanned = false;
+    let inProgress = false;
+    console.log(requirement.length);
+    if (plannedCount < requirement.length) {
+      if (requirementType == "all") {
+        if ((inProgressCount + plannedCount) == requirement.length) {
+          inProgress = true;
+          console.log(inProgress);
+        }
+        else {
+          notPlanned = true;
+          console.log(notPlanned);
+        }
+      }
+      else if (requirementType == "credits") {
+        console.log("Credits: credCount: " + creditCount + " reqNum: " + requirementNum + " complete: " + creditReqCompleted);
+        if (creditCount >= requirementNum && creditReqCompleted < requirementNum) {
+            inProgress = true;
+        }
+        else if (creditCount < requirementNum) {
+          notPlanned = true;
+        }
+      }
+      else {
+        if ((inProgressCount + plannedCount) >= requirementNum) {
+          inProgress = true;
+          console.log(inProgress);
+        }
+        else {
+          notPlanned = true;
+          console.log(notPlanned);
+        }
+      }
+    }
+    if (notPlanned) return (<PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>);
+    else if (inProgress) return (<TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>);
+    else return (<CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>);
   }
 
   function getIcon(courseId) {
