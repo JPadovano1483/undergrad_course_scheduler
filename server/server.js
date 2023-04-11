@@ -19,13 +19,6 @@ const db = mysql.createConnection({
   database: "heroku_a19411dd68d921e"
 });
 
- //localhost database - copy of cleardb
-//  const db = mysql.createConnection({
-//   user: "root",
-//   host: "localhost",
-//   password: "buckwheat2010",
-//   database: "undergrad",
-// });
 
 const userCtrlCheck = (reqUser, targetUser, role) => {
   let checker = false;
@@ -745,8 +738,9 @@ app.post("/insertGrade", (req, res) => {
   const user_id = req.body.user_id;
   const semester_id = req.body.semester_id;
   const course_id = req.body.course_id;
-  db.query(`UPDATE user_course SET grade = ? WHERE user_id = ? AND semester_id = ? AND course_id = ?;`,
-    [grade, user_id, semester_id, course_id],
+  console.log("insert :" + course_id);
+  db.query(`UPDATE user_course SET grade = ? WHERE user_id = ? AND course_id = ?;`,
+    [grade, user_id, course_id],
     (err, result) => {
       if (err) {
         console.log(err);

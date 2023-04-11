@@ -185,3 +185,8 @@ TableRow {
     border-left: 2px;
     border-right: 2px;
 }
+
+#buttonIcon
+{
+    color: #2e7d32;
+}
