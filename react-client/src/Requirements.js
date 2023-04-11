@@ -149,20 +149,50 @@ function Requirements() {
   }
 
   function getHeaderIcon(requirement) {
-    let notPlanned = false;
-    let inProgress = false;
+    console.log(requirement);
+    console.log(requirement[0].req_type);
+    let plannedCount = 0;
+    let inProgressCount = 0;
+    let requirementType = requirement[0].req_type;
+    let requirementNum = requirement[0].req_type_num;
+
     requirement.forEach((item) => {
       let course = userCourses.find(smallerItem => smallerItem.course_id == item.course_id);
       if (course) {
         console.log(course);
-        if (course.grade == null) {
+        if (course.grade) {
+          plannedCount++;
+        }
+        else {
+          inProgressCount++;
+        }
+      }
+    });
+    let notPlanned = false;
+    let inProgress = false;
+    console.log(requirement.length);
+    if (plannedCount < requirement.length) {
+      if (requirementType == "all") {
+        if ((inProgressCount + plannedCount) == requirement.length) {
           inProgress = true;
+          console.log(inProgress);
+        }
+        else {
+          notPlanned = true;
+          console.log(notPlanned);
         }
       }
       else {
-        notPlanned = true;
+        if ((inProgressCount + plannedCount) >= requirementNum) {
+          inProgress = true;
+          console.log(inProgress);
+        }
+        else {
+          notPlanned = true;
+          console.log(notPlanned);
+        }
       }
-    });
+    }
     if (notPlanned) return (<PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>);
     else if (inProgress) return (<TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>);
     else return (<CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>);
