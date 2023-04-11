@@ -2,14 +2,14 @@ import Navigation from "./navigation";
 import './css/home.css';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, Box, Collapse, IconButton, Typography, TableHead } from "@mui/material";
+import { Paper, Table, TableCell, TableContainer, TableBody, TableRow, Box, Collapse, IconButton, TableHead } from "@mui/material";
 import Axios from 'axios';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
-import { Icon } from '@mui/material';
+import Tooltip from '@mui/material/Tooltip';
 
 function Requirements() {
   let accountInfo = {};
@@ -209,23 +209,48 @@ function Requirements() {
         }
       }
     }
-    if (notPlanned) return (<PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>);
-    else if (inProgress) return (<TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>);
-    else return (<CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>);
+    if (notPlanned) return (
+      <Tooltip title="Incomplete/Unplanned" placement="top" arrow>
+        <PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>
+      </Tooltip>
+    );
+    else if (inProgress) return (
+      <Tooltip title="Planned/In Progress" placement="top" arrow>
+        <TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>
+      </Tooltip>
+    );
+    else return (
+      <Tooltip title="Completed" placement="top" arrow>
+        <CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>
+      </Tooltip>
+    );
   }
 
   function getIcon(courseId) {
     let course = userCourses.find(item => item.course_id == courseId);
     if (course) {
       console.log(course);
-      if (course.grade != null) return (<CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>);
+      if (course.grade != null) {
+        return (
+          <Tooltip title="Completed" placement="top" arrow>
+            <CheckCircleOutlineIcon sx={{ color: 'green' }}></CheckCircleOutlineIcon>
+          </Tooltip>
+        );
+      }
       else {
-        
-        return (<TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>);
+        return (
+          <Tooltip title="Planned/In Progress" placement="top" arrow>
+            <TrackChangesIcon sx={{ color: 'blue' }}></TrackChangesIcon>
+          </Tooltip>
+        );
       }
     }
     else {
-      return (<PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>);
+      return (
+        <Tooltip title="Incomplete/Unplanned" placement="top" arrow>
+          <PanoramaFishEyeIcon sx={{ color: 'red' }}></PanoramaFishEyeIcon>
+        </Tooltip>
+      );
     }
   }
 

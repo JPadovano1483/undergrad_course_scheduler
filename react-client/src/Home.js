@@ -17,8 +17,7 @@ import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
 import { green } from '@mui/material/colors';
 import SearchCourse from "./SearchCourse";
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
+import Tooltip from '@mui/material/Tooltip';
 
 
 function Home() {
@@ -34,9 +33,6 @@ function Home() {
     else {
         window.location.href = "http://localhost:3000";
     }
-
-
-    const user_id = window.sessionStorage.getItem("user_id");
     SimpleDialog.propTypes = {
         onClose: PropTypes.func.isRequired,
         open: PropTypes.bool.isRequired,
@@ -113,7 +109,6 @@ function Home() {
     useEffect(() => {
         getUserCourses(accountInfo.user_id);
     }, []);
-
 
     const [semNumSelected, setSemNumSelected] = useState(0);
     const [dialogRow, setDialogRow] = useState({});
@@ -271,53 +266,18 @@ function Home() {
         setSemTotal(semTotal - 1);
     }
 
-    // credit popup
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const handlePopoverOpen = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handlePopoverClose = () => {
-        setAnchorEl(null);
-    };
-
-    const openPopup = Boolean(anchorEl);
-
     const creditWarningPopup = (creditId, creditNum) => {
         if (creditNum < 12 || creditNum > 18) {
             return (
-                <div>
+                <Tooltip title="You must have 12-18 credits per semester. Please contact your advisor if you plan to underload/overload a semester." placement="top" arrow>
                     <Typography
                         id={creditId}
-                        aria-owns={openPopup ? 'mouse-over-popover' : undefined}
-                        aria-haspopup="true"
-                        onMouseEnter={handlePopoverOpen}
-                        onMouseLeave={handlePopoverClose}
+                        sx={{color: 'red'}}
                     >
                         Credits: {creditNum}
                     </Typography>
-                    <Popover
-                        id="mouse-over-popover"
-                        sx={{
-                            pointerEvents: 'none',
-                        }}
-                        open={openPopup}
-                        anchorEl={anchorEl}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'center',
-                        }}
-                        transformOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                        }}
-                        onClose={handlePopoverClose}
-                        disableRestoreFocus
-                    >
-                        <Typography sx={{ p: 1 }}>You must have 12-18 credits per semester. Please contact your advisor if you plan to underload/overload a semester.</Typography>
-                    </Popover>
-                </div>
+                </Tooltip>
+                
             );
         }
         else {
@@ -362,7 +322,6 @@ function Home() {
         }
 
         for (let i = 0; i < semTotal; i++) {
-            // if (semesters[i][0] !== undefined) {
             let creditId = 'credit_count' + i;
             let creditCount = countCredits(semesters[i], creditId);
             blocks.push(<Grid item={true} xs={6} className='tableGrid'>
@@ -422,7 +381,7 @@ function Home() {
                                         </Dialog>
                                     </TableCell>
                                     <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
-                                        {checkFlag(row.course_id)}
+                                        {checkFlag(row.error_code)}
                                     </TableCell>
                                     <SimpleDialog
                                         open={dialogOpen}
@@ -449,11 +408,7 @@ function Home() {
     }
 
     const addCourse = (course) => {
-        console.log(selectedSemester);
         if (selectedSemester !== "") {
-            console.log(selectedSemester);
-            console.log(course);
-            console.log("courseId: " + course.course_id);
             let courseInPlan = userCourses?.find(element => element.course_id == course.course_id);
             if (!courseInPlan) {
                 Promise.all([
@@ -468,9 +423,6 @@ function Home() {
                         semNumSelected: semNumSelected
                     })
                 ]).then((response) => {
-                    console.log(response);
-                    console.log(response[0].data);
-                    console.log(response[1].data);
                     let satisfied = true;
                     if (response[0].data.length > 0) {
                         const grades = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"];
@@ -479,44 +431,92 @@ function Home() {
                             const classPassed = response[1].data.some((course) => {
                                 return course.course_id == response[0].data[i].prerequisite_id && (course.grade === null || grades.findIndex(element => element == course.grade) >= grades.findIndex(element => element == response[0].data[i].grade_req));
                             });
-                            console.log(!classPassed);
+
                             if (!classPassed) {
                                 satisfied = false;
                             }
                         }
                     }
-                    if (satisfied) {
-                        console.log("Prerequisites have been met!");
-                        selectedSemester.push(course);
-                        Axios.post(`http://localhost:3001/addCourse`, {
-                            semester_id: semNumSelected,
-                            course_id: course.course_id,
-                            user_id: accountInfo.user_id
-                        }).then((response) => {
-                            console.log(response);
-                            getSemester(eval('setSem' + semNumSelected), semNumSelected);
-                            getUserCourses(accountInfo.user_id);
-                        });
-                    }
-                    else {
-                        console.log("Prerequisites not met.");
-                    }
+
+                    let errorCode = getErrorCode(course, semNumSelected, satisfied);
+
+                    // push the course to the semester
+                    selectedSemester.push(course);
+                    Axios.post(`http://localhost:3001/addCourse`, {
+                        semester_id: semNumSelected,
+                        course_id: course.course_id,
+                        user_id: accountInfo.user_id,
+                        error_code: errorCode
+                    }).then((response) => {
+                        console.log(response);
+                        getSemester(eval('setSem' + semNumSelected), semNumSelected);
+                        getUserCourses(accountInfo.user_id);
+                    });
                 });
+
+            
             }
             else {
                 console.log("Course already planned!");
             }
         }
     }
+    
+    const getErrorCode = (course, semId, satisfied) => {
+        let isStartSemEven = accountInfo?.start_year % 2 == 0;
+        let isSemEven = false;
+        let semFlag = false;
+        let yearFlag = false;
+        let prereqFlag = !satisfied;
+        let errorCode = 0;
+
+        // mark all flags as true or false
+        if (userSemIDs.length != 0 && course) {
+            // check semester placement
+            if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(semId) % 2 == 1) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(semId) % 2 == 0)) {
+                semFlag = true;
+            }
+
+            // flip bit for every spring semester
+            let sameAsFirstSem = [0, 3, 4, 7, 8, 11, 12];
+            if (sameAsFirstSem.includes(userSemIDs.indexOf(semId))) isSemEven = isStartSemEven;
+            else isSemEven = !isStartSemEven;
+
+            // check year placement
+            if ((course.year?.toLowerCase() == "even" && !isSemEven) || (course.year?.toLowerCase() == "odd" && isSemEven)) {
+                yearFlag = true;
+            }
+        }
+
+        // set error code and return
+        if (semFlag) {
+            if (yearFlag && prereqFlag) errorCode = 7;
+            else if (yearFlag) errorCode = 4;
+            else if (prereqFlag) errorCode = 5;
+            else errorCode = 1;
+        }
+        else if (yearFlag) {
+            if (prereqFlag) errorCode = 6;
+            else errorCode = 2;
+        }
+        else if (prereqFlag) {
+            errorCode = 3;
+        }
+        else {
+            errorCode = 0;
+        }
+
+        return errorCode;
+    }
 
     const [userSemIDs, setUserSemIDs] = useState([]);
 
     const getUserSemIDs = () => {
-        Axios.post(`http://localhost:3001/userSemeseterIDs`, {
-            user_id: user_id
+        Axios.post(`http://localhost:3001/userSemesterIDs`, {
+            user_id: accountInfo.user_id
         }).then((response) => {
             for (const elem of response.data) {
-                userSemIDs.push(elem.semester_id);
+                if (!userSemIDs.includes(elem.semester_id)) userSemIDs.push(elem.semester_id);
             }
         });
     }
@@ -525,52 +525,47 @@ function Home() {
         getUserSemIDs();
     }, []);
 
-    const [courseSemFlags, setCourseSemFlags] = useState([]);
-    const [courseYearFlags, setCourseYearFlags] = useState([]);
+    const checkFlag = (errorCode) => {
+        let errorMessage = '';
 
-    const courseFlagging = (userCourses) => {
-        // this is undefined rn
-        // let isStartSemEven = accountInfo[0]?.start_year % 2 == 0;
-        let isStartSemEven = true;
-        let isSemEven = false;
-        if (userSemIDs.length != 0 && userCourses.length != 0) {
-            for (const course of userCourses) {
-                // check semeseter placement
-                if ((course.semester?.toLowerCase() == "fall" && userSemIDs.indexOf(course.semester_id) % 2 == 1) || (course.semester?.toLowerCase() == "spring" && userSemIDs.indexOf(course.semester_id) % 2 == 0)) {
-                    if (!courseSemFlags.includes(course.course_id)) courseSemFlags.push(course.course_id);
-                }
-
-                // flip bit for every spring semester
-                if (userSemIDs.indexOf(course.semester_id) % 3 != 0) isSemEven = !isStartSemEven;
-                else isSemEven = isStartSemEven;
-
-                // check year placement
-                if ((course.year?.toLowerCase() == "even" && !isSemEven) || (course.year?.toLowerCase() == "odd" && isSemEven)) {
-                    if (!courseYearFlags.includes(course.course_id)) courseYearFlags.push(course.course_id);
-                }
-            }
+        switch (errorCode) {
+            case 0:
+                errorMessage = '';
+                break;
+            case 1:
+                errorMessage = 'Wrong Semester!';
+                break;
+            case 2:
+                errorMessage = 'Wrong Year!';
+                break;
+            case 3:
+                errorMessage = 'Prerequisites Not Met!';
+                break;
+            case 4:
+                errorMessage = 'Wrong Semester! Wrong Year!';
+                break;
+            case 5:
+                errorMessage = 'Wrong Semester! Prerequisites not Met!';
+                break;
+            case 6:
+                errorMessage = 'Wrong Year! Prerequisites Not Met!';
+                break;
+            case 7:
+                errorMessage = 'Wrong year! Wrong Semester! Prereq issue!';
+                break;
+            default:
+                errorMessage = '';
+                break;
         }
-    }
+            
 
-    courseFlagging(userCourses);
-
-    const checkFlag = (courseId) => {
-        let flags = [];
-
-        // 
-        if (courseSemFlags.includes(courseId)) {
-            flags.push(
-                <ErrorIcon sx={{ color: 'red' }}></ErrorIcon>
-            )
+        if (errorMessage !== '') {
+            return (
+                <Tooltip title={errorMessage} placement="top" arrow>
+                    <ErrorIcon sx={{ color: 'red' }} />
+                </Tooltip>
+            );
         }
-
-        if (courseYearFlags.includes(courseId)) {
-            flags.push(
-                <ErrorIcon sx={{ color: 'orange' }}></ErrorIcon>
-            )
-        }
-
-        return flags;
     }
 
     return (
@@ -605,13 +600,7 @@ function Home() {
                         <div>
                             <TextField
                                 id="course_id_input"
-                                label="Course ID"
-                            />
-                        </div>
-                        <div>
-                            <TextField
-                                id="course_name_input"
-                                label="Course Name"
+                                label="Course ID or Name"
                             />
                         </div>
                         <div>
