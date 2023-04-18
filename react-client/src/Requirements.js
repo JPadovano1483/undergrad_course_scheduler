@@ -81,6 +81,7 @@ function Requirements() {
           arrayToPush.push(element);
         }
       });
+    if (arrayToPush.length !== 0) newRequirements.push(arrayToPush);
     return newRequirements;
   }
 
