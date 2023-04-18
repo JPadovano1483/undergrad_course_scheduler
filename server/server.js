@@ -113,10 +113,7 @@ app.post("/adminCourses", (req, res) => {
 });
 
 app.post("/prereq", (req, res) => {
-  const semsterId = req.body.semesterId;
   const courseId = req.body.courseId;
-  console.log("semsterId " + semsterId);
-  console.log("courseId " + courseId);
   db.query("SELECT prerequisite_id, grade_req FROM prerequisite WHERE course_id = ?",
     [courseId],
     (err, result) => {
@@ -562,7 +559,7 @@ app.post("/userProgram", (req, res) => {
   const userId = req.body.userId;
 
   db.query("SELECT * FROM user_program JOIN program using(program_id) WHERE user_id=?",
-    userId,
+    [userId],
     (err, result) => {
       if (err) {
         console.log(err);

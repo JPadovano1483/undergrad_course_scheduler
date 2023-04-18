@@ -387,6 +387,7 @@ function Home() {
                                         open={dialogOpen}
                                         onClose={handleClose}
                                         row={dialogRow}
+                                        prereqs={getCoursePrereqs(row.course_id)}
                                     />
                                 </TableRow>
                             ))}
@@ -397,6 +398,16 @@ function Home() {
             </Grid>);
         }
         return blocks;
+    }
+
+    const getCoursePrereqs = (courseId) => {
+        let prereqs = {};
+        Axios.post(`http://localhost:3001/addCourse`, {
+            course_id: courseId
+        }).then((response) => {
+            prereqs = response.data;
+        });
+        return prereqs;
     }
 
     const [selectedSemester, setSelectedSemester] = useState("");

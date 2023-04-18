@@ -40,8 +40,26 @@ function Requirements() {
     getUserRequirements();
   }, []);
 
+  const [userPrograms, setUserPrograms] = useState([]);
+  const getUserPrograms = () => {
+    Axios.post(`http://localhost:3001/userProgram`, {
+      userId: user_id
+    }).then((response) => {
+      let programs = [];
+      for (const program of response.data) {
+        programs.push(program);
+      }
+      setUserPrograms(programs);
+    });
+  }
+
+  useEffect(() => {
+    getUserPrograms(user_id);
+  });
+
+  console.log(userPrograms);
+
   const handleRequirements = (requirements) => {
-    console.log(requirements);
     let newRequirements = [];
     let currId = null;
     let arrayToPush = [];
@@ -77,10 +95,6 @@ function Requirements() {
   useEffect(() => {
     getUserCourses(user_id);
   }, []);
-
-  console.log(userCourses);
-
-
 
   // return components for requirement rules
   function RequirementRows(props) {
@@ -149,8 +163,6 @@ function Requirements() {
   }
 
   function getHeaderIcon(requirement) {
-    console.log(requirement);
-    console.log(requirement[0].req_type);
     let plannedCount = 0;
     let inProgressCount = 0;
     let requirementType = requirement[0].req_type;
@@ -161,7 +173,6 @@ function Requirements() {
     requirement.forEach((item) => {
       let course = userCourses.find(smallerItem => smallerItem.course_id == item.course_id);
       if (course) {
-        console.log(course);
         if (course.grade) {
           plannedCount++;
           if (requirementType == "credits") creditReqCompleted += item.credit_num;
@@ -170,27 +181,22 @@ function Requirements() {
           inProgressCount++;
         }
         if (requirementType == "credits") {
-          console.log(item);
           creditCount += item.credit_num;
         }
       }
     });
     let notPlanned = false;
     let inProgress = false;
-    console.log(requirement.length);
     if (plannedCount < requirement.length) {
       if (requirementType == "all") {
         if ((inProgressCount + plannedCount) == requirement.length) {
           inProgress = true;
-          console.log(inProgress);
         }
         else {
           notPlanned = true;
-          console.log(notPlanned);
         }
       }
       else if (requirementType == "credits") {
-        console.log("Credits: credCount: " + creditCount + " reqNum: " + requirementNum + " complete: " + creditReqCompleted);
         if (creditCount >= requirementNum && creditReqCompleted < requirementNum) {
             inProgress = true;
         }
@@ -201,11 +207,9 @@ function Requirements() {
       else {
         if ((inProgressCount + plannedCount) >= requirementNum) {
           inProgress = true;
-          console.log(inProgress);
         }
         else {
           notPlanned = true;
-          console.log(notPlanned);
         }
       }
     }
@@ -229,7 +233,6 @@ function Requirements() {
   function getIcon(courseId) {
     let course = userCourses.find(item => item.course_id == courseId);
     if (course) {
-      console.log(course);
       if (course.grade != null) {
         return (
           <Tooltip title="Completed" placement="top" arrow>
@@ -265,14 +268,6 @@ function Requirements() {
       <div className='contentContainer'>
         <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
           <Table aria-label="simple table">
-            {/* <TableHead>
-                    <TableCell />
-                    <TableCell />
-                    <TableCell>Course ID:</TableCell>
-                    <TableCell>Course Name:</TableCell>
-                    <TableCell>Credits:</TableCell>
-                    <TableCell>Grade:</TableCell>
-                  </TableHead> */}
             <TableBody>
               {handleRequirements(requirements).map((row) => (
                 <RequirementRows key={row.course_name} req={row} />
