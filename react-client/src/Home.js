@@ -112,9 +112,25 @@ function Home() {
 
     const [semNumSelected, setSemNumSelected] = useState(0);
     const [dialogRow, setDialogRow] = useState({});
+    const [prereqString, setPrereqString] = useState("");
+
+    const getCoursePrereqs = (courseId) => {
+        let prereqs = "";
+        Axios.post(`http://localhost:3001/prereq`, {
+            courseId: courseId
+        }).then((response) => {
+            console.log(response.data);
+            for (const course of response.data) {
+                prereqs += course.prerequisite_id + ", ";
+            }
+            if (prereqs.substring(prereqs.length - 2) == ", ") prereqs = prereqs.substring(0, prereqs.length - 2);
+            setPrereqString(prereqs);
+        });
+    }
 
     const handleDialogOpen = (row) => {
         setDialogRow(courseList.find(elem => elem.course_id === row.course_id));
+        getCoursePrereqs(row.course_id);
         setDialogOpen(true);
     };
 
@@ -387,7 +403,7 @@ function Home() {
                                         open={dialogOpen}
                                         onClose={handleClose}
                                         row={dialogRow}
-                                        prereqs={getCoursePrereqs(row.course_id)}
+                                        prereqs={prereqString}
                                     />
                                 </TableRow>
                             ))}
@@ -398,16 +414,6 @@ function Home() {
             </Grid>);
         }
         return blocks;
-    }
-
-    const getCoursePrereqs = (courseId) => {
-        let prereqs = {};
-        Axios.post(`http://localhost:3001/addCourse`, {
-            course_id: courseId
-        }).then((response) => {
-            prereqs = response.data;
-        });
-        return prereqs;
     }
 
     const [selectedSemester, setSelectedSemester] = useState("");

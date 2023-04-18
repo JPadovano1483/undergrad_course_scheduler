@@ -54,7 +54,7 @@ function Requirements() {
   }
 
   useEffect(() => {
-    getUserPrograms(user_id);
+    getUserPrograms();
   });
 
   console.log(userPrograms);
