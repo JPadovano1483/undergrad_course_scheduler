@@ -55,7 +55,7 @@ function Requirements() {
 
   useEffect(() => {
     getUserPrograms();
-  });
+  }, []);
 
   console.log(userPrograms);
 
