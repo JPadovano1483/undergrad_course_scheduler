@@ -13,7 +13,9 @@ export default function SignUp() {
   const [confPassword, setConfPassword] = useState("");
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
-  const [grade_level, setGradeLevel] = useState("");
+  const [grade_level, setGradeLevel] = useState("Firstyear");
+  const loginErrorMsg = document.getElementById("login-error-msg");
+  const passwordErrorMsg = document.getElementById("password-error-msg");
 
   const handleGradeChange = (event) => {
    
@@ -22,18 +24,38 @@ export default function SignUp() {
   };
 
   const addUser = () => {
-      console.log("Adding user.");
-      Axios.post(`http://localhost:3001/signup`, {
-          email: email,
-          password: password,
-          confPassword: confPassword,
-          first_name: first_name,
-          last_name: last_name,
-          grade_level: grade_level,
-      }).then((response) => {
-          console.log(response);
-      });
-  }
+
+
+    if(email !== "" && first_name !== "" && last_name !== "")
+    {
+      if(password !== "" && confPassword !== "" && password === confPassword )
+        {
+        console.log("Adding user.");
+        Axios.post(`http://localhost:3001/signup`, {
+            email: email,
+            password: password,
+            confPassword: confPassword,
+            first_name: first_name,
+            last_name: last_name,
+            grade_level: grade_level,
+        }).then((response) => {
+            console.log(response);
+        });
+        sessionStorage.setItem("username", email);
+        window.location.href = "http://localhost:3000/Program";
+      }
+      else
+      {
+        passwordErrorMsg.style.display = 'block';
+        loginErrorMsg.style.display = 'none';
+      }
+    }
+    else
+    {
+      loginErrorMsg.style.display = 'block';
+
+    }
+};
 
   return (
     <Container component ="root"
@@ -135,9 +157,13 @@ export default function SignUp() {
                   }} 
                 />
               </Grid>
-              
+              <div id = "password-error-msg">
+                 Warning! Passwords do not match
+              </div>
+              <div id = "login-error-msg">
+                 Please fill in every field
+              </div>
             </Grid>
-             <Link to ="/Program"> 
             <Button
               fullWidth
               variant="contained"
@@ -145,8 +171,7 @@ export default function SignUp() {
               onClick={addUser}
             >
               Sign Up
-            </Button>
-             </Link> 
+            </Button> 
             <Grid container justifyContent="flex-end">
             <Link to ="/">
               <Grid item

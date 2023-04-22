@@ -14,9 +14,11 @@ export default function SignUp() {
 
   const [password, setPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
+  const loginErrorMsg = document.getElementById("reset-error-msg");
+
 
   const changePassword = () => {
-    if (code !== "" && password !== "" && password === confPassword) {
+    if (code !== "" && password !== "" && confPassword!=="" && password === confPassword) {
       console.log("Changing password.");
       Axios.post(`http://localhost:3001/reset`, {
         code: code,
@@ -32,6 +34,10 @@ export default function SignUp() {
 
         window.location.href = "http://localhost:3000";
       });
+    }
+    else
+    {
+      loginErrorMsg.style.display = 'block';
     }
   };
 
@@ -85,7 +91,9 @@ export default function SignUp() {
                   }}
                 />
               </Grid>
-
+              <div id = "reset-error-msg">
+                 Warning! Passwords do not match
+              </div>
             </Grid>
             {/* <Link to="/home"> */}
               <Button

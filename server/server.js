@@ -155,6 +155,23 @@ app.post("/resetCode", (req, res) => {
       }
     });
 });
+app.post("/checkEmail", (req, res) => {
+  const email = req.body.email;
+  db.query("SELECT * from user WHERE username = ?",
+    [email],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      if (result.length > 0) {
+        res.send(result);
+      }
+      else {
+        res.send("Username or password is incorrect.");
+      }
+    });
+});
+
 
 app.post("/email", (req, res) => {
   const code = req.body.code;
@@ -357,6 +374,20 @@ app.post("/insertProgram", (req, res) => {
       }
     });
 });
+app.post("/insertUserProgram", (req, res) => {
+  const userId = req.body.userId;
+  const programId = req.body.programId;
+
+  db.query("INSERT INTO user_program (user_id, program_id) VALUES (?,?)",
+    [userId, programId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
 
 app.post("/deleteProgram", (req, res) => {
   const userId = req.body.userId;
@@ -478,6 +509,32 @@ app.post("/major", (req, res) => {
     });
 });
 
+app.post("/majorId", (req, res) => {
+  const major = req.body.major;
+  db.query("SELECT program_id FROM program WHERE program_name = ? AND program_type = ?",
+    [major, 'major'],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/userId", (req, res) => {
+  const username = req.body.username;
+  db.query("SELECT user_id FROM user WHERE username = ?",
+    [username],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
 app.post("/minor", (req, res) => {
   db.query("SELECT program_name FROM program WHERE program_type = ?",
     ['minor'],
@@ -491,6 +548,32 @@ app.post("/minor", (req, res) => {
 
 });
 
+app.post("/minorId", (req, res) => {
+  const minor = req.body.minor;
+  db.query("SELECT program_id FROM program WHERE program_name = ? AND program_type = ?",
+    [minor, 'minor'],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+});
+
+app.post("/concentration", (req, res) => {
+
+  db.query("SELECT program_name FROM program WHERE program_type = ?",
+    ['concentration'],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
+
+});
 app.post("/concentration/:major", (req, res) => {
 
   const program = req.params.major;
@@ -504,6 +587,19 @@ app.post("/concentration/:major", (req, res) => {
       }
     });
 
+});
+
+app.post("/concentrationId", (req, res) => {
+  const concentration = req.body.concentration;
+  db.query("SELECT program_id FROM program WHERE program_name = ? AND program_type = ?",
+    [concentration, 'concentration'],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    });
 });
 
 app.post("/dialog", (req, res) => {
