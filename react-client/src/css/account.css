@@ -274,3 +274,55 @@ select
     margin-left: 0;
 
 }
+
+#password-error-msg {
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.43;
+    letter-spacing: 0.01071em;
+    text-align: center;
+    margin: 15px;
+    font-weight: 500;
+    color: #ffffff;
+    border: 1px solid #8a0000;
+    background-color: #d32f2f;
+    border-radius: 4px;
+    padding: 6px 16px;
+    margin-bottom: -10px;
+    margin-left: 20%;
+    display: none;
+  }
+
+  #login-error-msg {
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.43;
+    letter-spacing: 0.01071em;
+    text-align: center;
+    margin: 15px;
+    font-weight: 500;
+    color: #ffffff;
+    border: 1px solid #8a0000;
+    background-color: #d32f2f;
+    border-radius: 4px;
+    padding: 6px 16px;
+    margin-bottom: -10px;
+    margin-left: 30%;
+    display: none;
+  }
+  #selection-error-msg {
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.43;
+    letter-spacing: 0.01071em;
+    text-align: center;
+    margin: 15px;
+    font-weight: 500;
+    color: #ffffff;
+    border: 1px solid #8a0000;
+    background-color: #d32f2f;
+    border-radius: 4px;
+    padding: 6px 16px;
+    margin-bottom: -10px;
+    display: none;
+  }

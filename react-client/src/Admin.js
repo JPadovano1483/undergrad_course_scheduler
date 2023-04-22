@@ -114,7 +114,7 @@ function Admin() {
             if (response.data.length > 0) {
                 console.log("Course already exists!");
                 document.querySelector('#errorMessage').style.color = 'red';
-                document.querySelector('#errorMessage').innerHTML = "Course alredy exists!";
+                document.querySelector('#errorMessage').innerHTML = "Course already exists!";
             }
             else {
                 console.log("Adding course.");
