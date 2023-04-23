@@ -7,8 +7,21 @@ import { Link } from 'react-router-dom';
 
 export default function Reset() {
     const [email, setEmail] = useState("");
+    const [checkEmail, setCheckEmail] = useState("");
+    const loginErrorMsg = document.getElementById("reset-error-msg");
+
 
     const sendEmail = () => {
+
+        Axios.post(`http://localhost:3001/checkEmail`, {
+            email: email,
+        }).then((response) => {
+            setCheckEmail(response.data[0].username);
+            console.log(response.data[0].username);
+        });
+
+        if(checkEmail !== "" && checkEmail === email)
+        {
         const code = (Math.floor(Math.random() * 90000000) + 10000000).toString();
 
         Axios.post(`http://localhost:3001/resetCode`, {
@@ -24,6 +37,14 @@ export default function Reset() {
         }).then((response) => {
             console.log("sent");
         });
+        window.location.href = "http://localhost:3000/EmailConfirm";
+
+        }
+        else
+        {
+            loginErrorMsg.style.display = 'block';
+
+        }
     }
 
     return (
@@ -70,9 +91,10 @@ export default function Reset() {
                                 }} 
                             />
                         </Grid>
-                        <Link to="/EmailConfirm">
+                        <div id = "reset-error-msg">
+                            Error! Email address not found
+                        </div>
                             <Button
-                                type="submit"
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
@@ -80,7 +102,8 @@ export default function Reset() {
                             >
                                 Send Email
                             </Button>
-                        </Link>
+                        
+                        
                         <Link to="/">
                             <Grid item
                                 sx={{

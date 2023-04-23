@@ -18,7 +18,6 @@ function SimpleDialog(props) {
         onClose(selectedValue);
     };
 
-
     return (
         <Dialog onClose={handleClose} open={open}>
             <DialogTitle sx={{ backgroundColor: '#002856', color: 'white' }}>{row?.course_id} - {row?.course_name}</DialogTitle>
@@ -31,7 +30,7 @@ function SimpleDialog(props) {
                         </TableRow>
                         <TableRow><h5 id='description'>Prerequisites </h5></TableRow>
                         <TableRow>
-                            <TableCell> </TableCell>
+                            <TableCell>{props.prereqs}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

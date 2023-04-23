@@ -112,9 +112,25 @@ function Home() {
 
     const [semNumSelected, setSemNumSelected] = useState(0);
     const [dialogRow, setDialogRow] = useState({});
+    const [prereqString, setPrereqString] = useState("");
+
+    const getCoursePrereqs = (courseId) => {
+        let prereqs = "";
+        Axios.post(`http://localhost:3001/prereq`, {
+            courseId: courseId
+        }).then((response) => {
+            console.log(response.data);
+            for (const course of response.data) {
+                prereqs += course.prerequisite_id + ", ";
+            }
+            if (prereqs.substring(prereqs.length - 2) == ", ") prereqs = prereqs.substring(0, prereqs.length - 2);
+            setPrereqString(prereqs);
+        });
+    }
 
     const handleDialogOpen = (row) => {
         setDialogRow(courseList.find(elem => elem.course_id === row.course_id));
+        getCoursePrereqs(row.course_id);
         setDialogOpen(true);
     };
 
@@ -222,7 +238,6 @@ function Home() {
 
     const [grade, setGrade] = useState("A");
     const insertGrade = (course) => {
-        console.log("COURSE" +JSON.stringify(course));
         console.log("grade: " + grade);
         Axios.post(`http://localhost:3001/insertGrade`, {
             grade: grade,
@@ -273,12 +288,12 @@ function Home() {
                 <Tooltip title="You must have 12-18 credits per semester. Please contact your advisor if you plan to underload/overload a semester." placement="top" arrow>
                     <Typography
                         id={creditId}
-                        sx={{color: 'red'}}
+                        sx={{ color: 'red' }}
                     >
                         Credits: {creditNum}
                     </Typography>
                 </Tooltip>
-                
+
             );
         }
         else {
@@ -344,7 +359,7 @@ function Home() {
                                     </TableCell>
                                     <TableCell sx={{ width: "10%" }}>
                                         <Button onClick={() => handleClickOpen(row)}>
-                                        <Checkbox id ='check'
+                                            <Checkbox id='check'
                                                 sx={{
                                                     color: green[800],
                                                     '&.Mui-checked': {
@@ -354,31 +369,31 @@ function Home() {
                                             />
                                         </Button>
                                         <Dialog open={open} onClose={handleClose}>
-                                        <DialogTitle>Completed Course Grade</DialogTitle>
-                                        <DialogContent>
-                                            <DialogContentText>
-                                            Please enter the grade for the completed Course
-                                            </DialogContentText>
-                                            <select className="dropdownSem" onChange={(e) => {
-                                                setGrade(e.target.value)
-                                            }}>
-                                                <option value="A">A</option>
-                                                <option value="A-">A-</option>
-                                                <option value="B+">B+</option>
-                                                <option value="B">B</option>
-                                                <option value="B-">B-</option>
-                                                <option value="C+">C+</option>
-                                                <option value="C">C</option>
-                                                <option value="C-">C-</option>
-                                                <option value="D+">D+</option>    
-                                                <option value="D">D</option>                                        
-                                                <option value="F">F</option>
-                                            </select>
-                                        </DialogContent>
-                                        <DialogActions>
-                                            <Button onClick={handleClickClose}>Cancel</Button>
-                                            <Button onClick={() => {insertGrade(gradeRow); handleClickClose()}}>Submit</Button>
-                                        </DialogActions>
+                                            <DialogTitle>Completed Course Grade</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    Please enter the grade for the completed Course
+                                                </DialogContentText>
+                                                <select className="dropdownSem" onChange={(e) => {
+                                                    setGrade(e.target.value)
+                                                }}>
+                                                    <option value="A">A</option>
+                                                    <option value="A-">A-</option>
+                                                    <option value="B+">B+</option>
+                                                    <option value="B">B</option>
+                                                    <option value="B-">B-</option>
+                                                    <option value="C+">C+</option>
+                                                    <option value="C">C</option>
+                                                    <option value="C-">C-</option>
+                                                    <option value="D+">D+</option>
+                                                    <option value="D">D</option>
+                                                    <option value="F">F</option>
+                                                </select>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleClickClose}>Cancel</Button>
+                                                <Button onClick={() => { insertGrade(gradeRow); handleClickClose() }}>Submit</Button>
+                                            </DialogActions>
                                         </Dialog>
                                     </TableCell>
                                     <TableCell sx={{ width: "10%", borderTop: "1px solid rgba(224,224,224,1)" }}>
@@ -388,6 +403,7 @@ function Home() {
                                         open={dialogOpen}
                                         onClose={handleClose}
                                         row={dialogRow}
+                                        prereqs={prereqString}
                                     />
                                 </TableRow>
                             ))}
@@ -455,14 +471,14 @@ function Home() {
                     });
                 });
 
-            
+
             }
             else {
                 console.log("Course already planned!");
             }
         }
     }
-    
+
     const getErrorCode = (course, semId, satisfied) => {
         let isStartSemEven = accountInfo?.start_year % 2 == 0;
         let isSemEven = false;
@@ -558,7 +574,7 @@ function Home() {
                 errorMessage = '';
                 break;
         }
-            
+
 
         if (errorMessage !== '') {
             return (
@@ -616,7 +632,9 @@ function Home() {
                         <Table aria-label="simple table">
                             <TableBody>
                                 {filteredCourses.map((row) => (
-                                    <TableRow key={row.id} onClick={() => addCourse(row)}>
+                                    <TableRow key={row.id} onClick={() => addCourse(row)} style={{
+                                        cursor: 'pointer'
+                                    }}>
                                         <TableCell>{row.course_id}</TableCell>
                                         <TableCell>{row.course_name}</TableCell>
                                         <TableCell>{row.credit_num}</TableCell>
