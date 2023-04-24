@@ -111,7 +111,7 @@ function Account() {
             getProgramName(programId);
         }
         else {
-            console.log("None");
+            console.log("None ");
             setConcentration("None");
         }
     };
