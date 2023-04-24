@@ -20,7 +20,6 @@ function Account() {
     else {
         window.location.href = "http://localhost:3000";
     }
-    console.log(accountInfo);
 
     const [majorOptions, setMajorOptions] = useState([]);
     const getMajors = () => {
@@ -167,7 +166,7 @@ function Account() {
                 console.log(response);
             });
         }
-        
+
         if (currentMajor === "None") {
             insertProgram(majorId);
             setCurrentMajor(major);
@@ -223,7 +222,7 @@ function Account() {
                 }
             });
             // if (response.data[0] !== undefined) {
-                console.log(response.data);
+            console.log(response.data);
             // }
         });
     }
@@ -283,7 +282,7 @@ function Account() {
                         <div className="Major"> Select your Major</div>
                         <form className="Move">
 
-                            <select id = "selectMajor" onChange={handleMajorChange}>
+                            <select id="selectMajor" onChange={handleMajorChange}>
                                 {majorOptions.map((row) => (
                                     <option value={row?.program_id}>{row?.program_name}</option>
                                 ))}
@@ -294,7 +293,7 @@ function Account() {
                         <div className="Minor"> Select your Minor</div>
                         <form>
 
-                            <select id ="selectMinor" onChange={handleMinorChange}>
+                            <select id="selectMinor" onChange={handleMinorChange}>
 
                                 {minorOptions.map((row) => (
                                     <option value={row?.program_id}>{row?.program_name}</option>
@@ -307,7 +306,7 @@ function Account() {
                         <div className="Concentration"> Select your Concentration</div>
                         <form>
 
-                            <select id ="selectConcentration" onChange={handleConcentrationChange}>
+                            <select id="selectConcentration" onChange={handleConcentrationChange}>
                                 {concentrationOptions.map((row) => (
                                     <option value={row?.program_id}>{row?.program_name}</option>
                                 ))}
