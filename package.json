@@ -1,7 +1,6 @@
 {
   "name": "undergrad_course_scheduler",
   "version": "0.1.0",
-  "main": "react-client/src/index.js",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.4",
