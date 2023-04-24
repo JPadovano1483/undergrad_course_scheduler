@@ -961,9 +961,14 @@ app.post("/permDeleteCourse", (req, res) => {
   );
 });
 
+// Serve static files from the build directory
+app.use(express.static(path.join(__dirname, 'react-client/build')));
+
+// Serve the index.html file for all other requests
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'react-client/build/index.html'));
 });
+
 
 const PORT = 3001;
 
