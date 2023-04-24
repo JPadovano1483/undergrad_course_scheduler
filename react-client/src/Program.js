@@ -129,7 +129,7 @@ export default function Program() {
     }, []);
 
     const handleSubmit = () => {
-        if(typeof majorId === 'number' && typeof minorId === 'number' && typeof concentrationId === 'number')
+        if(typeof majorId === 'number' || typeof minorId === 'number' || typeof concentrationId === 'number')
         {
         insertProgram(userid, majorId);
         insertProgram(userid, minorId);
