@@ -34,7 +34,7 @@
   },
   "scripts": {
     "start": "react-app-rewired --optimize_for_size --max_old_space_size=4096 start",
-    "src": "cd react-client/src && npm start",
+    "src": "cd /react-client/src && npm start",
     "server": "cd server && node server.js",
     "heroku-postbuild": "cd react-client/src && npm install && cd ../../ && npm run build",
     "build": "react-app-rewired build",
