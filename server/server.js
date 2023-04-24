@@ -966,7 +966,7 @@ app.use(express.static(path.join(__dirname, 'react-client/build')));
 
 // Serve the index.html file for all other requests
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'react-client/public/index.html'));
+  res.sendFile(path.join(__dirname, 'react-client/public/index.js'));
 });
 
 
