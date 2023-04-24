@@ -965,7 +965,7 @@ app.post("/permDeleteCourse", (req, res) => {
 
 const PORT = 3001;
 
-app.get('/*', (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/../react-client/src/build/index.html'));
 });
 
